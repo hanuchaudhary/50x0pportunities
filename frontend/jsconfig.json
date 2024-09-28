@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["./*"],       // For main src folder imports
-      "@lib/*": ["./lib/*"]  // For src/lib imports
-    }
-  }
-}
