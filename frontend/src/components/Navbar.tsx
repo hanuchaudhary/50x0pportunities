@@ -22,22 +22,21 @@ const Navbar = () => {
               )}
               <span className="sr-only">Toggle theme</span>
             </button>
-            {path != "/" ? (
-              <div>
-                <button className="p-2 rounded-full bg-neutral-300 dark:bg-neutral-700 hover:bg-neutral-400 dark:hover:bg-neutral-600 transition duration-300">
-                  <Bell className="h-5 w-5" />
-                  <span className="sr-only">Notifications</span>
+            {path === "/" && <Button>Signup</Button>}
+            <div>
+              <button className="p-2 rounded-full bg-neutral-300 dark:bg-neutral-700 hover:bg-neutral-400 dark:hover:bg-neutral-600 transition duration-300">
+                <Bell className="h-5 w-5" />
+                <span className="sr-only">Notifications</span>
+              </button>
+              <div className="relative">
+                <button className="flex items-center space-x-2 p-2 rounded-full bg-neutral-300 dark:bg-neutral-700 dark:bg-opacity-55 hover:bg-neutral-400 dark:hover:bg-neutral-600 dark:backdrop-filter dark:backdrop-blur-sm backdrop-filter backdrop-blur-md bg-opacity-55 transition duration-300">
+                  <h1 className="h-7 uppercase w-7 flex items-center justify-center font-semibold">
+                    S
+                  </h1>
+                  <span className="sr-only">User menu</span>
                 </button>
-                <div className="relative">
-                  <button className="flex items-center space-x-2 p-2 rounded-full bg-neutral-300 dark:bg-neutral-700 dark:bg-opacity-55 hover:bg-neutral-400 dark:hover:bg-neutral-600 dark:backdrop-filter dark:backdrop-blur-sm backdrop-filter backdrop-blur-md bg-opacity-55 transition duration-300">
-                    <h1 className="h-7 uppercase w-7 flex items-center justify-center font-semibold">
-                      S
-                    </h1>
-                    <span className="sr-only">User menu</span>
-                  </button>
-                </div>
               </div>
-            ) : <Button>Signup</Button>}
+            </div>
           </div>
         </div>
       </header>

@@ -12,6 +12,7 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import axios from "axios";
 import { WEB_URL } from "@/Config";
+import { useNavigate } from "react-router-dom";
 
 interface signinTypes {
   email: string;
@@ -31,7 +32,7 @@ export default function SigninPage({
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const navigate = useNavigate();
   async function handleSubmit() {
     if (!values.email || !values.password) {
       setError("All fields are required.");
@@ -43,9 +44,14 @@ export default function SigninPage({
     }
     try {
       setLoading(true);
-      const res = await axios.post(`${WEB_URL}/api/v1/user/signin`, values);
+      const response = await axios.post(`${WEB_URL}/api/v1/user/signin`, values);
       setLoading(false);
-      localStorage.setItem("token", `Bearer ${res.data.token}`);
+      localStorage.setItem("token", `Bearer ${response.data.token}`);
+      if (response.data.user.role === "Recruiter") {
+        navigate("/dashboard");
+      } else {
+        navigate("jobs");
+      }
     } catch (err: any) {
       setLoading(false);
       setError(err.message);

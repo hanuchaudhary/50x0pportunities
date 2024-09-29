@@ -19,6 +19,7 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import axios from "axios";
 import { WEB_URL } from "@/Config";
+import { useNavigate } from "react-router-dom";
 
 interface signupTypes {
   fullName: string;
@@ -40,10 +41,14 @@ export default function SignupPage({
   });
   const [role, setRole] = useState("Candidate");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(""); 
-
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
   async function handleSubmit() {
-    if (!signupValues.fullName || !signupValues.email || !signupValues.password) {
+    if (
+      !signupValues.fullName ||
+      !signupValues.email ||
+      !signupValues.password
+    ) {
       setError("All fields are required.");
       return;
     }
@@ -54,17 +59,24 @@ export default function SignupPage({
     }
 
     try {
-      setLoading(true); 
-      setError(""); 
+      setLoading(true);
+      setError("");
 
       const data = { ...signupValues, role };
       const response = await axios.post(`${WEB_URL}/api/v1/user/signup`, data);
       localStorage.setItem("token", `Bearer ${response.data.token}`);
+      console.log(response.data);
+      if (response.data.user.role === "Recruiter") {
+        navigate("/dashboard");
+      } else {
+        navigate("jobs");
+      }
 
+      navigate("/dashboard");
     } catch (error: any) {
       setError(error.response?.data?.message || "Something went wrong");
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   }
 
@@ -139,11 +151,7 @@ export default function SignupPage({
           </div>
         </CardContent>
         <CardFooter>
-          <Button
-            onClick={handleSubmit}
-            className="w-full"
-            disabled={loading}
-          >
+          <Button onClick={handleSubmit} className="w-full" disabled={loading}>
             {loading ? "Signing up..." : "Sign Up"}
           </Button>
         </CardFooter>
