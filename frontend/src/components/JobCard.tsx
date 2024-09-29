@@ -9,8 +9,9 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Link } from "react-router-dom";
+import { useFetchSingleCompany } from "@/hooks/FetchCompany";
 
-interface cardType {
+interface CardType {
   id: string;
   createdAt?: Date;
   description?: string;
@@ -19,26 +20,31 @@ interface cardType {
   requirement?: string;
   title: string;
   type?: string;
+  companyId: string;
 }
 
-const JobCard = ({
-  id,
-  description,
-  location,
-  title,
-}: cardType) => {
+const JobCard = ({ id, description, location, title, companyId }: CardType) => {
+  const { company, loading } = useFetchSingleCompany({ id: companyId });
+
   return (
     <div>
-      <Card className="">
+      <Card className="dark:bg-neutral-900 dark:hover:bg-neutral-800 transition-colors duration-500">
         <CardHeader>
           <CardTitle className="text-xl">{title}</CardTitle>
         </CardHeader>
-        <CardContent className="flex items-center justify-between border-b">
-          <div className="logo w-20">
-            <img
-              src="https://imgs.search.brave.com/BW68j84XzF9g-Ws-KpajjMNw3PZfdFHsvpHzRIn4iJA/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9hc3Nl/dHMuc3RpY2twbmcu/Y29tL2ltYWdlcy81/ODBiNTdmY2Q5OTk2/ZTI0YmM0M2M1MWYu/cG5n"
-              alt=""
-            />
+        <CardContent className="flex h-20 overflow-hidden items-center justify-between border-b">
+          <div className="logo ">
+            {loading ? (
+              <div className="skeleton-loader">Loading...</div>
+            ) : (
+              company && (
+                <img
+                  className="w-16 object-cover"
+                  src={company.logo}
+                  alt={`${company.name} logo`}
+                />
+              )
+            )}
           </div>
           <div className="flex items-center justify-center gap-1">
             <MapPin />
@@ -46,7 +52,9 @@ const JobCard = ({
           </div>
         </CardContent>
         <CardContent className="pt-2">
-          <CardDescription>{description}</CardDescription>
+          <CardDescription>
+            {description?.length > 200 ? description?.substring(0,200) + "..." : description}
+          </CardDescription>
         </CardContent>
         <CardFooter className="flex items-center gap-4 justify-between">
           <Link to={`/jobs/${id}`}>

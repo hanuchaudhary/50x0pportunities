@@ -28,27 +28,36 @@ model User {
   email          String           @unique
   password       String
   role           Role
-  Jobs           Job[]
+  createdJobs    Job[]
   jobApplication jobApplication[]
 }
 
+model Company {
+  id   String @unique @default(uuid())
+  name String
+  logo String
+  Job  Job[]
+}
 model Job {
   id          String   @unique @default(uuid())
   recruiterId String
-  title    String
+  companyId   String?
+  title       String
   description String
   location    String
   type        String
   requirement String
-  isOpen      Boolean @default(true)
+  isOpen      Boolean  @default(true)
   createdAt   DateTime @default(now())
   recruiter   User     @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+  company     Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
 }
 
+
 model jobApplication {
-  id          String           @unique @default(uuid())
+  id          String            @unique @default(uuid())
   applicantId String
-  applicant   User             @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  applicant   User              @relation(fields: [applicantId], references: [id], onDelete: Cascade)
   status      applicationStatus
   resume      String
   skills      String

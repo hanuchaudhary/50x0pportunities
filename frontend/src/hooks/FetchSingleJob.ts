@@ -2,19 +2,36 @@ import { WEB_URL } from "@/Config";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-interface jobTypes {
+interface Company {
   id: string;
+  name: string;
+  logo: string;
+}
+
+interface Job {
+  id: string;
+  recruiterId: string;
+  companyId: string;
   title: string;
   description: string;
   location: string;
   type: string;
   requirement: string;
-  isOpen: string;
-  createAt: string;
+  isOpen: boolean;
+  createdAt: string;
+}
+
+interface JobResponse {
+  success: boolean;
+  message: string;
+  data: {
+    job: Job;
+    company: Company;
+  };
 }
 
 export const useSingleJob = ({ id }: { id: string }) => {
-  const [data, setData] = useState<jobTypes | null>(null);
+  const [jobData, setJobData] = useState<JobResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token")?.split(" ")[1];
 
@@ -22,12 +39,17 @@ export const useSingleJob = ({ id }: { id: string }) => {
     const fetchSingleJob = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${WEB_URL}/api/v1/job/${id}`, {
+        const response = await axios.get<JobResponse>(`${WEB_URL}/api/v1/job/${id}`, {
           headers: {
-            Authorization: token,
+            Authorization: token, 
           },
         });
-        setData(response.data.job);
+        
+        if (response.data.success) {
+          setJobData(response.data); 
+        } else {
+          console.error("Failed to fetch job:", response.data.data);
+        }
       } catch (error) {
         console.error("Error fetching the job:", error);
       } finally {
@@ -40,5 +62,5 @@ export const useSingleJob = ({ id }: { id: string }) => {
     }
   }, [id, token]);
 
-  return { loading, data };
+  return { loading, jobData }; // Returns loading status and job data
 };

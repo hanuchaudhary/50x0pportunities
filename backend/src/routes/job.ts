@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
-import { jobValidation } from "../Validation";
+import { companyValidation, jobValidation } from "../Validation";
 
 export const jobRouter = new Hono<{
     Bindings: {
@@ -40,9 +40,9 @@ jobRouter.post("/create", async (c) => {
     }).$extends(withAccelerate());
 
     try {
-        const { title, description, location, isOpen, type, requirement } = await c.req.json();
+        const { title, description, location, isOpen, type, requirement, companyId } = await c.req.json();
 
-        const { success, error } = jobValidation.safeParse({ title, description, location, isOpen, type, requirement });
+        const { success, error } = jobValidation.safeParse({ title, description, location, isOpen, type, requirement, companyId });
         if (!success) {
             return c.json({
                 success: false,
@@ -52,6 +52,7 @@ jobRouter.post("/create", async (c) => {
         }
 
         const userId = c.get("userId");
+
         const recruiter = await prisma.user.findFirst({
             where: {
                 id: userId,
@@ -66,22 +67,24 @@ jobRouter.post("/create", async (c) => {
             }, 404);
         }
 
+
         const job = await prisma.job.create({
             data: {
-                title: title,
-                description: description,
-                type: type,
-                requirement: requirement,
-                location: location,
-                isOpen: isOpen,
+                title,
+                description,
+                location,
+                isOpen,
+                type,
+                requirement,
                 recruiterId: recruiter.id,
+                companyId: companyId
             },
         });
 
         return c.json({
             success: true,
             message: 'Job created successfully',
-            job,
+            createdJob: job
         }, 201);
 
     } catch (error: any) {
@@ -103,7 +106,9 @@ jobRouter.get("/bulk", async (c) => {
         const jobs = await prisma.job.findMany({
             where: {
                 OR: [{ title: { contains: filter, mode: "insensitive" } },
-                { location: { contains: filter, mode: "insensitive" } }],
+                { location: { contains: filter, mode: "insensitive" } },
+                { companyId: { contains: filter, mode: "insensitive" } }
+            ],
             },
             orderBy: {
                 createdAt: "desc"
@@ -132,21 +137,84 @@ jobRouter.get("/:id", async (c) => {
     try {
         const id = c.req.param("id");
         const job = await prisma.job.findUnique({
-            where : {
-                id : id
+            where: {
+                id: id
+            }
+        })
+
+        const company = await prisma.company.findUnique({
+            where: {
+                id: job?.companyId || ""
             }
         })
 
         return c.json({
             success: true,
             message: "job fetched successfully",
-            job: job
+            data: {
+                job, company
+            }
         }, 200)
 
     } catch (error: any) {
         return c.json({
             success: false,
             message: 'Server error during fetching job',
+            error: error.message,
+        }, 500);
+    }
+})
+
+jobRouter.delete("/delete", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const { id } = await c.req.json();
+
+        const job = await prisma.job.delete({
+            where: {
+                id: id
+            }
+        })
+
+        return c.json({
+            success: true,
+            message: "Job deleted successfully",
+        }, 200)
+
+    } catch (error: any) {
+        return c.json({
+            success: false,
+            message: 'Error While Deleting the Job',
+            error: error.message,
+        }, 500);
+    }
+})
+
+jobRouter.delete("/deletemany", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const { id } = await c.req.json();
+        const job = await prisma.job.deleteMany({
+            where: {
+                isOpen : true
+            }
+        })
+
+        return c.json({
+            success: true,
+            message: "Job deleted successfully",
+        }, 200)
+
+    } catch (error: any) {
+        return c.json({
+            success: false,
+            message: 'Error While Deleting the Job',
             error: error.message,
         }, 500);
     }

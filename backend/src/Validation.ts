@@ -29,5 +29,11 @@ export const jobValidation = z.object({
     location: z.string().min(1, { message: "Location is required." }),
     isOpen: z.boolean().default(true).optional(),
     type: z.nativeEnum(jobType, { message: "Job type must be either 'On Site' or 'Work From Home'." }),
-    requirement: z.string().min(1, { message: "Job requirement is required." })
+    requirement: z.string().min(1, { message: "Job requirement is required." }),
+    companyId: z.string().min(1, { message: "CompanyId is required." })
+});
+
+export const companyValidation = z.object({
+    name: z.string().min(1, { message: "Company name must be at least 1 characters long." }),
+    logo: z.string().min(1, { message: "logo required in png format" }),
 });

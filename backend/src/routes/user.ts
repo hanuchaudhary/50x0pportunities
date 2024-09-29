@@ -220,6 +220,9 @@ userRouter.get('/me', async (c) => {
                 id: true,
                 fullName: true,
                 email: true,
+                role : true,
+                jobApplication: true,
+                createdJobs : true
             },
         });
 
