@@ -18,7 +18,7 @@ interface Job {
   type: string;
   requirement: string;
   isOpen: boolean;
-  createdAt: string;
+  createdAt: Date;
 }
 
 interface JobResponse {

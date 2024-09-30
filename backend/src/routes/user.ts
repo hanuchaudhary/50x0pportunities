@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { verify, sign, jwt } from "hono/jwt";
-import { signinValidation, signupValidation } from '../Validation';
+import { applicationValidation, signinValidation, signupValidation } from '../Validation';
 import { Jwt } from 'hono/utils/jwt';
 
 export const userRouter = new Hono<{
@@ -24,7 +24,7 @@ userRouter.use("/*", async (c, next) => {
         return;
     }
     const authHeader = c.req.header("authorization") || "";
-    
+
     try {
         const userVerify = await verify(authHeader, c.env.JWT_SECRET);
 
@@ -49,9 +49,9 @@ userRouter.post('/signup', async (c) => {
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
     try {
-        const { email, password, fullName , role } = await c.req.json();
+        const { email, password, fullName, role } = await c.req.json();
 
-        const validation = signupValidation.safeParse({ email, password, fullName , role });
+        const validation = signupValidation.safeParse({ email, password, fullName, role });
 
         if (!validation.success) {
             return c.json({
@@ -135,6 +135,7 @@ userRouter.post('/signin', async (c) => {
                 id: true,
                 fullName: true,
                 password: true,
+                role: true
             },
         });
 
@@ -160,11 +161,7 @@ userRouter.post('/signin', async (c) => {
             success: true,
             message: 'User signed in successfully',
             token,
-            user: {
-                id: user.id,
-                email: user.email,
-                name: user.fullName,
-            },
+            user
         }, 200);
     } catch (error: any) {
         return c.json({
@@ -220,9 +217,9 @@ userRouter.get('/me', async (c) => {
                 id: true,
                 fullName: true,
                 email: true,
-                role : true,
+                role: true,
                 jobApplication: true,
-                createdJobs : true
+                createdJobs: true
             },
         });
 
@@ -311,7 +308,176 @@ userRouter.put('/update', async (c) => {
     }
 });
 
+userRouter.post("/application/:id", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const { education, experience, skills, resume } = await c.req.json();
+        const { success, error } = applicationValidation.safeParse({
+            education,
+            experience,
+            skills,
+            resume,
+        });
+
+        if (!success) {
+            return c.json(
+                {
+                    success: false,
+                    message: "Validation error",
+                    error: error,
+                },
+                400
+            );
+        }
+
+        const jobId = c.req.param("id");
+        const job = await prisma.job.findUnique({
+            where: {
+                id: jobId || undefined,
+            },
+        });
+
+        if (!job) {
+            return c.json(
+                {
+                    success: false,
+                    message: "Job not found",
+                },
+                404
+            );
+        }
+
+        const userId = c.get("userId");
+        const candidate = await prisma.user.findFirst({
+            where: {
+                id: userId,
+                role: "Candidate",
+            },
+        });
+
+        if (!candidate) {
+            return c.json(
+                {
+                    success: false,
+                    message: "Only Candidate can create Apllications for Job",
+                },
+                404
+            );
+        }
+
+        const existingApplication = await prisma.jobApplication.findFirst({
+            where: {
+                applicantId: candidate.id,
+                jobId: job.id,
+            },
+        });
+
+        if (existingApplication) {
+            return c.json(
+                {
+                    success: false,
+                    message: "You have already applied for this job.",
+                },
+                400
+            );
+        }
+
+        const application = await prisma.jobApplication.create({
+            data: {
+                education,
+                experience,
+                resume,
+                skills,
+                applicantId: candidate.id,
+                jobId: job?.id,
+                status: 'Applied'
+            },
+        });
+
+        return c.json(
+            {
+                success: true,
+                message: "Application created successfully",
+                application,
+            },
+            201
+        );
+    } catch (error: any) {
+        return c.json(
+            {
+                success: false,
+                message: "Server error during application creation",
+                error: error.message,
+            },
+            500
+        );
+    }
+});
+
+userRouter.get("/allapplications/:id", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const jobId = c.req.param("id");
+        if (!jobId) {
+            return c.json(
+                { success: false, message: "Job ID is required" },
+                400
+            );
+        }
+
+        const job = await prisma.job.findUnique({
+            where: { id: jobId },
+        });
+
+        if (!job) {
+            return c.json(
+                { success: false, message: "Job not found" },
+                404
+            );
+        }
+
+        const userId = c.get("userId");
+        const recruiter = await prisma.user.findFirst({
+            where: { id: userId, role: "Recruiter" },
+        });
+
+        if (!recruiter) {
+            return c.json(
+                { success: false, message: "Only Recruiters can view applications for this job" },
+                403
+            );
+        }
+
+        const allApplications = await prisma.jobApplication.findMany({
+            where: { jobId: jobId },
+            include: { applicant: true },  
+        });
+
+        return c.json(
+            {
+                success: true,
+                message: "Fetched applications successfully",
+                applications: allApplications, 
+            },
+            200
+        );
+    } catch (error: any) {
+        return c.json(
+            {
+                success: false,
+                message: "Server error during fetching applications",
+                error: error.message,
+            },
+            500
+        );
+    }
+});
 
 
-
-export default userRouter;
+export default userRouter

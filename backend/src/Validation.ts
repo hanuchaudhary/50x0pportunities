@@ -17,7 +17,7 @@ export const signupValidation = z.object({
     role: z.nativeEnum(Role, { message: "Role must be either Recruiter or Candidate." })
 });
 
- 
+
 export const signinValidation = z.object({
     email: z.string().email({ message: "Invalid email address." }),
     password: z.string().min(6, { message: "Password must be at least 6 characters long." }),
@@ -37,3 +37,18 @@ export const companyValidation = z.object({
     name: z.string().min(1, { message: "Company name must be at least 1 characters long." }),
     logo: z.string().min(1, { message: "logo required in png format" }),
 });
+
+enum applicationStatus {
+    Rejected = "Rejected",
+    Applied = "Applied",
+    Interviewing = "Interviewing",
+    Hired = "Hired"
+}
+
+export const applicationValidation = z.object({
+    education: z.string().min(1, { message: "Education is required." }),
+    experience: z.string(),
+    skills: z.string().min(1, { message: "Skills are required." }),
+    resume: z.string().min(1, { message: "Resume is required." }),
+    status: z.nativeEnum(applicationStatus, { message: "Invalid application status." }).default(applicationStatus.Applied)
+})

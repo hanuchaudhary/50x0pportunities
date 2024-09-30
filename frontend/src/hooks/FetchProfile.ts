@@ -25,7 +25,7 @@ interface ProfileData {
   email: string;
   role: string;
   createdJobs: Job[];
-  jobApplications: JobApplication[];
+  jobApplication: JobApplication[];
 }
 
 export const useProfile = () => {
@@ -46,7 +46,7 @@ export const useProfile = () => {
                     },
                 });
                 setData(response.data.user);
-                console.log(response.data.user.Jobs);
+                console.log(response.data.user);
                 
             } catch (error) {
                 console.error("Error fetching profile:", error);

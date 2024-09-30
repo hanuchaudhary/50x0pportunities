@@ -3,7 +3,6 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
 } from "@/components/ui/card";
 import {
   Select,
@@ -65,11 +64,11 @@ export default function SignupPage({
       const data = { ...signupValues, role };
       const response = await axios.post(`${WEB_URL}/api/v1/user/signup`, data);
       localStorage.setItem("token", `Bearer ${response.data.token}`);
-      console.log(response.data);
-      if (response.data.user.role === "Recruiter") {
-        navigate("/dashboard");
+      localStorage.setItem("role", response.data.user.role);
+      if (response.data.user.role === "Candidate") {
+        navigate("/jobs");
       } else {
-        navigate("jobs");
+        navigate("/dashboard");
       }
 
       navigate("/dashboard");
@@ -88,14 +87,18 @@ export default function SignupPage({
         <div onClick={handleClose} className="x p-2 fixed cursor-pointer">
           <X />
         </div>
-        <h1 className="text-center py-6 text-2xl font-semibold">Sign Up</h1>
-        <CardHeader className="space-y-1">
-          <CardDescription className="text-center">
-            Enter your information to create an account
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {error && <p className="text-red-500 text-center">{error}</p>}
+        <h1 className="text-center py-2 md:py-6 text-2xl font-semibold">
+          Sign Up
+        </h1>
+        <CardDescription className="text-center">
+          <h1 className="py-2">Enter your information to create an account</h1>
+        </CardDescription>
+        <CardContent className="space-y-1">
+          {error && (
+            <p className="text-red-900 bg-red-300 rounded-sm font-semibold text-center">
+              {error}
+            </p>
+          )}
 
           <div className="flex items-end justify-between">
             <div className="space-y-2">

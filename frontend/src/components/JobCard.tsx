@@ -13,13 +13,9 @@ import { useFetchSingleCompany } from "@/hooks/FetchCompany";
 
 interface CardType {
   id: string;
-  createdAt?: Date;
-  description?: string;
-  isOpen?: boolean;
+  description: string;
   location: string;
-  requirement?: string;
   title: string;
-  type?: string;
   companyId: string;
 }
 
@@ -28,7 +24,7 @@ const JobCard = ({ id, description, location, title, companyId }: CardType) => {
 
   return (
     <div>
-      <Card className="dark:bg-neutral-900 dark:hover:bg-neutral-800 transition-colors duration-500">
+      <Card className="dark:bg-neutral-900 bg-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors duration-500">
         <CardHeader>
           <CardTitle className="text-xl">{title}</CardTitle>
         </CardHeader>

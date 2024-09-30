@@ -17,7 +17,6 @@ export const useFetchData = () => {
                     }
                 });
                 setData(response.data.jobs)
-                console.log(response);
             }
             fetch();
             setLoading(false);

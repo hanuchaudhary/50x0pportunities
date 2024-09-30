@@ -93,10 +93,12 @@ export default function JobPostingForm() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="container px-4 mx-auto pt-28">
-        <h1 className="text-center text-3xl font-bold mb-6">Post Job</h1>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        <h1 className="text-center text-3xl font-bold mb-3 md:mb-6">Post Job</h1>
+        <p className="text-red-900 my-2 bg-red-300 rounded-sm font-semibold text-center">
+          {error}
+        </p>
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
             <div>
               <Label htmlFor="job-title">Job Title</Label>
               <Input
@@ -141,7 +143,7 @@ export default function JobPostingForm() {
               placeholder="Enter description"
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <Label htmlFor="job-type">Job Type</Label>
               <Select
@@ -231,7 +233,6 @@ function CompanyDrawer() {
   const [logo, setLogo] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
   const handleCreateCompany = async () => {
     try {
       if (!name || !logo) {
@@ -240,7 +241,7 @@ function CompanyDrawer() {
       }
       setLoading(true);
       const token = localStorage.getItem("token")?.split(" ")[1];
-      const response = await axios.post(
+      await axios.post(
         `${WEB_URL}/api/v1/company/create`,
         { name: name, logo: logo },
         {
@@ -272,7 +273,7 @@ function CompanyDrawer() {
             Please fill out all fields to create a new company.
           </DrawerDescription>
         </DrawerHeader>
-        <div className="px-4 py-2 flex flex-col gap-4">
+        <div className="px-4 py-2 flex flex-col gap-2 md:gap-4">
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <div>
             <Label htmlFor="company-name">Company Name</Label>
@@ -294,7 +295,11 @@ function CompanyDrawer() {
           </div>
         </div>
         <DrawerFooter>
-          <Button onClick={handleCreateCompany} disabled={loading} className="w-full">
+          <Button
+            onClick={handleCreateCompany}
+            disabled={loading}
+            className="w-full"
+          >
             {loading ? "Create Company..." : "Create Company"}
           </Button>
           <DrawerClose asChild>

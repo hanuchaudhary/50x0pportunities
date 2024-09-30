@@ -47,10 +47,11 @@ export default function SigninPage({
       const response = await axios.post(`${WEB_URL}/api/v1/user/signin`, values);
       setLoading(false);
       localStorage.setItem("token", `Bearer ${response.data.token}`);
-      if (response.data.user.role === "Recruiter") {
-        navigate("/dashboard");
+      localStorage.setItem("role", response.data.user.role);
+      if (response.data.user.role === "Candidate") {
+        navigate("/jobs");
       } else {
-        navigate("jobs");
+        navigate("/dashboard");
       }
     } catch (err: any) {
       setLoading(false);
@@ -64,14 +65,16 @@ export default function SigninPage({
         <div onClick={handleClose} className="fixed p-2 cursor-pointer">
           <X />
         </div>
-        <h1 className="text-center py-6 text-2xl font-semibold">Sign In</h1>
+        <h1 className="text-center py-2 md:py-6 text-2xl font-semibold">Sign In</h1>
         <CardHeader className="space-y-1">
           <CardDescription className="text-center">
             Enter your information to sign in
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {error && <p className="text-red-500 text-center">{error}</p>}
+        <p className="text-red-900 bg-red-300 rounded-sm font-semibold text-center">
+              {error}
+            </p>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input

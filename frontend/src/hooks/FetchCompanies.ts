@@ -23,7 +23,6 @@ export const useFetchCompanies = () => {
                     }
                 });
                 setCompanies(response.data.companies)
-                console.log(response);
             }
             fetch();
             setLoading(false);

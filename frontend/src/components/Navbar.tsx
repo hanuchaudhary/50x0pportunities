@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
-import Profile from "@/pages/Profile";
+import Profile from "@/components/MiniProfile";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
