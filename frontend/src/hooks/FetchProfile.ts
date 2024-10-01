@@ -3,8 +3,13 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 interface JobApplication {
-  id: string;
-  title: string;
+    id: string
+    title: string
+    education: string
+    experience: string
+    skills: string
+    status: string
+    createdAt: string
 }
 
 interface Job {
@@ -26,6 +31,7 @@ interface ProfileData {
   role: string;
   createdJobs: Job[];
   jobApplication: JobApplication[];
+  savedJobs : Job[]
 }
 
 export const useProfile = () => {
@@ -46,7 +52,7 @@ export const useProfile = () => {
                     },
                 });
                 setData(response.data.user);
-                console.log(response.data.user);
+                console.log(response.data);
                 
             } catch (error) {
                 console.error("Error fetching profile:", error);

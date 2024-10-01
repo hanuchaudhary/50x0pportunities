@@ -12,20 +12,14 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import axios from "axios";
 import { WEB_URL } from "@/Config";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface signinTypes {
   email: string;
   password: string;
 }
 
-export default function SigninPage({
-  onClick,
-  handleClose,
-}: {
-  onClick: () => void;
-  handleClose: () => void;
-}) {
+export default function SigninPage() {
   const [values, setValues] = useState<signinTypes>({
     email: "",
     password: "",
@@ -62,7 +56,7 @@ export default function SigninPage({
   return (
     <div className="min-h-screen flex items-center justify-center bg-black bg-opacity-80 px-3 md:p-0">
       <Card className="w-full max-w-md">
-        <div onClick={handleClose} className="fixed p-2 cursor-pointer">
+        <div className="fixed p-2 cursor-pointer">
           <X />
         </div>
         <h1 className="text-center py-2 md:py-6 text-2xl font-semibold">Sign In</h1>
@@ -105,11 +99,11 @@ export default function SigninPage({
           </Button>
         </CardFooter>
         <CardFooter>
-          <div onClick={onClick} className="text-sm text-center w-full">
+          <div className="text-sm text-center w-full">
             Don't have an Account?{" "}
-            <span className="text-blue-500 underline font-semibold cursor-pointer">
+            <Link to={"/signup"} className="text-blue-500 underline font-semibold cursor-pointer">
               Sign up
-            </span>
+            </Link>
           </div>
         </CardFooter>
       </Card>

@@ -65,3 +65,22 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px; 
+  display: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: white !important; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: white !important;
+  border-radius: 10px; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: white !important; 
+}

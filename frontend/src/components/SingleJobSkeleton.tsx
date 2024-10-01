@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function SingleJobSkeleton() {
   return (
-    <div className="mt-32 md:mt-40 mx-0 md:px-20">
+    <div className="mt-28">
       <div className="title flex items-center justify-between">
         <div className="space-y-2">
           <Skeleton className="h-8 w-64" />

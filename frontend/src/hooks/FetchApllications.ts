@@ -18,10 +18,8 @@ export const useApplications = () => {
                         Authorization: token,
                     },
                 });
-
                 console.log(response.data.allApplications);
                 if (response.data.success) {
-                    
                     setApplications(response.data.allApplications);
                 } else {
                     console.error("Failed to applications:", response.data.data);

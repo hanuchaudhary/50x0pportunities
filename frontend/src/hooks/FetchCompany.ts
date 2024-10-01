@@ -10,12 +10,12 @@ interface Company {
 
 export const useFetchSingleCompany = ({ id }: { id: string }) => {
   const [company, setCompany] = useState<Company | null>(null);
-  const [loading, setLoading] = useState(true); 
+  const [companyLoading, setCompanyLoading] = useState(true); 
   const token = localStorage.getItem("token")?.split(" ")[1];
 
   useEffect(() => {
     const fetchCompany = async () => {
-      setLoading(true); 
+      setCompanyLoading(true); 
 
       try {
         const response = await axios.post(`${WEB_URL}/api/v1/company/find`, { id }, {
@@ -27,7 +27,7 @@ export const useFetchSingleCompany = ({ id }: { id: string }) => {
       } catch (error) {
         console.error("Error fetching company:", error); 
       } finally {
-        setLoading(false);
+        setCompanyLoading(false);
       }
     };
 
@@ -36,5 +36,5 @@ export const useFetchSingleCompany = ({ id }: { id: string }) => {
     }
   }, [id, token]); 
 
-  return { company, loading };
+  return { company, companyLoading };
 };

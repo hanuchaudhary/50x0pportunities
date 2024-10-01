@@ -43,7 +43,6 @@ userRouter.use("/*", async (c, next) => {
 });
 
 
-
 userRouter.post('/signup', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -111,7 +110,6 @@ userRouter.post('/signup', async (c) => {
     }
 });
 
-// User Signin
 userRouter.post('/signin', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -172,7 +170,6 @@ userRouter.post('/signin', async (c) => {
     }
 });
 
-// Fetch bulk users
 userRouter.get('/bulk', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -218,8 +215,17 @@ userRouter.get('/me', async (c) => {
                 fullName: true,
                 email: true,
                 role: true,
-                jobApplication: true,
-                createdJobs: true
+                jobApplication: {
+                    orderBy: {
+                        createdAt: "asc"
+                    }
+                },
+                createdJobs: true,
+                savedJobs: {
+                    include: {
+                        job: true,
+                    }
+                }
             },
         });
 
@@ -245,7 +251,6 @@ userRouter.get('/me', async (c) => {
 });
 
 
-// Delete a user
 userRouter.post('/remove', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -276,7 +281,7 @@ userRouter.post('/remove', async (c) => {
     }
 });
 
-// Update user details
+// Update 
 userRouter.put('/update', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -307,6 +312,8 @@ userRouter.put('/update', async (c) => {
         }, 500);
     }
 });
+
+//applications routes---------------------------------------------------------
 
 userRouter.post("/application/:id", async (c) => {
     const prisma = new PrismaClient({
@@ -346,7 +353,7 @@ userRouter.post("/application/:id", async (c) => {
                     success: false,
                     message: "Job not found",
                 },
-                404
+                401
             );
         }
 
@@ -381,7 +388,7 @@ userRouter.post("/application/:id", async (c) => {
                     success: false,
                     message: "You have already applied for this job.",
                 },
-                400
+                402
             );
         }
 
@@ -394,7 +401,9 @@ userRouter.post("/application/:id", async (c) => {
                 applicantId: candidate.id,
                 jobId: job?.id,
                 status: 'Applied'
-            },
+            }, include: {
+                job: true,
+            }
         });
 
         return c.json(
@@ -456,14 +465,14 @@ userRouter.get("/allapplications/:id", async (c) => {
 
         const allApplications = await prisma.jobApplication.findMany({
             where: { jobId: jobId },
-            include: { applicant: true },  
+            include: { applicant: true },
         });
 
         return c.json(
             {
                 success: true,
                 message: "Fetched applications successfully",
-                applications: allApplications, 
+                applications: allApplications,
             },
             200
         );
@@ -479,5 +488,19 @@ userRouter.get("/allapplications/:id", async (c) => {
     }
 });
 
+// userRouter.post("/delall", async (c) => {
+//     const prisma = new PrismaClient({
+//         datasourceUrl: c.env.DATABASE_URL,
+//     }).$extends(withAccelerate());
 
-export default userRouter
+//     const del =  await prisma.user.deleteMany({
+//         where :{
+//             role : 'Recruiter'
+//         }
+//     })
+
+//     return c.json({
+//         success : true,
+//         del
+//     },201)
+// })

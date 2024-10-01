@@ -1,9 +1,18 @@
+import { useState } from "react";
+import axios from "axios";
+import { X } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -11,29 +20,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { X } from "lucide-react";
-import { useState } from "react";
-import axios from "axios";
-import { WEB_URL } from "@/Config";
-import { useNavigate } from "react-router-dom";
 
-interface signupTypes {
+import { WEB_URL } from "@/Config";
+import { Link, useNavigate } from "react-router-dom";
+
+interface SignupValues {
   fullName: string;
   password: string;
   email: string;
 }
 
-export default function SignupPage({
-  onClick,
-  handleClose,
-}: {
-  onClick: () => void;
-  handleClose: () => void;
-}) {
-  const [signupValues, setSignupValues] = useState<signupTypes>({
+export default function SignupPage() {
+  const navigate = useNavigate();
+  const [signupValues, setSignupValues] = useState<SignupValues>({
     fullName: "",
     password: "",
     email: "",
@@ -41,7 +40,7 @@ export default function SignupPage({
   const [role, setRole] = useState("Candidate");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+
   async function handleSubmit() {
     if (
       !signupValues.fullName ||
@@ -70,8 +69,6 @@ export default function SignupPage({
       } else {
         navigate("/dashboard");
       }
-
-      navigate("/dashboard");
     } catch (error: any) {
       setError(error.response?.data?.message || "Something went wrong");
     } finally {
@@ -80,43 +77,45 @@ export default function SignupPage({
   }
 
   return (
-    <div
-      className={`min-h-screen px-3 md:p-0 flex items-center justify-center bg-black bg-opacity-80`}
-    >
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
-        <div onClick={handleClose} className="x p-2 fixed cursor-pointer">
-          <X />
-        </div>
-        <h1 className="text-center py-2 md:py-6 text-2xl font-semibold">
-          Sign Up
-        </h1>
-        <CardDescription className="text-center">
-          <h1 className="py-2">Enter your information to create an account</h1>
-        </CardDescription>
-        <CardContent className="space-y-1">
+        <CardHeader className="space-y-1">
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-2xl font-semibold">Sign Up</CardTitle>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <CardDescription>
+            Enter your information to create an account
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
           {error && (
-            <p className="text-red-900 bg-red-300 rounded-sm font-semibold text-center">
-              {error}
-            </p>
+            <div
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+              role="alert"
+            >
+              <span className="block sm:inline">{error}</span>
+            </div>
           )}
-
-          <div className="flex items-end justify-between">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <Input
+                id="name"
+                placeholder="John Doe"
                 value={signupValues.fullName}
                 onChange={(e) =>
                   setSignupValues({ ...signupValues, fullName: e.target.value })
                 }
-                id="name"
-                placeholder="John Doe"
                 required
               />
             </div>
             <div className="space-y-2">
               <Label>Select Role</Label>
               <Select value={role} onValueChange={setRole}>
-                <SelectTrigger className="w-40">
+                <SelectTrigger>
                   <SelectValue placeholder="Select Role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -126,45 +125,45 @@ export default function SignupPage({
               </Select>
             </div>
           </div>
-
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
+              id="email"
+              type="email"
+              placeholder="john@example.com"
               value={signupValues.email}
               onChange={(e) =>
                 setSignupValues({ ...signupValues, email: e.target.value })
               }
-              id="email"
-              type="email"
-              placeholder="john@example.com"
               required
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
+              id="password"
+              type="password"
               value={signupValues.password}
               onChange={(e) =>
                 setSignupValues({ ...signupValues, password: e.target.value })
               }
-              id="password"
-              type="password"
               required
             />
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex flex-col space-y-4">
           <Button onClick={handleSubmit} className="w-full" disabled={loading}>
             {loading ? "Signing up..." : "Sign Up"}
           </Button>
-        </CardFooter>
-        <CardFooter>
-          <div onClick={onClick} className="text-sm text-center w-full">
-            Already have an Account?{" "}
-            <span className="text-blue-500 underline font-semibold cursor-pointer">
+          <p className="text-sm text-center">
+            Already have an account?{" "}
+            <Link
+              to={"/signin"}
+              className="text-primary hover:underline font-semibold"
+            >
               Sign In
-            </span>
-          </div>
+            </Link>
+          </p>
         </CardFooter>
       </Card>
     </div>

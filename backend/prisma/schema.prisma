@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -30,6 +27,7 @@ model User {
   role           Role
   createdJobs    Job[]
   jobApplication jobApplication[]
+  savedJobs      SavedJobs[]
 }
 
 model Company {
@@ -53,6 +51,15 @@ model Job {
   recruiter      User             @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   company        Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
   jobApplication jobApplication[]
+  savedJobs      SavedJobs[]
+}
+
+model SavedJobs {
+  id     String @unique @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId  String
+  job    Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
 }
 
 model jobApplication {
@@ -60,7 +67,7 @@ model jobApplication {
   applicantId String
   applicant   User               @relation(fields: [applicantId], references: [id], onDelete: Cascade)
   jobId       String?
-  job         Job?               @relation(fields: [jobId], references: [id])
+  job         Job?               @relation(fields: [jobId], references: [id], onDelete: Cascade)
   status      applicationStatus? @default(Applied)
   isApplied   Boolean            @default(true)
   resume      String
