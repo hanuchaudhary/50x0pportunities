@@ -26,7 +26,7 @@ const FullViewJob = () => {
                 <span className="md:text-sm text-xs bg-green-300 font-bold select-none text-green-900 rounded-md inline-block py-1 px-2 mr-2">
                   {jobData?.data.job.type === "onsite"
                     ? "On Site"
-                    : "Remote" || "types"}
+                    : "Remote"}
                 </span>
                 {jobData?.data.job.isOpen ? (
                   <span className="md:text-sm text-xs bg-green-300 font-bold select-none text-green-900 rounded-md inline-block py-1 px-2">
