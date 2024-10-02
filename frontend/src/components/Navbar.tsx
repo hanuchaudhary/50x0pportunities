@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
+  const role = localStorage.getItem("role");
   const location = useLocation();
   const path = location.pathname;
   const [menu, setMenu] = useState(false);
@@ -20,7 +21,7 @@ export default function Navbar() {
     <div className="w-full flex justify-center fixed top-0 left-0 right-0 z-50 px-4">
       <header className="w-full max-w-7xl mt-4 border dark:border-neutral-800 bg-background/80 backdrop-blur-md rounded-xl shadow-lg py-3">
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-primary">
+          <Link to="/jobs" className="text-2xl font-bold text-primary">
             jobConnect
           </Link>
           <div className="flex items-center space-x-4">
@@ -37,6 +38,11 @@ export default function Navbar() {
               )}
               <span className="sr-only">Toggle theme</span>
             </Button>
+            {role === "Recruiter" && (
+              <Link to={"/dashboard"}>
+                <Button>Post Job</Button>
+              </Link>
+            )}
             {path === "/" ? (
               <Button asChild>
                 <Link to="/signup">Signup</Link>
@@ -75,11 +81,15 @@ export default function Navbar() {
 
 function MiniProfile() {
   const { data, loading, error } = useProfile();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/signin");
+  };
 
-  // loader
   if (loading) {
     return (
-      <Card className="lg:w-[30vw] md:w-[40vw] shadow-xl">
+      <Card className="lg:w-[30vw] md:w-[40vw] w-[70vw] shadow-xl">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-4">
             <Skeleton className="w-16 h-16 rounded-full" />
@@ -95,6 +105,7 @@ function MiniProfile() {
             <Skeleton className="h-20 rounded-lg" />
             <Skeleton className="h-20 rounded-lg" />
           </div>
+          <Skeleton className="h-10 w-full mt-4" />
           <Skeleton className="h-10 w-full mt-4" />
         </CardContent>
       </Card>
@@ -130,7 +141,9 @@ function MiniProfile() {
             </AvatarFallback>
           </Avatar>
           <div className="flex-grow">
-            <CardTitle className="text-xl capitalize">{data?.fullName}</CardTitle>
+            <CardTitle className="text-xl capitalize">
+              {data?.fullName}
+            </CardTitle>
             <p className="text-sm text-muted-foreground mt-1">{data?.email}</p>
             <Badge variant="secondary" className="mt-2">
               {data?.role}
@@ -139,8 +152,7 @@ function MiniProfile() {
         </div>
       </CardHeader>
       <CardContent className="pt-4">
-        <div
-        >
+        <div>
           {data?.role === "Recruiter" ? (
             <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
               <span className="text-2xl font-bold">
@@ -172,9 +184,17 @@ function MiniProfile() {
             </div>
           )}
         </div>
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex flex-col gap-2 justify-end">
           <Button asChild variant="outline" className="w-full">
             <Link to="/profile">View Full Profile</Link>
+          </Button>
+          <Button
+            onClick={handleLogout}
+            asChild
+            variant="destructive"
+            className="w-full"
+          >
+            <h1>Logout</h1>
           </Button>
         </div>
       </CardContent>

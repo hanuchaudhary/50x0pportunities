@@ -32,7 +32,7 @@ import { LogOut, Trash2, UserMinus } from "lucide-react";
 import { useProfile } from "@/hooks/FetchProfile";
 import Navbar from "@/components/Navbar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { WEB_URL } from "@/Config";
 import { toast } from "@/hooks/use-toast";
@@ -42,7 +42,6 @@ import CreatedJobCard from "@/components/CreatedJobCard";
 
 export default function Profile() {
   const { data, loading } = useProfile();
-  console.log(data);
 
   const navigate = useNavigate();
 
@@ -255,7 +254,19 @@ export default function Profile() {
                   </DrawerHeader>
                   <div className="p-4 space-y-4 max-h-[60vh] my-2 overflow-y-auto custom-scrollbar">
                     {data?.jobApplication.map((e) => (
-                      <ApplicationCard key={e.id} application={e} />
+                      <ApplicationCard
+                        key={e.id}
+                        title={e.job.title}
+                        description={e.job.description}
+                        createdAt={e.createdAt}
+                        isOpen={e.job.isOpen}
+                        status={e.status}
+                        companyName={e.job.company.name}
+                        companyLogo={e.job.company.logo}
+                        location={e.job.location}
+                        jobId={e.job.id}
+                        jobType={e.job.type}
+                      />
                     ))}
                   </div>
                   <div className="w-full flex items-center justify-center">
@@ -296,7 +307,7 @@ function JobCard({ job, type }: any) {
           description: "Saved job successfully removed.",
           variant: "success",
         });
-        window.location.reload()
+        window.location.reload();
       }
     } catch (error) {
       toast({
@@ -343,12 +354,19 @@ function JobCard({ job, type }: any) {
           Location: {job.job.location}
         </p>
         <p className="text-xs text-muted-foreground">Type: {job.job.type}</p>
-        <p className="text-sm mt-2">{job.job.description}</p>
+        <p className="text-sm mt-2">
+          {job.job.description.length > 200
+            ? job.job.description.substring(0, 200) + "..."
+            : job.job.description}
+        </p>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-col justify-start items-start gap-2">
         <p className="text-xs text-muted-foreground">
           Created: {new Date(job.job.createdAt).toLocaleDateString()}
         </p>
+        <Link to={"/jobs/" + job.job.id}>
+          <Button variant={"secondary"} size={"sm"}>Open</Button>
+        </Link>
       </CardFooter>
     </Card>
   );

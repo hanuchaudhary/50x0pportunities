@@ -27,14 +27,14 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { toast } from "@/hooks/use-toast";
 
 export default function JobPostingForm() {
   const { companies } = useFetchCompanies();
   const navigate = useNavigate();
-  const mdStr = `# This is a H1  \n## This is a H2  \n###### This is a H6`;
+  const mdStr = `# Requirements`;
   const [requirement, setRequirement] = useState(mdStr);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [values, setValues] = useState({
     title: "",
     description: "",
@@ -49,7 +49,6 @@ export default function JobPostingForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     if (
       !values.title ||
@@ -58,7 +57,11 @@ export default function JobPostingForm() {
       !values.type ||
       !values.companyId
     ) {
-      setError("Please fill out all fields.");
+      toast({
+        title: "Error",
+        description: "Please fill out all fields.",
+        variant: "destructive",
+      });
       setLoading(false);
       return;
     }
@@ -70,7 +73,7 @@ export default function JobPostingForm() {
           Authorization: token,
         },
       });
-console.log(ress);
+      console.log(ress);
 
       setValues({
         title: "",
@@ -81,10 +84,18 @@ console.log(ress);
         isOpen: false,
       });
       setRequirement(mdStr);
+      toast({
+        title: "Success",
+        description: "Job posted successfully!",
+      });
       navigate("/jobs");
     } catch (error) {
       console.error(error);
-      setError("Failed to create job.");
+      toast({
+        title: "Error",
+        description: "Failed to create job.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -94,10 +105,9 @@ console.log(ress);
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="container px-4 mx-auto pt-28">
-        <h1 className="text-center text-3xl font-bold mb-3 md:mb-6">Post Job</h1>
-        <p className="text-red-900 my-2 bg-red-300 rounded-sm font-semibold text-center">
-          {error}
-        </p>
+        <h1 className="text-center text-3xl font-bold mb-3 md:mb-6">
+          Post Job
+        </h1>
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
             <div>
@@ -233,11 +243,14 @@ function CompanyDrawer() {
   const [name, setName] = useState("");
   const [logo, setLogo] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const handleCreateCompany = async () => {
     try {
       if (!name || !logo) {
-        setError("Please fill out all fields.");
+        toast({
+          title: "Error",
+          description: "Please fill out all fields.",
+          variant: "destructive",
+        });
         return;
       }
       setLoading(true);
@@ -255,9 +268,17 @@ function CompanyDrawer() {
 
       setLogo("");
       setName("");
-      setError("");
+      toast({
+        title: "Success",
+        description: "Company created successfully!",
+      });
     } catch (error) {
       console.log(error);
+      toast({
+        title: "Error",
+        description: "Failed to create company.",
+        variant: "destructive",
+      });
       setLoading(false);
     }
   };
@@ -275,7 +296,6 @@ function CompanyDrawer() {
           </DrawerDescription>
         </DrawerHeader>
         <div className="px-4 py-2 flex flex-col gap-2 md:gap-4">
-          {error && <p className="text-red-500 text-sm">{error}</p>}
           <div>
             <Label htmlFor="company-name">Company Name</Label>
             <Input

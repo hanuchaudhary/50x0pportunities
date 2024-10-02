@@ -9,7 +9,6 @@ import { useParams } from "react-router-dom";
 const FullViewJob = () => {
   const { id } = useParams();
   const { jobData, loading } = useSingleJob({ id: id! });
-  console.log(jobData);
   
   const role = localStorage.getItem("role");
 

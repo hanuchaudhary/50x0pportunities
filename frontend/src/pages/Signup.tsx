@@ -82,9 +82,11 @@ export default function SignupPage() {
         <CardHeader className="space-y-1">
           <div className="flex justify-between items-center">
             <CardTitle className="text-2xl font-semibold">Sign Up</CardTitle>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <X className="h-4 w-4" />
-            </Button>
+            <Link to={"/"}>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <X className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
           <CardDescription>
             Enter your information to create an account

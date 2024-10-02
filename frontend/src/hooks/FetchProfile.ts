@@ -2,18 +2,33 @@ import { WEB_URL } from "@/Config";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+interface Company{
+    logo : string,
+    name : string
+}
+
+enum ApplicationStatus {
+    Rejected = "Rejected",
+    Applied = "Applied",
+    Interviewing = "Interviewing",
+    Hired = "Hired",
+  }
+
 interface JobApplication {
     id: string
     title: string
     education: string
     experience: string
     skills: string
-    status: string
+    status: ApplicationStatus
     createdAt: string
     job : Job
+    company : Company
 }
 
 interface Job {
+  jobApplication: JobApplication[];
+  company: any;
   id: string;
   title: string;
   description: string;
@@ -36,7 +51,7 @@ interface ProfileData {
 }
 
 export const useProfile = () => {
-    const [data, setData] = useState<ProfileData | null>(null);
+    const [data, setData] = useState<ProfileData>();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const token = localStorage.getItem("token")?.split(" ")[1];
@@ -53,7 +68,6 @@ export const useProfile = () => {
                     },
                 });
                 setData(response.data.user);
-                console.log(response.data);
                 
             } catch (error) {
                 console.error("Error fetching profile:", error);

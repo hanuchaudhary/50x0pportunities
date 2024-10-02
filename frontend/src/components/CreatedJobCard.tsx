@@ -31,50 +31,16 @@ import { toast } from "@/hooks/use-toast";
 import { Label } from "./ui/label";
 import EditJob from "./EditJob";
 
-enum ApplicationStatus {
+
+export enum ApplicationStatus {
   Rejected = "Rejected",
   Applied = "Applied",
   Interviewing = "Interviewing",
   Hired = "Hired",
 }
 
-interface Applicant {
-  applicantId: string;
-  fullName: string;
-  email: string;
-  role: string;
-}
+export default function CreatedJobCard({ job } : any) {
 
-interface JobApplication {
-  id: string;
-  status: ApplicationStatus;
-  isApplied: boolean;
-  resume: string;
-  skills: string;
-  experience: string;
-  education: string;
-  createdAt: string;
-  applicant: Applicant;
-}
-
-interface CreatedJob {
-  id : true
-  title: string;
-  description: string;
-  location: string;
-  type: string;
-  requirement: string;
-  isOpen: boolean;
-  createdAt: string;
-  jobApplication: JobApplication[];
-}
-
-interface CreatedJobCardProps {
-  job: CreatedJob;
-}
-
-export default function CreatedJobCard({ job }: CreatedJobCardProps) {
-  
   return (
     <Card className="w-full">
       <CardHeader>
@@ -102,7 +68,8 @@ export default function CreatedJobCard({ job }: CreatedJobCardProps) {
       <CardContent>
         <div className="space-y-2 mb-4">
           <div className="flex items-center space-x-2">
-            <MapPin className="h-4 w-4 text-muted-foreground" />
+            <MapPin className="h
+            -4 w-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
               {job.location}
             </span>
@@ -119,7 +86,7 @@ export default function CreatedJobCard({ job }: CreatedJobCardProps) {
           </div>
           <div className="flex items-center space-x-2">
             <Users className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm bg-indigo-600 rounded-md font-semibold px-1">
               {job.jobApplication.length} application(s)
             </span>
           </div>
@@ -133,7 +100,7 @@ export default function CreatedJobCard({ job }: CreatedJobCardProps) {
   );
 }
 
-function ApplicationDialog({ job }: CreatedJobCardProps) {
+function ApplicationDialog({ job } : any) {
   const [applications, setApplications] = useState(job.jobApplication);
   const updateApplicationStatus = async (
     applicationId: string,
@@ -154,7 +121,7 @@ function ApplicationDialog({ job }: CreatedJobCardProps) {
       );
 
       if (response.status === 200) {
-        setApplications((prevApps) =>
+        setApplications((prevApps: any[]) =>
           prevApps.map((app) =>
             app.id === applicationId ? { ...app, status } : app
           )
@@ -190,7 +157,7 @@ function ApplicationDialog({ job }: CreatedJobCardProps) {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            {applications.map((application) => (
+            {applications.map((application : any) => (
               <Card key={application.id} className="p-4">
                 <div className="flex justify-between items-start mb-2">
                   <div>

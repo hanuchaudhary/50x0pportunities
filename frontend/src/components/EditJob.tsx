@@ -27,7 +27,7 @@ import { toast } from "@/hooks/use-toast";
 
 interface editTypes {
   isOpen: boolean;
-  id: boolean;
+  id: string;
 }
 
 export default function EditJob({ isOpen, id } : editTypes) {

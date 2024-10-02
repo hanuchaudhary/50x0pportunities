@@ -51,7 +51,6 @@ const JobCard = ({ id, description, location, title, companyId }: CardType) => {
           title: "!!Saved",
           description: "Job Saved Succesfully",
           variant: "success",
-          draggable: true,
         });
       }
     } catch (error) {

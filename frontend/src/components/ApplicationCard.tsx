@@ -18,40 +18,31 @@ enum ApplicationStatus {
   Hired = "Hired",
 }
 
-interface Application {
-  id: string;
-  applicantId: string;
+interface applicationCard {
   jobId: string;
   status: ApplicationStatus;
-  isApplied: boolean;
-  resume: string;
-  skills: string;
-  experience: string;
-  education: string;
+  id?: string;
+  companyName: string;
+  companyLogo: string;
+  title: string;
+  description: string;
+  location: string;
+  jobType: string;
+  isOpen: boolean;
   createdAt: string;
-  job: {
-    id: string;
-    company: {
-      name: string;
-      logo: string;
-    };
-    recruiterId: string;
-    companyId: string;
-    title: string;
-    description: string;
-    location: string;
-    type: string;
-    requirement: string;
-    isOpen: boolean;
-    createdAt: string;
-  };
 }
 
-interface ApplicationCardProps {
-  application: Application;
-}
-
-export default function ApplicationCard({ application }: ApplicationCardProps) {
+export default function ApplicationCard({
+  title,
+  description,
+  companyName,
+  companyLogo,
+  location,
+  jobType,
+  createdAt,
+  jobId,
+  status,
+}: applicationCard) {
   const getStatusColor = (status: ApplicationStatus) => {
     switch (status) {
       case ApplicationStatus.Rejected:
@@ -69,25 +60,25 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-        <div className="space-y-1">
+      <CardHeader className="flex flex-row items-start justify-between gap-5 pb-2">
+        <div>
           <CardTitle className="text-xl font-bold">
-            {application.job.title}
+            {title}
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground">
-            {application.job.description.length > 250
-              ? application.job.description.substring(0, 250) + "..."
-              : application.job.description}
+            {description.length > 150
+              ? description.substring(0, 150) + "..."
+              : description}
           </CardDescription>
         </div>
         <div className="flex flex-col items-end">
           <h2 className="text-sm font-semibold">
-            {application.job.company.name}
+            {companyName}
           </h2>
           <img
             className="w-12 h-12 object-contain"
-            src={application.job.company.logo}
-            alt={`${application.job.company.name} logo`}
+            src={companyLogo}
+            alt={`${companyName} logo`}
           />
         </div>
       </CardHeader>
@@ -96,32 +87,32 @@ export default function ApplicationCard({ application }: ApplicationCardProps) {
           <div className="flex items-center space-x-2">
             <MapPin className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
-              {application.job.location}
+              {location}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <Briefcase className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
-              {application.job.type}
+              {jobType === "onsite" ? "On Site" : "Remote"}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
-              Applied on {new Date(application.createdAt).toLocaleDateString()}
+              Applied on {new Date(createdAt).toLocaleDateString()}
             </span>
           </div>
         </div>
         <Badge
           className={`${getStatusColor(
-            application.status
+            status
           )} px-2 py-1 text-xs font-bold rounded-full`}
         >
-          {application.status}
+          {status}
         </Badge>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Link to={"/jobs/" + application.job.id}>
+        <Link to={"/jobs/" + jobId}>
           <Button variant="outline">View Job</Button>
         </Link>
       </CardFooter>
