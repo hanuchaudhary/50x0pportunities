@@ -23,6 +23,7 @@ import {
 
 import { WEB_URL } from "@/Config";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 interface SignupValues {
   fullName: string;
@@ -39,7 +40,6 @@ export default function SignupPage() {
   });
   const [role, setRole] = useState("Candidate");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   async function handleSubmit() {
     if (
@@ -47,30 +47,45 @@ export default function SignupPage() {
       !signupValues.email ||
       !signupValues.password
     ) {
-      setError("All fields are required.");
+      toast({
+        title: "Oops!",
+        description: "Looks like you're missing some information. Please fill out all fields.",
+        variant: "destructive" 
+      });
       return;
     }
 
     if (signupValues.password.length < 6) {
-      setError("Password must be at least 6 characters.");
+      toast({
+        title: "Hold on!",
+        description: "Your password is a bit short. Make sure it's at least 6 characters long!",
+        variant: "destructive"
+      });
       return;
     }
 
     try {
       setLoading(true);
-      setError("");
-
       const data = { ...signupValues, role };
       const response = await axios.post(`${WEB_URL}/api/v1/user/signup`, data);
       localStorage.setItem("token", `Bearer ${response.data.token}`);
       localStorage.setItem("role", response.data.user.role);
+      toast({
+        title: "Success!",
+        description: "You have signed up successfully! Redirecting...",
+        variant: "success"
+      });
       if (response.data.user.role === "Candidate") {
         navigate("/jobs");
       } else {
         navigate("/dashboard");
       }
     } catch (error: any) {
-      setError(error.response?.data?.message || "Something went wrong");
+      toast({
+        title: "Error!",
+        description: error.response?.data?.message || "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -93,14 +108,6 @@ export default function SignupPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {error && (
-            <div
-              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-              role="alert"
-            >
-              <span className="block sm:inline">{error}</span>
-            </div>
-          )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>

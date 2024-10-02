@@ -75,6 +75,7 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
         toast({
           title: "Application Submitted",
           description: "Your application has been successfully submitted.",
+          variant:"success"
         });
         setOpen(false);
       }

@@ -47,14 +47,7 @@ const App = () => {
   return (
     <AnimatePresence mode="wait" initial={false}>
       <Routes location={location} key={location.pathname}>
-        <Route
-          path="/"
-          element={
-            <PageTransition>
-              <Landing />
-            </PageTransition>
-          }
-        />
+        <Route path="/" element={<Landing />} />
         <Route
           path="/signup"
           element={
@@ -75,9 +68,7 @@ const App = () => {
           path="/dashboard"
           element={
             <PrivateRoute restrictedRole="Candidate" redirectPath="/jobs">
-              <PageTransition>
                 <Dashboard />
-              </PageTransition>
             </PrivateRoute>
           }
         />
@@ -89,22 +80,8 @@ const App = () => {
             </PageTransition>
           }
         />
-        <Route
-          path="/jobs"
-          element={
-            <PageTransition>
-              <Jobs />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/jobs/:id"
-          element={
-            <PageTransition>
-              <FullViewJob />
-            </PageTransition>
-          }
-        />
+        <Route path="/jobs" element={<Jobs />} />
+        <Route path="/jobs/:id" element={<FullViewJob />} />
       </Routes>
       <Toaster />
     </AnimatePresence>

@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const Landing = () => {
   return (
     <div>
-      <div className="bg-neutral-100 bg-gradient-to-t dark:bg-black transition-colors duration-500">
+      <div className="bg-background transition-colors duration-500">
         <Navbar />
         <div className="page pt-32 md:pt-40 px-4 md:px-20">
           <div className="flex items-center justify-center gap-5 flex-col py-10">
@@ -21,7 +21,7 @@ const Landing = () => {
           </div>
           <div className="flex py-10 items-center justify-center gap-10">
             <Link to={"/signup"}>
-              <Button size={"xl"}>Get Started Your Carrier</Button>
+              <Button  size={"xl"}>Get Started Your Carrier</Button>
             </Link>
           </div>
           <LandingFooterOne />
