@@ -90,8 +90,8 @@ const JobCard = ({ id, description, location, title, companyId }: CardType) => {
         </CardContent>
         <CardContent className="pt-2">
           <CardDescription>
-            {description?.length > 200
-              ? description?.substring(0, 200) + "..."
+            {description?.length > 180
+              ? description?.substring(0, 180) + "..."
               : description}
           </CardDescription>
         </CardContent>

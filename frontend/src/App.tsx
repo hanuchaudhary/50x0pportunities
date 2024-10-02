@@ -35,17 +35,17 @@ const PrivateRoute = ({ children, restrictedRole, redirectPath }: any) => {
 const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const pathsToRedirect = ["/", "/signup", "/signin"];
-    const token = localStorage.getItem("token");
     if (token && pathsToRedirect.includes(location.pathname)) {
       navigate("/jobs");
     }
   }, [navigate]);
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="sync">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Landing />} />
         <Route
@@ -68,7 +68,9 @@ const App = () => {
           path="/dashboard"
           element={
             <PrivateRoute restrictedRole="Candidate" redirectPath="/jobs">
+              <PageTransition>
                 <Dashboard />
+              </PageTransition>
             </PrivateRoute>
           }
         />

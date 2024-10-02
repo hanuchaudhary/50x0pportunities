@@ -1,6 +1,7 @@
 import { Briefcase, Building2, Search, Users } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 const LandingFooterOne = () => {
   return (
     <div>
@@ -29,7 +30,9 @@ const LandingFooterOne = () => {
                   Career development resources
                 </li>
               </ul>
-              <Button size="lg">Find Jobs</Button>
+              <Link to={"/signup"}>
+                <Button size="lg">Find Jobs</Button>
+              </Link>
             </motion.div>
             <motion.div className="space-y-4">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
@@ -53,7 +56,9 @@ const LandingFooterOne = () => {
                   Employer branding tools
                 </li>
               </ul>
-              <Button size="lg">Post a Job</Button>
+              <Link to={"/signup"}>
+                <Button size="lg">Post a Job</Button>
+              </Link>
             </motion.div>
           </div>
         </div>
