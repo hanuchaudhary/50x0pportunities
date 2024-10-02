@@ -122,7 +122,7 @@ function MiniProfile() {
               src="/placeholder.svg?height=64&width=64"
               alt="User avatar"
             />
-            <AvatarFallback className="text-2xl font-semibold bg-primary text-primary-foreground">
+            <AvatarFallback className="text-2xl uppercase font-semibold bg-primary text-primary-foreground">
               {data?.fullName
                 .split(" ")
                 .map((e) => e[0])
@@ -130,7 +130,7 @@ function MiniProfile() {
             </AvatarFallback>
           </Avatar>
           <div className="flex-grow">
-            <CardTitle className="text-xl">{data?.fullName}</CardTitle>
+            <CardTitle className="text-xl capitalize">{data?.fullName}</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">{data?.email}</p>
             <Badge variant="secondary" className="mt-2">
               {data?.role}
@@ -140,9 +140,6 @@ function MiniProfile() {
       </CardHeader>
       <CardContent className="pt-4">
         <div
-          className={`grid ${
-            data?.role === "Candidate" ? "grid-cols-2" : "grid-cols-1"
-          }  gap-4`}
         >
           {data?.role === "Recruiter" ? (
             <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
@@ -153,21 +150,25 @@ function MiniProfile() {
                 Created Jobs
               </span>
             </div>
-          ) : null}
-          
-          <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
-            <span className="text-2xl font-bold">
-              {data?.jobApplication.length}
-            </span>
-            <span className="text-sm text-muted-foreground">Applied Jobs</span>
-          </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
+                <span className="text-2xl font-bold">
+                  {data?.jobApplication.length}
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  Applied Jobs
+                </span>
+              </div>
 
-          {data?.role === "Candidate" && (
-            <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
-              <span className="text-2xl font-bold">
-                {data?.savedJobs.length}
-              </span>
-              <span className="text-sm text-muted-foreground">Saved Jobs</span>
+              <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
+                <span className="text-2xl font-bold">
+                  {data?.savedJobs.length}
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  Saved Jobs
+                </span>
+              </div>
             </div>
           )}
         </div>

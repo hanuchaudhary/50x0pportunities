@@ -52,3 +52,8 @@ export const applicationValidation = z.object({
     resume: z.string().min(1, { message: "Resume is required." }),
     status: z.nativeEnum(applicationStatus, { message: "Invalid application status." }).default(applicationStatus.Applied)
 })
+
+export const statusValidation = z.object({
+    applicationId: z.string().min(1, { message: "Id is Required" }),
+    status: z.nativeEnum(applicationStatus, { message: "Invalid application status." }).default(applicationStatus.Applied)
+})

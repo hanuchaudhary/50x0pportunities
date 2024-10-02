@@ -10,6 +10,7 @@ interface JobApplication {
     skills: string
     status: string
     createdAt: string
+    job : Job
 }
 
 interface Job {

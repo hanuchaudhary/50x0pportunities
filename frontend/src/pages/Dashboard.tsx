@@ -65,11 +65,12 @@ export default function JobPostingForm() {
 
     try {
       const token = localStorage.getItem("token")?.split(" ")[1];
-      await axios.post(`${WEB_URL}/api/v1/job/create`, data, {
+      const ress = await axios.post(`${WEB_URL}/api/v1/job/create`, data, {
         headers: {
           Authorization: token,
         },
       });
+console.log(ress);
 
       setValues({
         title: "",

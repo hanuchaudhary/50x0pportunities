@@ -2,6 +2,27 @@ import { WEB_URL } from "@/Config";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+
+interface Applicant {
+  fullName: string;
+  email: string;
+  id: string;
+}
+
+interface JobApplication {
+  id: string;
+  applicantId: string;
+  jobId: string;
+  status: string;
+  isApplied: boolean;
+  resume: string;
+  skills: string;
+  experience: string;
+  education: string;
+  createdAt: Date;
+  applicant: Applicant; 
+}
+
 interface Company {
   id: string;
   name: string;
@@ -19,19 +40,15 @@ interface Job {
   requirement: string;
   isOpen: boolean;
   createdAt: Date;
+  company: Company;
+  jobApplication: JobApplication[]; 
 }
 
-interface JobResponse {
-  success: boolean;
-  message: string;
-  data: {
-    job: Job;
-    company: Company;
-  };
-}
+
+
 
 export const useSingleJob = ({ id }: { id: string }) => {
-  const [jobData, setJobData] = useState<JobResponse | null>(null);
+  const [jobData, setJobData] = useState<Job | null>(null);
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token")?.split(" ")[1];
 
@@ -39,14 +56,14 @@ export const useSingleJob = ({ id }: { id: string }) => {
     const fetchSingleJob = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<JobResponse>(`${WEB_URL}/api/v1/job/${id}`, {
+        const response = await axios.get(`${WEB_URL}/api/v1/job/${id}`, {
           headers: {
-            Authorization: token, 
+            Authorization: token,
           },
         });
         
         if (response.data.success) {
-          setJobData(response.data); 
+          setJobData(response.data.job);
         } else {
           console.error("Failed to fetch job:", response.data.data);
         }
@@ -62,5 +79,5 @@ export const useSingleJob = ({ id }: { id: string }) => {
     }
   }, [id, token]);
 
-  return { loading, jobData }; // Returns loading status and job data
+  return { loading, jobData };
 };

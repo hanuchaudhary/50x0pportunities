@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { verify, sign, jwt } from "hono/jwt";
-import { applicationValidation, signinValidation, signupValidation } from '../Validation';
+import { applicationValidation, signinValidation, signupValidation, statusValidation } from '../Validation';
 import { Jwt } from 'hono/utils/jwt';
 
 export const userRouter = new Hono<{
@@ -218,9 +218,24 @@ userRouter.get('/me', async (c) => {
                 jobApplication: {
                     orderBy: {
                         createdAt: "asc"
+                    },
+                    include: {
+                        job: {
+                            include: {
+                                company: true
+                            }
+                        }
                     }
                 },
-                createdJobs: true,
+                createdJobs: {
+                    include: {
+                        jobApplication: {
+                            include: {
+                                applicant: true
+                            }
+                        }
+                    }
+                },
                 savedJobs: {
                     include: {
                         job: true,
@@ -401,8 +416,6 @@ userRouter.post("/application/:id", async (c) => {
                 applicantId: candidate.id,
                 jobId: job?.id,
                 status: 'Applied'
-            }, include: {
-                job: true,
             }
         });
 
@@ -465,7 +478,7 @@ userRouter.get("/allapplications/:id", async (c) => {
 
         const allApplications = await prisma.jobApplication.findMany({
             where: { jobId: jobId },
-            include: { applicant: true },
+            include: { applicant: true, job: true },
         });
 
         return c.json(
@@ -487,6 +500,79 @@ userRouter.get("/allapplications/:id", async (c) => {
         );
     }
 });
+
+//update status route
+
+userRouter.put("/status", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const { applicationId, status } = await c.req.json();
+        const { success, error } = statusValidation.safeParse({ applicationId, status });
+
+        if (!success) {
+            return c.json({
+                success: false,
+                message: "Invalid input: Zod validation error",
+                error: error.errors
+            }, 400);
+        }
+
+        const userId = c.get("userId");
+        const user = await prisma.user.findFirst({
+            where: {
+                id: userId,
+                role: "Recruiter"
+            }
+        });
+
+        if (!user) {
+            return c.json({
+                success: false,
+                message: "User not found or user is not a recruiter"
+            }, 403);
+        }
+
+        const application = await prisma.jobApplication.findUnique({
+            where: {
+                id: applicationId
+            }
+        });
+
+        if (!application) {
+            return c.json({
+                success: false,
+                message: "Job application not found"
+            }, 404);
+        }
+
+        const updatedStatus = await prisma.jobApplication.update({
+            where: {
+                id: application.id
+            },
+            data: {
+                status: status
+            }
+        });
+
+        return c.json({
+            success: true,
+            message: "Job application status updated successfully",
+            updatedStatus
+        }, 200);
+
+    } catch (error : any) {
+        console.error("Error updating job application status:", error);
+        return c.json({
+            success: false,
+            message: "Server error occurred while updating the status",
+            error: error.message
+        }, 500);
+    }
+});
+
 
 // userRouter.post("/delall", async (c) => {
 //     const prisma = new PrismaClient({

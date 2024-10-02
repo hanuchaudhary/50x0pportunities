@@ -32,10 +32,57 @@ import { LogOut, Trash2, UserMinus } from "lucide-react";
 import { useProfile } from "@/hooks/FetchProfile";
 import Navbar from "@/components/Navbar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ApplicationCard } from "@/components/ApplicationCard";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { WEB_URL } from "@/Config";
+import { toast } from "@/hooks/use-toast";
+import { useState } from "react";
+import ApplicationCard from "@/components/ApplicationCard";
+import CreatedJobCard from "@/components/CreatedJobCard";
 
 export default function Profile() {
   const { data, loading } = useProfile();
+  console.log(data);
+
+  const navigate = useNavigate();
+
+  const [deactivateLoading, setDeactivateLoading] = useState(false);
+  const handleDeactivateAccount = async () => {
+    try {
+      setDeactivateLoading(true);
+      const response = await axios.post(
+        `${WEB_URL}/api/v1/user/remove`,
+        {},
+        {
+          headers: {
+            Authorization: localStorage.getItem("token")?.split(" ")[1],
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setDeactivateLoading(false);
+        toast({
+          title: "!Bye Bye",
+          description: "Account Deleted Successfully.",
+          variant: "success",
+        });
+      }
+      navigate("/signup");
+    } catch (error) {
+      toast({
+        title: "Account Error",
+        description: "Error while Account Deletion...",
+        variant: "destructive",
+      });
+      console.log(error);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/signin");
+  };
 
   if (loading) {
     return (
@@ -60,7 +107,7 @@ export default function Profile() {
               {data?.fullName.split(" ").map((e) => e[0])}
             </div>
             <div>
-              <CardTitle>{data?.fullName}</CardTitle>
+              <CardTitle className="capitalize">{data?.fullName}</CardTitle>
               <CardDescription>{data?.email}</CardDescription>
             </div>
           </div>
@@ -88,7 +135,15 @@ export default function Profile() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction>Deactivate Account</AlertDialogAction>
+                  <Button
+                    disabled={deactivateLoading}
+                    variant={"destructive"}
+                    onClick={handleDeactivateAccount}
+                  >
+                    {deactivateLoading
+                      ? "Deactivating Account..."
+                      : "Deactivate Account"}
+                  </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -111,7 +166,9 @@ export default function Profile() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction>Log Out</AlertDialogAction>
+                  <AlertDialogAction onClick={handleLogout}>
+                    Log Out
+                  </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -137,8 +194,8 @@ export default function Profile() {
                   </DrawerDescription>
                 </DrawerHeader>
                 <div className="p-4 space-y-4 max-h-[60vh] my-2 overflow-y-auto custom-scrollbar">
-                  {data?.savedJobs.map((job) => (
-                    <JobCard key={job.id} job={job} type="created" />
+                  {data?.createdJobs.map((job) => (
+                    <CreatedJobCard key={job.id} job={job} />
                   ))}
                 </div>
                 <div className="w-full flex items-center justify-center">
@@ -198,7 +255,7 @@ export default function Profile() {
                   </DrawerHeader>
                   <div className="p-4 space-y-4 max-h-[60vh] my-2 overflow-y-auto custom-scrollbar">
                     {data?.jobApplication.map((e) => (
-                      <ApplicationCard key={e.id} application={e}/>
+                      <ApplicationCard key={e.id} application={e} />
                     ))}
                   </div>
                   <div className="w-full flex items-center justify-center">
@@ -218,7 +275,39 @@ export default function Profile() {
   );
 }
 
-function JobCard({ job, onDelete, type }: any) {
+function JobCard({ job, type }: any) {
+  const handleRemoveSavedJob = async () => {
+    try {
+      const response = await axios.post(
+        `${WEB_URL}/api/v1/job/removesave`,
+        {
+          id: job.id,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token")?.split(" ")[1],
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast({
+          title: "Successfully Removed",
+          description: "Saved job successfully removed.",
+          variant: "success",
+        });
+        window.location.reload()
+      }
+    } catch (error) {
+      toast({
+        title: "Removing Error",
+        description: "Error while removing saved job.",
+        variant: "destructive",
+      });
+      console.log(error);
+    }
+  };
+
   return (
     <Card className="mb-4 dark:bg-neutral-900">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -240,7 +329,7 @@ function JobCard({ job, onDelete, type }: any) {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => onDelete(job.job.id)}>
+                  <AlertDialogAction onClick={handleRemoveSavedJob}>
                     Delete
                   </AlertDialogAction>
                 </AlertDialogFooter>
