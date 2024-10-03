@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Navbar from "@/components/Navbar";
 import axios from "axios";
 import { WEB_URL } from "@/Config";
 import { useNavigate } from "react-router-dom";
@@ -103,7 +102,6 @@ export default function JobPostingForm() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
       <div className="container px-4 mx-auto pt-28">
         <h1 className="text-center text-3xl font-bold mb-3 md:mb-6">
           Post Job

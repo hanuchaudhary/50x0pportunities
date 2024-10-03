@@ -65,7 +65,7 @@ const JobCard = ({ id, description, location, title, companyId }: CardType) => {
 
   return (
     <div>
-      <Card className="dark:bg-neutral-900 bg-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors duration-500">
+      <Card className="dark:bg-neutral-900 flex flex-col justify-between bg-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors duration-500">
         <CardHeader>
           <CardTitle className="text-xl">{title}</CardTitle>
         </CardHeader>
@@ -88,7 +88,7 @@ const JobCard = ({ id, description, location, title, companyId }: CardType) => {
             <div className="location font-semibold">{location}</div>
           </div>
         </CardContent>
-        <CardContent className="pt-2">
+        <CardContent className="pt-2 h-28">
           <CardDescription>
             {description?.length > 180
               ? description?.substring(0, 180) + "..."
@@ -108,7 +108,7 @@ const JobCard = ({ id, description, location, title, companyId }: CardType) => {
               {loading ? (
                 <ClipLoader color="white" />
               ) : (
-                <Bookmark fill={success ? "white" : ""} size={30} />
+                <Bookmark fill={success ? "white" : "transparent"} size={30} />
               )}
             </button>
           )}

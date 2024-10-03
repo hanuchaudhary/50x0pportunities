@@ -1,5 +1,4 @@
 import ApplyForJob from "@/components/ApplyForJob";
-import Navbar from "@/components/Navbar";
 import SingleJobSkeleton from "@/components/SingleJobSkeleton";
 import { useSingleJob } from "@/hooks/FetchSingleJob";
 import MarkdownEditor from "@uiw/react-markdown-editor";
@@ -14,8 +13,7 @@ const FullViewJob = () => {
 
   return (
     <div>
-      <Navbar />
-      <div className="mt-28 px-4 md:px-32">
+      <div className="pt-28 px-4 md:px-40">
         {loading ? (
           <SingleJobSkeleton />
         ) : (

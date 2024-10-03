@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, X } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
 import { useProfile } from "@/hooks/FetchProfile";
 import { Button } from "@/components/ui/button";
@@ -16,15 +16,28 @@ export default function Navbar() {
   const location = useLocation();
   const path = location.pathname;
   const [menu, setMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menu]);
 
   return (
-    <div className="w-full flex justify-center fixed top-0 left-0 right-0 z-50 px-4">
-      <header className="w-full max-w-7xl mt-4 border dark:border-neutral-800 bg-background/80 backdrop-blur-md rounded-xl shadow-lg py-3">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <Link to="/jobs" className="text-2xl font-bold text-primary">
-            jobConnect
+    <div className="w-full flex justify-center fixed top-4 left-0 right-0 z-50 px-4">
+      <header className="flex w-full justify-between bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-6 py-4 rounded-2xl">
+        <div className="container flex justify-between items-center">
+          <Link to="/jobs" className="md:text-2xl font-bold text-primary">
+            50<span className="text-blue-500">x</span>Opportunities
           </Link>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-1 md:space-x-4">
             <Button
               variant="ghost"
               size="icon"
@@ -43,7 +56,7 @@ export default function Navbar() {
                 <Button>Post Job</Button>
               </Link>
             )}
-            {path === "/" ? (
+            {path === "/" || path === "/signup" || path === "/signin" ? (
               <Button asChild>
                 <Link to="/signup">Signup</Link>
               </Button>
@@ -70,8 +83,9 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
+            ref={menuRef} // Set reference to detect outside clicks
           >
-            <MiniProfile />
+            <MiniProfile setMenu={setMenu} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -79,9 +93,10 @@ export default function Navbar() {
   );
 }
 
-function MiniProfile() {
+function MiniProfile({ setMenu }: { setMenu: (value: boolean) => void }) {
   const { data, loading, error } = useProfile();
   const navigate = useNavigate();
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/signin");
@@ -125,7 +140,13 @@ function MiniProfile() {
   }
 
   return (
-    <Card className="lg:w-[30vw] md:w-[40vw] shadow-xl">
+    <Card className="lg:w-[30vw] md:w-[40vw] shadow-xl relative">
+      <div
+        onClick={() => setMenu(false)}
+        className="absolute top-4 right-4 cursor-pointer"
+      >
+        <X />
+      </div>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-4">
           <Avatar className="w-16 h-16 border-2 border-primary">

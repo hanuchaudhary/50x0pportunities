@@ -30,7 +30,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { LogOut, Trash2, UserMinus } from "lucide-react";
 import { useProfile } from "@/hooks/FetchProfile";
-import Navbar from "@/components/Navbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -85,8 +84,7 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-4">
-        <Navbar />
+      <div className="container mt-0 mx-auto p-4">
         <ProfileSkeleton />
         <div className="grid grid-cols-2 gap-4">
           <Skeleton className="h-10 w-full" />
@@ -98,8 +96,7 @@ export default function Profile() {
 
   return (
     <div className="container mx-auto p-4">
-      <Navbar />
-      <Card className="mt-24 md:mt-32 mb-8">
+      <Card className="mt-24 md:mt-32 dark:bg-neutral-900 bg-blue-50 bg-opacity-75 mb-8">
         <CardHeader className="flex flex-row items-center space-y-0">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold uppercase">
@@ -116,7 +113,7 @@ export default function Profile() {
           <div className="flex space-x-4">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" className="flex items-center">
+                <Button variant="destructive" className="flex items-center">
                   <UserMinus className="mr-2 h-4 w-4" />
                   Deactivate
                 </Button>
@@ -149,7 +146,7 @@ export default function Profile() {
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" className="flex items-center">
+                <Button variant="secondary" className="flex items-center">
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
                 </Button>

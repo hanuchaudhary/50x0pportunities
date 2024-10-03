@@ -17,6 +17,7 @@ import SigninPage from "./pages/Signin";
 import { Toaster } from "./components/ui/toaster";
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Navbar from "./components/Navbar";
 
 const getUserRole = () => {
   const role = localStorage.getItem("role");
@@ -46,6 +47,7 @@ const App = () => {
 
   return (
     <AnimatePresence mode="sync">
+      <Navbar />
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Landing />} />
         <Route
