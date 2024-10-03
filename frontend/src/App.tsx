@@ -1,53 +1,65 @@
-import Landing from "./pages/Landing";
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
-import { ThemeProvider } from "./providers/ThemeProvider";
-import Dashboard from "./pages/Dashboard";
-import Jobs from "./pages/Jobs";
-import FullViewJob from "./pages/FullViewJob";
-import Profile from "./pages/Profile";
-import SignupPage from "./pages/Signup";
-import SigninPage from "./pages/Signin";
-import { Toaster } from "./components/ui/toaster";
-import { useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import Navbar from "./components/Navbar";
+import { useEffect } from 'react'
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 
-const getUserRole = () => {
-  const role = localStorage.getItem("role");
-  return role;
-};
+import { ThemeProvider } from './providers/ThemeProvider'
+import { Toaster } from './components/ui/toaster'
+import Navbar from './components/Navbar'
 
-const PrivateRoute = ({ children, restrictedRole, redirectPath }: any) => {
-  const role = getUserRole();
+import Landing from './pages/Landing'
+import Dashboard from './pages/Dashboard'
+import Jobs from './pages/Jobs'
+import FullViewJob from './pages/FullViewJob'
+import Profile from './pages/Profile'
+import SignupPage from './pages/Signup'
+import SigninPage from './pages/Signin'
 
-  if (role === restrictedRole) {
-    return <Navigate to={redirectPath} replace />;
-  }
-  return children;
-};
+type Role = 'Candidate' | 'Employer' | null
 
-const App = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+const getUserRole = (): Role => {
+  return localStorage.getItem('role') as Role
+}
+
+interface PrivateRouteProps {
+  children: React.ReactNode
+  restrictedRole: Role
+  redirectPath: string
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, restrictedRole, redirectPath }) => {
+  const role = getUserRole()
+  return role === restrictedRole ? <Navigate to={redirectPath} replace /> : <>{children}</>
+}
+
+interface PageTransitionProps {
+  children: React.ReactNode
+}
+
+const PageTransition: React.FC<PageTransitionProps> = ({ children }) => (
+  <motion.div
+    initial={{ opacity: 0, filter: 'blur(20px)' }}
+    animate={{ opacity: 1, filter: 'blur(0px)' }}
+    exit={{ opacity: 0, filter: 'blur(20px)' }}
+    transition={{ duration: 0.2 }}
+  >
+    {children}
+  </motion.div>
+)
+
+const App: React.FC = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const token = localStorage.getItem('token')
 
   useEffect(() => {
-    const pathsToRedirect = ["/", "/signup", "/signin"];
+    const pathsToRedirect = ['/', '/signup', '/signin']
     if (token && pathsToRedirect.includes(location.pathname)) {
-      navigate("/jobs");
+      navigate('/jobs')
     }
-  }, [navigate]);
+  }, [token, location.pathname, navigate])
 
   return (
-    <AnimatePresence mode="sync">
-      <Navbar />
+    <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Landing />} />
         <Route
@@ -87,32 +99,18 @@ const App = () => {
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/:id" element={<FullViewJob />} />
       </Routes>
-      <Toaster />
     </AnimatePresence>
-  );
-};
+  )
+}
 
-const PageTransition = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, filter: "blur(20px)" }}
-      animate={{ opacity: 1, filter: "blur(0px)" }}
-      exit={{ opacity: 0, filter: "blur(20px)" }}
-      transition={{ duration: 0.2 }}
-    >
-      {children}
-    </motion.div>
-  );
-};
+const WrappedApp: React.FC = () => (
+  <ThemeProvider>
+    <BrowserRouter>
+      <Navbar />
+      <App />
+      <Toaster />
+    </BrowserRouter>
+  </ThemeProvider>
+)
 
-const WrappedApp = () => {
-  return (
-    <ThemeProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ThemeProvider>
-  );
-};
-
-export default WrappedApp;
+export default WrappedApp

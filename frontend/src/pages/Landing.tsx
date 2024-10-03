@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Spotlight } from "@/components/ui/spotlight";
 import { GitHubLogoIcon, InstagramLogoIcon } from "@radix-ui/react-icons";
-import {  motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowRight, Building2, UserCircle } from "lucide-react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -29,8 +29,13 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="dark:bg-background bg-primary-foreground overflow-x-hidden">
-      <Spotlight fill={theme==="dark" ? "white" : "blue"} className="-top-40 left-0 md:left-60 md:-top-20" />
+    <div className="dark:bg-background w-full bg-primary-foreground overflow-x-hidden">
+      <div className="w-full overflow-hidden">
+        <Spotlight
+          fill={theme === "dark" ? "white" : "blue"}
+          className="-top-0 left-0 md:left-60 md:-top-20 w-[100%] lg:w-full h-[200%] lg:h-full "
+        />
+      </div>
 
       <main className="relative z-10 md:mt-32 mt-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center">
         <h1 className="text-3xl md:text-5xl font-bold mb-4">
@@ -46,7 +51,7 @@ export default function LandingPage() {
           fulfillment in the job market."
         </p>
         <div className="mt-10">
-          <motion.div whileTap={{scale: 0.95}} whileHover={{scale : 1.05}} >
+          <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.05 }}>
             <Link to={"/signup"}>
               <Button
                 size="lg"

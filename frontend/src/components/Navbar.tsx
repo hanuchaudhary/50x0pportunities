@@ -32,7 +32,7 @@ export default function Navbar() {
 
   return (
     <div className="w-full flex justify-center fixed top-4 left-0 right-0 z-50 px-4">
-      <header className="flex w-full justify-between overflow-hidden bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-6 py-4 rounded-2xl">
+      <header className="flex w-full justify-between bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-6 py-4 rounded-2xl">
         <div className="container flex justify-between items-center">
           <Link to="/jobs" className="md:text-2xl font-bold text-primary">
             50<span className="text-blue-500">x</span>Opportunities
@@ -53,11 +53,11 @@ export default function Navbar() {
             </Button>
             {role === "Recruiter" && (
               <Link to={"/dashboard"}>
-                <Button>Post Job</Button>
+                <Button size={"sm"}>Post Job</Button>
               </Link>
             )}
             {path === "/" || path === "/signup" || path === "/signin" ? (
-              <Button asChild>
+              <Button size={"sm"} asChild>
                 <Link to="/signup">Signup</Link>
               </Button>
             ) : (
@@ -208,7 +208,7 @@ function MiniProfile({ setMenu }: { setMenu: (value: boolean) => void }) {
           )}
         </div>
         <div className="mt-4 flex flex-col gap-2 justify-end">
-          <Button asChild variant="outline" className="w-full">
+          <Button onClick={() => setMenu(false)} asChild variant="outline" className="w-full">
             <Link to="/profile">View Full Profile</Link>
           </Button>
           <Button

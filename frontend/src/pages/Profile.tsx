@@ -67,6 +67,7 @@ export default function Profile() {
         });
       }
       localStorage.removeItem("role");
+      localStorage.removeItem("token");
       navigate("/signup");
     } catch (error) {
       toast({
