@@ -32,7 +32,7 @@ export default function Navbar() {
 
   return (
     <div className="w-full flex justify-center fixed top-4 left-0 right-0 z-50 px-4">
-      <header className="flex w-full justify-between bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-6 py-4 rounded-2xl">
+      <header className="flex w-full justify-between overflow-hidden bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:p-6 py-4 rounded-2xl">
         <div className="container flex justify-between items-center">
           <Link to="/jobs" className="md:text-2xl font-bold text-primary">
             50<span className="text-blue-500">x</span>Opportunities
@@ -99,6 +99,8 @@ function MiniProfile({ setMenu }: { setMenu: (value: boolean) => void }) {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    setMenu(false);
     navigate("/signin");
   };
 
