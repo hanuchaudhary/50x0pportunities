@@ -18,7 +18,8 @@ companyRouter.use("/*", async (c, next) => {
     const authHeader = c.req.header("authorization") || "";
 
     try {
-        const userVerify = await verify(authHeader, c.env.JWT_SECRET);
+        const token = authHeader.split(" ")[1];
+        const userVerify = await verify(token, c.env.JWT_SECRET);
 
         if (userVerify) {
             c.set("userId", userVerify.id as string);
@@ -108,42 +109,6 @@ companyRouter.get("/bulk", async (c) => {
         return c.json({
             success: false,
             message: 'Server error during fetching companies',
-            error: error.message,
-        }, 500);
-    }
-})
-
-
-companyRouter.post("/find", async (c) => {
-    const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());
-
-    const { id } = await c.req.json();
-
-    try {
-        const company = await prisma.company.findUnique({
-            where: {
-                id: id
-            }
-        });
-        if (!company) {
-            return c.json({
-                success: false,
-                message: 'Company not Exists',
-            }, 400);
-        }
-
-        return c.json({
-            success: true,
-            message: "Company fetched successfully",
-            company
-        }, 200)
-
-    } catch (error: any) {
-        return c.json({
-            success: false,
-            message: 'Server error during fetching company',
             error: error.message,
         }, 500);
     }

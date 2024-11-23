@@ -18,7 +18,8 @@ jobRouter.use("/*", async (c, next) => {
     const authHeader = c.req.header("authorization") || "";
 
     try {
-        const userVerify = await verify(authHeader, c.env.JWT_SECRET);
+        const token = authHeader.split(" ")[1];
+        const userVerify = await verify(token, c.env.JWT_SECRET);
 
         if (userVerify) {
             c.set("userId", userVerify.id as string);
@@ -112,13 +113,28 @@ jobRouter.get("/bulk", async (c) => {
             },
             orderBy: {
                 createdAt: "desc"
+            }, select: {
+                id: true,
+                recruiterId: true,
+                title: true,
+                description: true,
+                location: true,
+                type: true,
+                requirement: true,
+                isOpen: true,
+                createdAt: true,
+                company: {
+                    select: {
+                        id: true,
+                        logo: true,
+                        name: true
+                    }
+                }
             }
         })
 
         return c.json({
-            success: true,
-            message: "jobs fetched successfully",
-            jobs: jobs
+            jobs
         }, 200)
 
     } catch (error: any) {

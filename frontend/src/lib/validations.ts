@@ -1,10 +1,5 @@
 import z from "zod";
 
-enum Role {
-    Recruiter = "Recruiter",
-    Candidate = "Candidate"
-}
-
 enum jobType {
     onSite = "onsite",
     workFromHome = "workfromhome"
@@ -13,7 +8,7 @@ enum jobType {
 export const signupValidation = z.object({
     email: z.string().email({ message: "Invalid email address." }),
     password: z.string().min(6, { message: "Password must be at least 6 characters long." }),
-    role: z.nativeEnum(Role, { message: "Role must be either Recruiter or Candidate." })
+    role: z.enum(["Candidate","Recruiter"], { message: "Role must be either Recruiter or Candidate." })
 });
 
 

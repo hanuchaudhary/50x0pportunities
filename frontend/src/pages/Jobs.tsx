@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { State } from "country-state-city";
 
 import { Button } from "@/components/ui/button";
@@ -11,12 +11,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import JobCard from "@/components/JobCard";
-import { useFetchData } from "@/hooks/FetchJobs";
 import { useFetchCompanies } from "@/hooks/FetchCompanies";
 import { BarLoader } from "react-spinners";
+import { useJobsStore } from "@/store/jobsState";
 
 export default function Jobs() {
-  const { loading, data, setFilter } = useFetchData();
+  const { jobs, fetchJobs, loading } = useJobsStore();
+  const [filter, setFilter] = useState("");
+  console.log(jobs);
+
+  useEffect(() => {
+    if (jobs.length === 0) {
+      fetchJobs(filter);
+    }
+  }, [fetchJobs, jobs]);
+
   const { companies } = useFetchCompanies();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedState, setSelectedState] = useState("");
@@ -43,6 +52,8 @@ export default function Jobs() {
     setSelectedCompany("");
     setFilter("");
   };
+
+  console.log(jobs);
 
   return (
     <div className="min-h-screen bg-background">
@@ -102,12 +113,13 @@ export default function Jobs() {
             </div>
           ) : (
             <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {data.length > 0 ? (
-                data.map(({ id, description, location, title, companyId }) => (
+              {jobs.length > 0 ? (
+                jobs.map(({ id, description, location, title, company }) => (
                   <JobCard
                     key={id}
                     id={id}
-                    companyId={companyId}
+                    companyLogo={company.logo}
+                    companyName={company.name}
                     description={description}
                     location={location}
                     title={title}

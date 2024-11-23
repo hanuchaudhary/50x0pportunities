@@ -1,28 +1,29 @@
 import { WEB_URL } from "@/Config";
+import { useJobsStore } from "@/store/jobsState";
+import { getAuthHeaders } from "@/store/profileState";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
 export const useFetchData = () => {
-  const [data, setData] = useState([]);
+  const {setJobs} = useJobsStore()
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("");
-
+  const { Authorization } = getAuthHeaders()
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true); 
-        const token = localStorage.getItem("token")?.split(" ")[1];
+        setLoading(true);
         const response = await axios.get(
           `${WEB_URL}/api/v1/job/bulk?filter=${filter}`,
           {
             headers: {
-              Authorization: token,
+              Authorization
             },
           }
         );
-        setData(response.data.jobs); 
+        setJobs(response.data.jobs);
       } catch (error) {
-        console.log(error); 
+        console.log(error);
       } finally {
         setLoading(false);
       }
@@ -31,5 +32,5 @@ export const useFetchData = () => {
     fetchData();
   }, [filter]);
 
-  return { data, loading, setFilter };
+  return { loading, setFilter };
 };

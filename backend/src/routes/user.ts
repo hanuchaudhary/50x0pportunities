@@ -25,8 +25,14 @@ userRouter.use("/*", async (c, next) => {
     }
     const authHeader = c.req.header("authorization") || "";
 
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return c.json({ message: "Token missing or malformed" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
     try {
-        const userVerify = await verify(authHeader, c.env.JWT_SECRET);
+        const userVerify = await verify(token, c.env.JWT_SECRET);
 
         if (userVerify) {
             c.set("userId", userVerify.id as string);
@@ -48,9 +54,9 @@ userRouter.post('/signup', async (c) => {
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
     try {
-        const { email, password, fullName, role } = await c.req.json();
+        const { email, password, role } = await c.req.json();
 
-        const validation = signupValidation.safeParse({ email, password, fullName, role });
+        const validation = signupValidation.safeParse({ email, password, role });
 
         if (!validation.success) {
             return c.json({
@@ -64,7 +70,6 @@ userRouter.post('/signup', async (c) => {
             where: { email },
             select: {
                 id: true,
-                fullName: true,
                 email: true,
                 role: true
             },
@@ -81,18 +86,17 @@ userRouter.post('/signup', async (c) => {
             data: {
                 email,
                 password: hashedPassword,
-                fullName,
-                role
+                role,
+                fullName: ""
             },
             select: {
                 id: true,
                 email: true,
-                fullName: true,
                 role: true
             },
         });
 
-        const data = { id: user.id, email: user.email, name: user.fullName }
+        const data = { id: user.id, email: user.email }
         const token = await Jwt.sign(data, c.env.JWT_SECRET)
 
         return c.json({
@@ -154,7 +158,6 @@ userRouter.post('/signin', async (c) => {
 
         const data = { id: user.id, email: user.email, name: user.fullName }
         const token = await Jwt.sign(data, c.env.JWT_SECRET)
-
         return c.json({
             success: true,
             message: 'User signed in successfully',
@@ -310,7 +313,7 @@ userRouter.put('/update', async (c) => {
         if (password) updateData.password = await bcrypt.hash(password, 10);
 
         const updatedUser = await prisma.user.update({
-            where: { id: userId },
+            where: { id: userId, role: "Candidate" },
             data: updateData,
         });
 
@@ -327,6 +330,42 @@ userRouter.put('/update', async (c) => {
         }, 500);
     }
 });
+
+userRouter.put('/edit', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const userId = c.get("userId");
+        const { fullName, skills, photoURL, resume, bio } = await c.req.json();
+
+        const updateData: any = {};
+        if (fullName) updateData.fullName = fullName;
+        if (skills) updateData.skills = skills;
+        if (photoURL) updateData.photoURL = photoURL;
+        if (resume) updateData.resume = resume;
+        if (bio) updateData.bio = bio;
+
+        await prisma.user.update({
+            where: { id: userId },
+            data: updateData,
+        });
+        return c.json({
+            success: true,
+            message: "User updated successfully",
+
+        }, 200);
+
+
+    } catch (error: any) {
+        return c.json({
+            success: false,
+            message: "Server error during updating user",
+            error: error.message,
+        }, 500);
+    }
+})
 
 //applications routes---------------------------------------------------------
 
@@ -350,6 +389,7 @@ userRouter.post("/application/:id", async (c) => {
                     success: false,
                     message: "Validation error",
                     error: error,
+
                 },
                 400
             );
@@ -563,7 +603,7 @@ userRouter.put("/status", async (c) => {
             updatedStatus
         }, 200);
 
-    } catch (error : any) {
+    } catch (error: any) {
         console.error("Error updating job application status:", error);
         return c.json({
             success: false,

@@ -13,6 +13,7 @@ import FullViewJob from './pages/FullViewJob'
 import Profile from './pages/Profile'
 import SignupPage from './pages/Signup'
 import SigninPage from './pages/Signin'
+import EditUserDetails from './pages/EditUserDetails'
 
 type Role = 'Candidate' | 'Employer' | null
 
@@ -97,6 +98,7 @@ const App: React.FC = () => {
           }
         />
         <Route path="/jobs" element={<Jobs />} />
+        <Route path="/edit" element={<EditUserDetails />} />
         <Route path="/jobs/:id" element={<FullViewJob />} />
       </Routes>
     </AnimatePresence>

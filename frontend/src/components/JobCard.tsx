@@ -21,12 +21,19 @@ interface CardType {
   description: string;
   location: string;
   title: string;
-  companyId: string;
+  companyLogo: string;
+  companyName: string;
 }
 
-const JobCard = ({ id, description, location, title, companyId }: CardType) => {
+const JobCard = ({
+  id,
+  description,
+  location,
+  title,
+  companyLogo,
+  companyName,
+}: CardType) => {
   const role = localStorage.getItem("role");
-  const { company, companyLoading } = useFetchSingleCompany({ id: companyId });
   const jobId = id;
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,7 +61,7 @@ const JobCard = ({ id, description, location, title, companyId }: CardType) => {
         });
       }
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       toast({
         title: "Saving Error",
         description: "Error While Saving Job",
@@ -71,16 +78,12 @@ const JobCard = ({ id, description, location, title, companyId }: CardType) => {
         </CardHeader>
         <CardContent className="flex h-20 overflow-hidden items-center justify-between border-b">
           <div className="logo ">
-            {companyLoading ? (
-              <div className="skeleton-loader"><ClipLoader color="white"/></div>
-            ) : (
-              company && (
-                <img
-                  className="w-16 object-cover"
-                  src={company.logo}
-                  alt={`${company.name} logo`}
-                />
-              )
+            {companyLogo && (
+              <img
+                className="w-16 object-cover"
+                src={companyLogo}
+                alt={`${companyName} logo`}
+              />
             )}
           </div>
           <div className="flex items-center justify-center gap-1">
