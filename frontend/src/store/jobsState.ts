@@ -6,12 +6,14 @@ import { getAuthHeaders, Job } from "@/store/profileState";
 interface JobsStore {
   jobs: Job[];
   loading: boolean;
+  selectedJob: Job | null; 
   fetchJobs: (filter: string) => Promise<void>;
 }
 
 export const useJobsStore = create<JobsStore>((set) => ({
   jobs: [],
   loading: false,
+  selectedJob : null,
   fetchJobs: async (filter: string) => {
     const { Authorization } = getAuthHeaders();
     set({ loading: true });

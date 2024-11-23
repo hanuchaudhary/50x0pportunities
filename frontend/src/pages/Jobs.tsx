@@ -14,15 +14,17 @@ import JobCard from "@/components/JobCard";
 import { useFetchCompanies } from "@/hooks/FetchCompanies";
 import { BarLoader } from "react-spinners";
 import { useJobsStore } from "@/store/jobsState";
+import useProfileStore from "@/store/profileState";
 
 export default function Jobs() {
+  const { fetchProfile } = useProfileStore();
   const { jobs, fetchJobs, loading } = useJobsStore();
   const [filter, setFilter] = useState("");
-  console.log(jobs);
 
   useEffect(() => {
     if (jobs.length === 0) {
       fetchJobs(filter);
+      fetchProfile();
     }
   }, [fetchJobs, jobs]);
 

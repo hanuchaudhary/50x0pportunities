@@ -9,11 +9,13 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "../ui/button";
 import ApplicationCard from "../ApplicationCard";
-import { Job } from "@/store/profileState";
+import {  JobApplication } from "@/store/profileState";
 
-export default function AppliedJobs({appliedJobs}) {
-  console.log(appliedJobs);
-  
+interface appliedJobs {
+  data: JobApplication[];
+}
+
+export default function AppliedJobs({ data }: appliedJobs) {
   return (
     <div>
       <Drawer>
@@ -31,22 +33,26 @@ export default function AppliedJobs({appliedJobs}) {
               </DrawerDescription>
             </DrawerHeader>
             <div className="p-4 space-y-4 max-h-[60vh] my-2 overflow-y-auto custom-scrollbar">
-              {appliedJobs.length > 0 ? (
-                appliedJobs.map((e) => (
-                  <ApplicationCard
-                    key={e.id}
-                    title={e.title}
-                    description={e.description}
-                    createdAt={e.createdAt}
-                    isOpen={e.isOpen}
-                    status={"Rejected"}
-                    companyName={e.company.name}
-                    companyLogo={e.company.logo}
-                    location={e.location}
-                    jobId={e.id}
-                    jobType={e.type}
-                  />
-                ))
+              {data.length > 0 ? (
+                data.map((e) => {
+                  console.log();
+                  
+                  return (
+                    <ApplicationCard
+                      key={e.id}
+                      jobId={e.id}
+                      title={e.title}
+                      createdAt={e.createdAt}
+                      description={e.job.description}
+                      isOpen={e.job.isOpen}
+                      location={e.job.location}
+                      jobType={e.job.type}
+                      status={e.status}
+                      companyName={e.job.company.name}
+                      companyLogo={e.job.company.logo}
+                    />
+                  );
+                })
               ) : (
                 <div>NoT applied Yet</div>
               )}

@@ -19,7 +19,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -28,15 +28,13 @@ import { toast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 import { ProfileSkeleton } from "@/components/ProfileSkeleton";
 import SavedJobs from "@/components/Drawers/SavedJobs";
-import AppliedJobs from "@/components/Drawers/AppliedJobs";
 import CreatedJobs from "@/components/Drawers/CreatedJobs";
 import useProfileState from "@/store/profileState";
 import DeactivateAccout from "@/components/Profile/DeactivateAccout";
+import AppliedJobs from "@/components/Drawers/AppliedJobs";
 
 export default function Profile() {
   const { fetchProfile, isLoading, profile } = useProfileState();
-  console.log(profile);
-
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -81,11 +79,11 @@ export default function Profile() {
       <div>
         {/* createdJobs */}
         {profile?.role === "Recruiter" ? (
-          <CreatedJobs data={profile} />
+          <CreatedJobs data={profile.createdJobs} />
         ) : (
           <div className="grid grid-cols-2 gap-4">
-            <SavedJobs data={profile} />
-            {/* <AppliedJobs appliedJobs={profile?.jobApplication}  /> */}
+            <SavedJobs data={profile?.savedJobs || []} />
+            <AppliedJobs data={profile?.jobApplication || [] } />
           </div>
         )}
       </div>

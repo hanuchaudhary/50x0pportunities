@@ -9,12 +9,12 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Link } from "react-router-dom";
-import { useFetchSingleCompany } from "@/hooks/FetchCompany";
 import axios from "axios";
 import { WEB_URL } from "@/Config";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
+import { getAuthHeaders } from "@/store/profileState";
 
 interface CardType {
   id: string;
@@ -38,16 +38,17 @@ const JobCard = ({
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const { Authorization} = getAuthHeaders()
+
   const HandleSaveJob = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("token")?.split(" ")[1];
       const response = await axios.post(
         `${WEB_URL}/api/v1/job/saved`,
         { jobId },
         {
           headers: {
-            Authorization: token,
+            Authorization
           },
         }
       );
@@ -69,6 +70,7 @@ const JobCard = ({
       });
     }
   };
+  
 
   return (
     <div>

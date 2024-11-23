@@ -44,7 +44,7 @@ export interface Job {
   isOpen: boolean;
   recruiterId: string;
   createdAt: string;
-  company : Company
+  company: Company
 }
 
 export interface ProfileData {
@@ -72,7 +72,7 @@ export const getAuthHeaders = () => {
   };
 };
 
-const useProfileState = create<ProfileState>((set) => ({
+const useProfileStore = create<ProfileState>((set) => ({
   profile: null,
   isLoading: false,
   error: null,
@@ -103,4 +103,4 @@ const useProfileState = create<ProfileState>((set) => ({
     })),
 }));
 
-export default useProfileState;
+export default useProfileStore;

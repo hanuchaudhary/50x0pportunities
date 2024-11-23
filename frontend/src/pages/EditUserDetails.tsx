@@ -93,12 +93,7 @@ export default function EditUserDetails() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("Form values:", values);
-
-    if (values.photo) {
-      const photoUrl = await uploadToCloudinary(values.photo);
-      console.log("Uploaded photo URL:", photoUrl);
-    }
-
+    
     if (values.resume) {
       console.log("Resume file to be uploaded:", values.resume.name);
     }
@@ -126,7 +121,7 @@ export default function EditUserDetails() {
 
   return (
     <div className="mt-24 w-full max-w-4xl mx-auto">
-      <Link to={"/jobs"} replace={true}>
+      <Link to={"/profile"} replace={true}>
         <Button size={"sm"} variant={"outline"} className="my-2">
           Back
         </Button>
@@ -279,8 +274,3 @@ export default function EditUserDetails() {
   );
 }
 
-async function uploadToCloudinary(file: File): Promise<string> {
-  // Implement Cloudinary upload logic here
-  // This should be done securely, typically via your backend
-  return "https://res.cloudinary.com/your-cloud-name/image/upload/your-image-public-id";
-}

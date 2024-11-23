@@ -241,7 +241,21 @@ userRouter.get('/me', async (c) => {
                 },
                 savedJobs: {
                     include: {
-                        job: true,
+                        job: {
+                            select: {
+                                id: true,
+                                title: true,
+                                description: true,
+                                location: true,
+                                company: {
+                                    select: {
+                                        id: true,
+                                        logo: true,
+                                        name: true
+                                    }
+                                }
+                            }
+                        },
                     }
                 }
             },

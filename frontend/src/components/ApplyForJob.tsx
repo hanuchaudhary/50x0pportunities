@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 
 import { WEB_URL } from "@/Config";
 import { useParams } from "react-router-dom";
+import { getAuthHeaders } from "@/store/profileState";
 
 interface ApplyForJobProps {
   companyName: string;
@@ -44,6 +45,7 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
   const [open, setOpen] = useState(false);
   const { id } = useParams();
   const { toast } = useToast();
+  const { Authorization } = getAuthHeaders();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -61,12 +63,11 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem("token")?.split(" ")[1];
       const response = await axios.post(
         `${WEB_URL}/api/v1/user/application/${id}`,
         values,
         {
-          headers: { Authorization: token },
+          headers: { Authorization },
         }
       );
 
@@ -75,11 +76,10 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
         toast({
           title: "Application Submitted",
           description: "Your application has been successfully submitted.",
-          variant:"success"
+          variant: "success",
         });
         setOpen(false);
       }
-      
     } catch (error) {
       toast({
         title: "Application Error",

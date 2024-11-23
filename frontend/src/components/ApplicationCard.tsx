@@ -43,6 +43,7 @@ export default function ApplicationCard({
   jobId,
   status,
 }: applicationCard) {
+  
   const getStatusColor = (status: ApplicationStatus) => {
     switch (status) {
       case ApplicationStatus.Rejected:
