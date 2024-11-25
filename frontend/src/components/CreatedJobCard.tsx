@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -6,10 +6,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Briefcase, MapPin, Calendar, Users } from "lucide-react"
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Briefcase, MapPin, Calendar, Users } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,19 +17,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import axios from "axios"
-import { WEB_URL } from "@/Config"
-import { toast } from "@/hooks/use-toast"
-import { Label } from "./ui/label"
-import EditJob from "./EditJob"
+} from "@/components/ui/select";
+import axios from "axios";
+import { WEB_URL } from "@/Config";
+import { toast } from "@/hooks/use-toast";
+import { Label } from "./ui/label";
+import EditJob from "./EditJob";
 
 export enum ApplicationStatus {
   Rejected = "Rejected",
@@ -44,7 +44,9 @@ export default function CreatedJobCard({ job }: any) {
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
           <div>
-            <CardTitle className="text-lg sm:text-xl font-bold">{job.title}</CardTitle>
+            <CardTitle className="text-lg sm:text-xl font-bold">
+              {job.title}
+            </CardTitle>
             <CardDescription className="text-sm text-muted-foreground mt-1">
               {job.description.length > 100
                 ? job.description.substring(0, 100) + "..."
@@ -73,7 +75,9 @@ export default function CreatedJobCard({ job }: any) {
           </div>
           <div className="flex items-center space-x-2">
             <Briefcase className="h-4 w-4 text-muted-foreground" />
-            <span className="text-xs sm:text-sm text-muted-foreground">{job.type}</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">
+              {job.type}
+            </span>
           </div>
           <div className="flex items-center space-x-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -94,11 +98,11 @@ export default function CreatedJobCard({ job }: any) {
         <EditJob isOpen={job.isOpen} id={job.id} />
       </CardFooter>
     </Card>
-  )
+  );
 }
 
 function ApplicationDialog({ job }: any) {
-  const [applications, setApplications] = useState(job.jobApplication)
+  const [applications, setApplications] = useState(job.jobApplication);
   const updateApplicationStatus = async (
     applicationId: string,
     status: ApplicationStatus
@@ -115,36 +119,38 @@ function ApplicationDialog({ job }: any) {
             Authorization: localStorage.getItem("token")?.split(" ")[1],
           },
         }
-      )
+      );
 
       if (response.status === 200) {
         setApplications((prevApps: any[]) =>
           prevApps.map((app) =>
             app.id === applicationId ? { ...app, status } : app
           )
-        )
+        );
 
         toast({
           title: "Yay! Status Updated",
           description: "Status updated successfully",
           variant: "success",
-        })
+        });
       }
     } catch (error) {
       toast({
         title: "Server Error",
         description: "Error while updating status",
         variant: "destructive",
-      })
-      console.log(error)
+      });
+      console.log(error);
     }
-  }
+  };
 
   return (
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline" className="w-full sm:w-auto">View Applications</Button>
+          <Button variant="outline" className="w-full sm:w-auto">
+            View Applications
+          </Button>
         </DialogTrigger>
         <DialogContent className="max-w-[90vw] sm:max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
@@ -168,7 +174,15 @@ function ApplicationDialog({ job }: any) {
                   <div className="w-full sm:w-auto">
                     <div className="flex items-center gap-2 mb-2">
                       <Label className="text-xs sm:text-sm">Resume: </Label>
-                      <h1 className="text-xs sm:text-sm">{application.resume}</h1>
+                      <Button variant={"link"}>
+                        <a
+                          href={application.resume}
+                          target="_blank"
+                          className="text-xs sm:text-sm"
+                        >
+                          Applicant Resume
+                        </a>
+                      </Button>
                     </div>
                     <Select
                       value={application.status}
@@ -210,5 +224,5 @@ function ApplicationDialog({ job }: any) {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

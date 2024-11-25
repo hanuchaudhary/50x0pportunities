@@ -1,9 +1,7 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -29,9 +27,9 @@ import { useEffect } from "react";
 import { ProfileSkeleton } from "@/components/ProfileSkeleton";
 import SavedJobs from "@/components/Drawers/SavedJobs";
 import CreatedJobs from "@/components/Drawers/CreatedJobs";
-import useProfileState from "@/store/profileState";
-import DeactivateAccout from "@/components/Profile/DeactivateAccout";
+import useProfileState, { Role } from "@/store/profileState";
 import AppliedJobs from "@/components/Drawers/AppliedJobs";
+import ProfilePageCard from "@/components/Profile/ProfilePageCard";
 
 export default function Profile() {
   const { fetchProfile, isLoading, profile } = useProfileState();
@@ -53,37 +51,22 @@ export default function Profile() {
 
   return (
     <div className="container mx-auto p-4">
-      <Card className="mt-24 md:mt-32 dark:bg-neutral-900 bg-blue-50 bg-opacity-75 mb-8">
-        <CardHeader className="flex flex-row items-center space-y-0">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold uppercase">
-              {!profile?.fullName
-                ? "Unknown"
-                : profile?.fullName.split(" ").map((e) => e[0])}
-            </div>
-            <div>
-              <CardTitle className="capitalize">{profile?.fullName}</CardTitle>
-              <CardDescription>{profile?.email}</CardDescription>
-            </div>
-          </div>
-          <Badge className="ml-auto">{profile?.role}</Badge>
-        </CardHeader>
-        <CardContent>
-          <DeactivateAccout />
-        </CardContent>
-        <Link to={"/edit"}>
-          <Button>Edit Profile</Button>
-        </Link>
-      </Card>
-
+      <ProfilePageCard
+        avatar={profile?.avatar as string}
+        bio={profile?.bio as string}
+        fullName={profile?.fullName as string}
+        email={profile?.email as string}
+        skills={profile?.skills as string}
+        role={profile?.role as Role}
+      />
       <div>
         {/* createdJobs */}
         {profile?.role === "Recruiter" ? (
-          <CreatedJobs data={profile.createdJobs} />
+          <CreatedJobs data={profile.createdJobs || []} />
         ) : (
           <div className="grid grid-cols-2 gap-4">
             <SavedJobs data={profile?.savedJobs || []} />
-            <AppliedJobs data={profile?.jobApplication || [] } />
+            <AppliedJobs data={profile?.jobApplication || []} />
           </div>
         )}
       </div>

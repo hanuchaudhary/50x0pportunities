@@ -7,13 +7,13 @@ CREATE TYPE "applicationStatus" AS ENUM ('Rejected', 'Applied', 'Interviewing', 
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "fullName" TEXT NOT NULL,
+    "fullName" TEXT NOT NULL DEFAULT '',
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "skills" TEXT,
-    "resume" TEXT,
-    "bio" TEXT,
-    "photoURL" TEXT,
+    "skills" TEXT NOT NULL DEFAULT '',
+    "resume" TEXT NOT NULL DEFAULT '',
+    "bio" TEXT NOT NULL DEFAULT '',
+    "avatar" TEXT NOT NULL DEFAULT '',
     "role" "Role" NOT NULL
 );
 

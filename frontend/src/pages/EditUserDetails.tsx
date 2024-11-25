@@ -1,10 +1,7 @@
-"use client";
-
 import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,10 +16,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { isValidFileType, isValidFileSize } from "@/utils/file-helpers";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { WEB_URL } from "@/Config";
+import { getAuthHeaders } from "@/store/profileState";
+import { editProfileSchema } from "@/lib/validations";
+import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "@/hooks/use-toast";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
@@ -31,72 +33,75 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 const ACCEPTED_RESUME_TYPES = ["application/pdf"];
 
-const formSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, {
-      message: "Full name must be at least 2 characters.",
-    })
-    .max(50, {
-      message: "Full name must not exceed 50 characters.",
-    }),
-  skills: z
-    .string()
-    .min(2, {
-      message: "Skills must be at least 2 characters.",
-    })
-    .max(100, {
-      message: "Skills must not exceed 100 characters.",
-    }),
-  photo: z
-    .instanceof(File)
-    .refine(
-      (file) => isValidFileType(file, ACCEPTED_IMAGE_TYPES),
-      "Invalid file type. Only JPEG, JPG, PNG, and WebP are allowed."
-    )
-    .refine(
-      (file) => isValidFileSize(file, MAX_FILE_SIZE),
-      "File size must be less than 5MB."
-    ),
-  resume: z
-    .instanceof(File)
-    .refine(
-      (file) => isValidFileType(file, ACCEPTED_RESUME_TYPES),
-      "Invalid file type. Only PDF is allowed."
-    )
-    .refine(
-      (file) => isValidFileSize(file, MAX_FILE_SIZE),
-      "File size must be less than 5MB."
-    ),
-  bio: z
-    .string()
-    .min(10, {
-      message: "Bio must be at least 10 characters.",
-    })
-    .max(500, {
-      message: "Bio must not exceed 500 characters.",
-    }),
-});
-
 export default function EditUserDetails() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [resumeName, setResumeName] = useState<string | null>(null);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { Authorization } = getAuthHeaders();
+  const form = useForm<z.infer<typeof editProfileSchema>>({
+    resolver: zodResolver(editProfileSchema),
     defaultValues: {
       fullName: "",
       skills: "",
       bio: "",
+      experience: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Form values:", values);
-    
-    if (values.resume) {
-      console.log("Resume file to be uploaded:", values.resume.name);
-    }
+  async function onSubmit(values: z.infer<typeof editProfileSchema>) {
+    try {
+      setIsLoading(true);
+      const formData = new FormData();
+      formData.append("fullName", values.fullName);
+      formData.append("skills", values.skills);
+      formData.append("bio", values.bio);
+      formData.append("education", values.education);
+      formData.append("experience", values.experience);
+
+      if (values.avatar) {
+        const avatarUrl = await uploadToCloudinary(
+          values.avatar,
+          "avatar_preset"
+        );
+        formData.append("avatarURL", avatarUrl);
+      }
+
+      if (values.resume) {
+        const resumeUrl = await uploadToCloudinary(
+          values.resume,
+          "resume_preset"
+        );
+        formData.append("resumeURL", resumeUrl);
+      }
+
+      const response = await axios.put(
+        `${WEB_URL}/api/v1/user/update-profile`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization,
+          },
+        }
+      );
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been successfully updated.",
+        variant: "success",
+      });
+      navigate("/profile");
+      console.log("Response:", response.data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred while updating your profile.",
+        variant: "destructive",
+      });
+      console.error("Error submitting form:", error);
+    }finally {
+      setIsLoading(false);
+    } 
   }
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +112,7 @@ export default function EditUserDetails() {
         setPhotoPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
-      form.setValue("photo", file);
+      form.setValue("avatar", file);
     }
   };
 
@@ -121,15 +126,15 @@ export default function EditUserDetails() {
 
   return (
     <div className="mt-24 w-full max-w-4xl mx-auto">
-      <Link to={"/profile"} replace={true}>
-        <Button size={"sm"} variant={"outline"} className="my-2">
+      <Link to="/profile" replace={true}>
+        <Button size="sm" variant="outline" className="my-2">
           Back
         </Button>
       </Link>
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center">
-            Edit User Details
+            Update Profile Details
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -193,11 +198,27 @@ export default function EditUserDetails() {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="experience"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Experience</FormLabel>
+                        <FormControl>
+                          <Input placeholder="2 years" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          How many years of experience do you have?
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 <div className="space-y-6">
                   <FormField
                     control={form.control}
-                    name="photo"
+                    name="avatar"
                     render={() => (
                       <FormItem>
                         <FormLabel>Profile Photo</FormLabel>
@@ -232,6 +253,34 @@ export default function EditUserDetails() {
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                    control={form.control}
+                    name="education"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Education</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select your education level" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="High School">High School</SelectItem>
+                            <SelectItem value="Bachelors">Bachelors</SelectItem>
+                            <SelectItem value="Masters">Masters</SelectItem>
+                            <SelectItem value="Doctorate">Doctorate</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          What is your highest level of education?
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <FormField
                     control={form.control}
                     name="resume"
@@ -263,8 +312,8 @@ export default function EditUserDetails() {
                 </div>
               </div>
               <Separator />
-              <Button type="submit" className="w-full">
-                Save Changes
+              <Button disabled={isLoading} type="submit" className="w-full">
+                {isLoading ? "Updating..." : "Update Profile"}
               </Button>
             </form>
           </Form>

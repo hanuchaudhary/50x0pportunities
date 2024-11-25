@@ -16,12 +16,16 @@ import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { getAuthHeaders } from "@/store/profileState";
+import { useFetchCompanies } from "@/hooks/FetchCompanies";
 
 export function CompanyDrawer() {
     const { Authorization } = getAuthHeaders();
     const [name, setName] = useState("");
     const [logo, setLogo] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const {fetchCompanies} = useFetchCompanies();
+
     const handleCreateCompany = async () => {
       try {
         if (!name || !logo) {
@@ -43,6 +47,8 @@ export function CompanyDrawer() {
           }
         );
         setLoading(false);
+
+        fetchCompanies();
   
         setLogo("");
         setName("");

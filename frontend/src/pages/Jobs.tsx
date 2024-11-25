@@ -26,7 +26,7 @@ export default function Jobs() {
       fetchJobs(filter);
       fetchProfile();
     }
-  }, [fetchJobs, jobs]);
+  }, []);
 
   const { companies } = useFetchCompanies();
   const [searchTerm, setSearchTerm] = useState("");

@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider   = "postgresql"
-  url        = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum Role {
@@ -21,13 +21,15 @@ enum applicationStatus {
 
 model User {
   id             String           @unique @default(uuid())
-  fullName       String
+  fullName       String           @default("")
   email          String           @unique
   password       String
-  skills         String?
-  resume         String?
-  bio            String?
-  photoURL       String?
+  experience     String           @default("")
+  education      String           @default("")
+  skills         String           @default("")
+  resume         String           @default("")
+  bio            String           @default("")
+  avatar         String           @default("")
   role           Role
   createdJobs    Job[]
   jobApplication jobApplication[]
@@ -45,6 +47,7 @@ model Job {
   id             String           @unique @default(uuid())
   recruiterId    String
   companyId      String?
+  jobRole        String          @default("")
   title          String
   description    String
   location       String

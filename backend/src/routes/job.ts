@@ -97,7 +97,6 @@ jobRouter.post("/create", async (c) => {
     }
 });
 
-
 jobRouter.get("/bulk", async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,

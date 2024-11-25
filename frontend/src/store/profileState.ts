@@ -2,7 +2,7 @@ import { WEB_URL } from '@/Config';
 import axios from 'axios';
 import { create } from 'zustand';
 
-enum Role {
+export enum Role {
   Candidate = "Candidate",
   Recruiter = "Recruiter",
 }
@@ -38,6 +38,7 @@ export interface Job {
   id: string;
   title: string;
   description: string;
+  jobRole?: string;
   location: string;
   type: string;
   requirement: string;
@@ -51,10 +52,16 @@ export interface ProfileData {
   id: string;
   fullName: string;
   email: string;
+  experience: string;
+  education: string;
+  resume: string;
+  avatar: string;
+  bio: string;
+  skills: string;
   role: Role;
-  createdJobs: Job[];
-  jobApplication: JobApplication[];
-  savedJobs: Job[];
+  createdJobs?: Job[];
+  jobApplication?: JobApplication[];
+  savedJobs?: Job[];
 }
 
 interface ProfileState {
@@ -71,6 +78,8 @@ export const getAuthHeaders = () => {
     Authorization: token ? `Bearer ${token}` : "",
   };
 };
+
+// add education and experience to ProfileData
 
 const useProfileStore = create<ProfileState>((set) => ({
   profile: null,

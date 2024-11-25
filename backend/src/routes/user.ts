@@ -33,6 +33,7 @@ userRouter.use("/*", async (c, next) => {
 
     try {
         const userVerify = await verify(token, c.env.JWT_SECRET);
+        console.log(token, userVerify);
 
         if (userVerify) {
             c.set("userId", userVerify.id as string);
@@ -69,11 +70,10 @@ userRouter.post('/signup', async (c) => {
         const userExist = await prisma.user.findUnique({
             where: { email },
             select: {
-                id: true,
                 email: true,
-                role: true
             },
         });
+
         if (userExist) {
             return c.json({
                 success: false,
@@ -106,6 +106,8 @@ userRouter.post('/signup', async (c) => {
             token,
         }, 201);
     } catch (error: any) {
+        console.log("error", error);
+
         return c.json({
             success: false,
             message: 'Server error during user creation',
@@ -218,6 +220,12 @@ userRouter.get('/me', async (c) => {
                 fullName: true,
                 email: true,
                 role: true,
+                avatar: true,
+                resume: true,
+                education: true,
+                experience: true,
+                bio: true,
+                skills: true,
                 jobApplication: {
                     orderBy: {
                         createdAt: "asc"
@@ -314,21 +322,19 @@ userRouter.post('/remove', async (c) => {
 });
 
 // Update 
-userRouter.put('/update', async (c) => {
+userRouter.put('/update-password', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
     try {
         const userId = c.get("userId");
-        const { name, password } = await c.req.json();
-
-        const updateData: any = {};
-        if (name) updateData.name = name;
-        if (password) updateData.password = await bcrypt.hash(password, 10);
+        const { password } = await c.req.json();
 
         const updatedUser = await prisma.user.update({
             where: { id: userId, role: "Candidate" },
-            data: updateData,
+            data: {
+                password
+            }
         });
 
         return c.json({
@@ -345,41 +351,56 @@ userRouter.put('/update', async (c) => {
     }
 });
 
-userRouter.put('/edit', async (c) => {
+userRouter.put('/update-profile', async (c) => {
     const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL,
+        datasources: { db: { url: c.env.DATABASE_URL } },
     }).$extends(withAccelerate());
 
     try {
         const userId = c.get("userId");
-        const { fullName, skills, photoURL, resume, bio } = await c.req.json();
+        if (!userId) {
+            return c.json({
+                success: false,
+                message: 'User ID is required',
+            }, 400);
+        }
 
-        const updateData: any = {};
-        if (fullName) updateData.fullName = fullName;
-        if (skills) updateData.skills = skills;
-        if (photoURL) updateData.photoURL = photoURL;
-        if (resume) updateData.resume = resume;
-        if (bio) updateData.bio = bio;
+        const formData = await c.req.formData();
+        const fullName = formData.get('fullName') as string;
+        const skills = formData.get('skills') as string;
+        const bio = formData.get('bio') as string;
+        const avatar = formData.get('avatarURL') as string;
+        const resume = formData.get('resumeURL') as string;
+        const education = formData.get('education') as string;
+        const experience = formData.get('experience') as string;
 
-        await prisma.user.update({
+        const updatedUser = await prisma.user.update({
             where: { id: userId },
-            data: updateData,
+            data: {
+                fullName,
+                skills,
+                bio,
+                avatar,
+                resume,
+                education,
+                experience
+            },
         });
+
         return c.json({
             success: true,
-            message: "User updated successfully",
-
+            message: 'User updated successfully',
+            user: updatedUser,
         }, 200);
-
-
     } catch (error: any) {
+        console.error('Error during user update:', error);
         return c.json({
             success: false,
-            message: "Server error during updating user",
+            message: 'Server error during updating user',
             error: error.message,
         }, 500);
     }
-})
+});
 
 //applications routes---------------------------------------------------------
 

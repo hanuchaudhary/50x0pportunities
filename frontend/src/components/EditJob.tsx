@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import axios from "axios";
 import { AlertCircle, CheckCircle2, Trash2 } from "lucide-react";
@@ -24,18 +23,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { WEB_URL } from "@/Config";
 import { toast } from "@/hooks/use-toast";
+import { getAuthHeaders } from "@/store/profileState";
 
 interface editTypes {
   isOpen: boolean;
   id: string;
 }
 
-export default function EditJob({ isOpen, id } : editTypes) {
+export default function EditJob({ isOpen, id }: editTypes) {
   const [delLoading, setDelLoading] = useState(false);
   const [openLoading, setOpenLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
-
+  const { Authorization } = getAuthHeaders();
   const handleDeleteJob = async () => {
     try {
       setDelLoading(true);
@@ -44,7 +44,7 @@ export default function EditJob({ isOpen, id } : editTypes) {
         { id },
         {
           headers: {
-            Authorization: localStorage.getItem("token")?.split(" ")[1],
+            Authorization,
           },
         }
       );
@@ -76,7 +76,7 @@ export default function EditJob({ isOpen, id } : editTypes) {
         { jobId: id, isOpenValue: !isOpen },
         {
           headers: {
-            Authorization: localStorage.getItem("token")?.split(" ")[1],
+            Authorization,
           },
         }
       );

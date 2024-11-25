@@ -14,26 +14,25 @@ export const useFetchCompanies = () => {
     const [companies, setCompanies] = useState<companiesTypes[]>([]);
     const [loading, setLoading] = useState(false);
     const token = localStorage.getItem("token")?.split(" ")[1];
-    const {Authorization} = getAuthHeaders();
+    const { Authorization } = getAuthHeaders();
+    const fetchCompanies = async () => {
+        const response = await axios.get(`${WEB_URL}/api/v1/company/bulk`, {
+            headers: {
+                Authorization
+            }
+        });
+        setCompanies(response.data.companies)
+    }
     useEffect(() => {
-
-
         try {
             setLoading(true)
-            const fetch = async () => {
-                const response = await axios.get(`${WEB_URL}/api/v1/company/bulk`, {
-                    headers: {
-                        Authorization
-                    }
-                });
-                setCompanies(response.data.companies)
-            }
-            fetch();
+
+            fetchCompanies();
             setLoading(false);
         } catch (error) {
             setLoading(true);
             console.log(error);
         }
     }, [token])
-    return { companies, loading }
+    return { companies, loading, fetchCompanies }
 } 

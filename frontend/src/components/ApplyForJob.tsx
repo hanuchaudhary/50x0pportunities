@@ -1,71 +1,67 @@
 import { useState } from "react";
 import axios from "axios";
+import { Link, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
 import { WEB_URL } from "@/Config";
-import { useParams } from "react-router-dom";
-import { getAuthHeaders } from "@/store/profileState";
+import useProfileStore, { getAuthHeaders } from "@/store/profileState";
 
 interface ApplyForJobProps {
-  companyName: string;
-  jobTitle: string;
-}
-
-interface ApplicationValues {
-  education: string;
-  experience: string;
-  skills: string;
-  resume: string;
+  companyName?: string;
+  jobTitle?: string;
 }
 
 const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
-  const [values, setValues] = useState<ApplicationValues>({
-    education: "intermediate",
-    experience: "",
-    skills: "",
-    resume: "",
-  });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [incompleteProfileDialogOpen, setIncompleteProfileDialogOpen] =
+    useState(false);
+  const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const { id } = useParams();
   const { toast } = useToast();
   const { Authorization } = getAuthHeaders();
+  const { profile } = useProfileStore();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
+  const [data] = useState({
+    education: profile?.education,
+    experience: profile?.experience,
+    skills: profile?.skills,
+    resume: profile?.resume,
+  });
+
+  console.log(data);
+
+  const isProfileComplete =
+    data.education && data.experience && data.skills && data.resume;
+  const handleApplyClick = () => {
+    if (isProfileComplete) {
+      setConfirmationDialogOpen(true);
+    } else {
+      setIncompleteProfileDialogOpen(true);
+    }
   };
 
   const handleSubmitApplication = async () => {
-    if (!values.experience || !values.skills || !values.resume) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all fields before submitting.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     try {
       setLoading(true);
       const response = await axios.post(
         `${WEB_URL}/api/v1/user/application/${id}`,
-        values,
+        {
+          education: profile?.education,
+          experience: profile?.experience,
+          skills: profile?.skills,
+          resume: profile?.resume,
+        },
         {
           headers: { Authorization },
         }
@@ -75,15 +71,20 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
         setSuccess(true);
         toast({
           title: "Application Submitted",
-          description: "Your application has been successfully submitted.",
+          description: `Your application for ${jobTitle} at ${companyName} has been successfully submitted.`,
           variant: "success",
         });
-        setOpen(false);
+        setConfirmationDialogOpen(false);
       }
     } catch (error) {
+      const errorMessage =
+        axios.isAxiosError(error) && error.response?.data?.message
+          ? error.response.data.message
+          : "An unexpected error occurred. Please try again later.";
+
       toast({
         title: "Application Error",
-        description: "An unexpected error occurred. Please try again later.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -92,91 +93,110 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
   };
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button className="w-full">Apply For This Job</Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>
-            Apply at {companyName} for {jobTitle}
-          </DrawerTitle>
-          <DrawerDescription>
-            Please fill in the form below to submit your application
-          </DrawerDescription>
-        </DrawerHeader>
-        <div className="px-4 py-2 space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="experience">Years of Experience</Label>
-            <Input
-              id="experience"
-              name="experience"
-              value={values.experience}
-              onChange={handleInputChange}
-              placeholder="e.g., 3"
-            />
+    <div className="space-y-4">
+      <Dialog
+        open={incompleteProfileDialogOpen}
+        onOpenChange={setIncompleteProfileDialogOpen}
+      >
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-red-600">
+              Caution: Incomplete Profile
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              Your profile is incomplete, which may significantly reduce your
+              chances of being considered for this position. It is strongly
+              recommended that you complete your profile before applying.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-muted-foreground">
+              Missing information may include your resume, education,
+              experience, or skills. A complete profile helps employers
+              understand your qualifications better.
+            </p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="skills">Skills</Label>
-            <Input
-              id="skills"
-              name="skills"
-              value={values.skills}
-              onChange={handleInputChange}
-              placeholder="e.g., JavaScript, React, Node.js"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Education Level</Label>
-            <RadioGroup
-              value={values.education}
-              onValueChange={(value) =>
-                setValues({ ...values, education: value })
-              }
-              className="flex flex-col space-y-1"
+          <DialogFooter className="sm:justify-start">
+            <Button
+              size={"sm"}
+              variant="outline"
+              onClick={() => setIncompleteProfileDialogOpen(false)}
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="intermediate" id="intermediate" />
-                <Label htmlFor="intermediate">Intermediate</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="graduate" id="graduate" />
-                <Label htmlFor="graduate">Graduate</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="post-graduate" id="post-graduate" />
-                <Label htmlFor="post-graduate">Post-Graduate</Label>
-              </div>
-            </RadioGroup>
+              Cancel Application
+            </Button>
+            <Link to="/profile">
+              <Button size={"sm"}>Go to Profile </Button>
+            </Link>
+            <Link to="/edit">
+              <Button size={"sm"}>Update Profile</Button>
+            </Link>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={confirmationDialogOpen}
+        onOpenChange={setConfirmationDialogOpen}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">
+              Confirm Application
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              Are you sure you want to apply for the position of {jobTitle} at{" "}
+              {companyName}?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-muted-foreground">
+              By confirming, your application will be submitted with the
+              information from your profile. Make sure all details are up to
+              date before proceeding.
+            </p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="resume">Resume Link</Label>
-            <Input
-              id="resume"
-              name="resume"
-              value={values.resume}
-              onChange={handleInputChange}
-              placeholder="https://example.com/your-resume.pdf"
-            />
-          </div>
-        </div>
-        <DrawerFooter>
+          <DialogFooter className="sm:justify-start">
+            <Button
+              variant="outline"
+              onClick={() => setConfirmationDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleSubmitApplication} disabled={loading}>
+              {loading ? "Submitting..." : "Confirm and Apply"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <div className="text-center space-y-4">
+        <div className="flex justify-center space-x-4">
           <Button
-            onClick={handleSubmitApplication}
+            onClick={handleApplyClick}
             disabled={loading || success}
+            className="w-full max-w-xs"
           >
             {loading
-              ? "Applying..."
+              ? "Submitting Application..."
               : success
-              ? "Applied"
-              : "Submit Application"}
+              ? "Application Submitted"
+              : "Apply Now"}
           </Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+          <Link to="/profile">
+            <Button variant="outline" asChild className="w-full max-w-xs">
+              Go to Profile
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {success && (
+        <p className="text-center text-green-600">
+          Your application has been successfully submitted. We'll be in touch
+          soon!
+        </p>
+      )}
+    </div>
   );
 };
 
