@@ -33,7 +33,6 @@ userRouter.use("/*", async (c, next) => {
 
     try {
         const userVerify = await verify(token, c.env.JWT_SECRET);
-        console.log(token, userVerify);
 
         if (userVerify) {
             c.set("userId", userVerify.id as string);
@@ -226,6 +225,13 @@ userRouter.get('/me', async (c) => {
                 resume: true,
                 education: true,
                 experience: true,
+                _count: {
+                    select:{
+                        createdJobs: true,
+                        jobApplication:true,
+                        savedJobs: true
+                    }
+                }
             },
         });
 

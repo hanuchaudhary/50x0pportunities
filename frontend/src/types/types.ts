@@ -6,13 +6,19 @@ export enum Role {
 
 export enum JobType {
     OnSite = "On Site",
-    WorkFromHome = "Work From Home",
+    Remote = "Work From Home",
 }
 
 export interface Company {
     id: string
     logo: string;
     name: string;
+}
+
+export interface _count{
+    createdJobs: number
+    jobApplication: number
+    savedJobs: number
 }
 
 export enum ApplicationStatus {
@@ -60,4 +66,5 @@ export interface User {
     bio: string;
     skills: string;
     role: Role;
+    _count ?: _count;
 }

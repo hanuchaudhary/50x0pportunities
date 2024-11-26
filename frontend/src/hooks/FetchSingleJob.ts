@@ -1,10 +1,12 @@
 import { WEB_URL } from "@/Config";
-import { getAuthHeaders, Job } from "@/store/profileState";
+import { getAuthHeaders } from "@/store/profileState";
+import { Job } from "@/types/types";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
 export const useSingleJob = ({ id }: { id: string }) => {
-  const [jobData, setJobData] = useState<Job | null>(null);
+  const [jobData, setJobData] = useState<Job
+   | null>(null);
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token")?.split(" ")[1];
   const { Authorization } = getAuthHeaders()

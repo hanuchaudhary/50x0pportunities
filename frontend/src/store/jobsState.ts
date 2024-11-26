@@ -1,19 +1,24 @@
 import { create } from "zustand";
 import axios from "axios";
 import { WEB_URL } from "@/Config";
-import { getAuthHeaders, Job } from "@/store/profileState";
+import { getAuthHeaders } from "@/store/profileState";
+import { Company, Job } from "@/types/types";
+
+interface extendedJob extends Job {
+  company: Company;
+}
 
 interface JobsStore {
-  jobs: Job[];
+  jobs: extendedJob[];
   loading: boolean;
-  selectedJob: Job | null; 
+  selectedJob: Job | null;
   fetchJobs: (filter: string) => Promise<void>;
 }
 
 export const useJobsStore = create<JobsStore>((set) => ({
   jobs: [],
   loading: false,
-  selectedJob : null,
+  selectedJob: null,
   fetchJobs: async (filter: string) => {
     const { Authorization } = getAuthHeaders();
     set({ loading: true });

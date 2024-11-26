@@ -12,6 +12,11 @@ enum Role {
   Candidate
 }
 
+enum jobType {
+  Remote
+  OnSite
+}
+
 enum applicationStatus {
   Rejected
   Applied
@@ -47,11 +52,11 @@ model Job {
   id             String           @unique @default(uuid())
   recruiterId    String
   companyId      String?
-  jobRole        String          @default("")
+  jobRole        String           @default("")
   title          String
   description    String
   location       String
-  type           String
+  type           jobType
   requirement    String
   isOpen         Boolean          @default(true)
   createdAt      DateTime         @default(now())
@@ -62,11 +67,11 @@ model Job {
 }
 
 model SavedJobs {
-  id     String @unique @default(uuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  jobId  String
-  job    Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  id        String   @unique @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
 

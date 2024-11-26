@@ -31,6 +31,7 @@ import { toast } from "@/hooks/use-toast";
 import { Label } from "./ui/label";
 import EditJob from "./EditJob";
 import { CreatedJobs } from "@/store/userJobsStore";
+import { getAuthHeaders } from "@/store/profileState";
 
 export enum ApplicationStatus {
   Rejected = "Rejected",
@@ -39,7 +40,7 @@ export enum ApplicationStatus {
   Hired = "Hired",
 }
 
-export default function CreatedJobCard( job : CreatedJobs) {
+export default function CreatedJobCard(job: CreatedJobs) {
   return (
     <Card className="w-full">
       <CardHeader>
@@ -101,7 +102,7 @@ export default function CreatedJobCard( job : CreatedJobs) {
     </Card>
   );
 }
-
+const { Authorization } = getAuthHeaders();
 function ApplicationDialog({ job }: any) {
   const [applications, setApplications] = useState(job);
   const updateApplicationStatus = async (
@@ -117,7 +118,7 @@ function ApplicationDialog({ job }: any) {
         },
         {
           headers: {
-            Authorization: localStorage.getItem("token")?.split(" ")[1],
+            Authorization,
           },
         }
       );
@@ -173,13 +174,13 @@ function ApplicationDialog({ job }: any) {
                     </p>
                   </div>
                   <div className="w-full sm:w-auto">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Label className="text-xs sm:text-sm">Resume: </Label>
+                    <div className="flex items-center mb-2">
+                      <Label className="text-xs sm:text-sm">Resume:</Label>
                       <Button variant={"link"}>
                         <a
                           href={application.resume}
                           target="_blank"
-                          className="text-xs sm:text-sm"
+                          className="text-xs sm:text-sm underline"
                         >
                           Applicant Resume
                         </a>

@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef } from "react";
-import { useLocation, Link,} from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Moon, Sun} from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { MiniProfile } from "./Profile/MiniProfile";
+import useProfileStore from "@/store/profileState";
 
 export default function Navbar() {
+  const { profile } = useProfileStore();
   const { theme, toggleTheme } = useTheme();
   const role = localStorage.getItem("role");
   const location = useLocation();
@@ -63,11 +65,10 @@ export default function Navbar() {
                 onClick={() => setMenu((prev) => !prev)}
                 className="cursor-pointer hover:ring-2 hover:ring-primary transition-all duration-200"
               >
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>Cn</AvatarFallback>
+                <AvatarImage src={profile?.avatar} alt="@shadcn" />
+                <AvatarFallback className="uppercase font-semibold">
+                  {/* {profile.email.split("@")[0][0] || "UN"} */}
+                </AvatarFallback>
               </Avatar>
             )}
           </div>
@@ -90,4 +91,3 @@ export default function Navbar() {
     </div>
   );
 }
-

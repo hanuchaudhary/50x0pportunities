@@ -47,12 +47,7 @@ export default function SavedJobs() {
                     return (
                       <JobCard
                         key={job.id}
-                        companyLogo={job.company.logo || ""}
-                        companyName={job.company.name || ""}
-                        description={job.description}
-                        title={job.title}
-                        location={job.location}
-                        id={job.id}
+                        {...job}
                       />
                     );
                   })

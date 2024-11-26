@@ -189,7 +189,7 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
       </div>
 
       {success && (
-        <p className="text-center text-green-600">
+        <p className="text-center text-green-900 font-semibold rounded-lg bg-green-300">
           Your application has been successfully submitted. We'll be in touch
           soon!
         </p>

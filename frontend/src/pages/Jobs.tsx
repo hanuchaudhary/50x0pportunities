@@ -22,11 +22,9 @@ export default function Jobs() {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    if (jobs.length === 0) {
       fetchJobs(filter);
       fetchProfile();
-    }
-  }, []);
+  }, [filter]);
 
   const { companies } = useFetchCompanies();
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,8 +52,6 @@ export default function Jobs() {
     setSelectedCompany("");
     setFilter("");
   };
-
-  console.log(jobs);
 
   return (
     <div className="min-h-screen bg-background">
@@ -116,15 +112,10 @@ export default function Jobs() {
           ) : (
             <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {jobs.length > 0 ? (
-                jobs.map(({ id, description, location, title, company }) => (
+                jobs.map((job) => (
                   <JobCard
-                    key={id}
-                    id={id}
-                    companyLogo={company.logo}
-                    companyName={company.name}
-                    description={description}
-                    location={location}
-                    title={title}
+                    key={job.id}
+                    {...job}
                   />
                 ))
               ) : (

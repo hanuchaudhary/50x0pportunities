@@ -3,7 +3,7 @@ import { Skeleton } from "./ui/skeleton";
 
 export function ProfileSkeleton() {
     return (
-      <Card className="mt-24 md:mt-32 mb-8">
+      <Card className="pt-24 md:pt-32 mb-8">
         <CardHeader className="flex flex-row items-center space-y-0">
           <div className="flex items-center space-x-4">
             <Skeleton className="w-12 h-12 rounded-full" />

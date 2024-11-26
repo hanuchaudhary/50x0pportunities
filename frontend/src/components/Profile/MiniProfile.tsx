@@ -12,7 +12,7 @@ export function MiniProfile({
 }: {
   setMenu: (value: boolean) => void;
 }) {
-  const { isLoading, profile, error} = useProfileStore();
+  const { isLoading, profile, error } = useProfileStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -71,7 +71,7 @@ export function MiniProfile({
         <div className="flex items-center gap-4">
           <Avatar className="w-16 h-16 border-2 border-primary">
             <AvatarImage
-              src="/placeholder.svg?height=64&width=64"
+              src={profile.avatar}
               alt="User avatar"
             />
             <AvatarFallback className="text-2xl uppercase font-semibold bg-primary text-primary-foreground">
@@ -99,7 +99,7 @@ export function MiniProfile({
           {profile?.role === "Recruiter" ? (
             <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
               <span className="text-2xl font-bold">
-                {/* {profile?.createdJobs.length} */}
+                {profile?._count?.createdJobs}
               </span>
               <span className="text-sm text-muted-foreground">
                 Created Jobs
@@ -109,7 +109,7 @@ export function MiniProfile({
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
                 <span className="text-2xl font-bold">
-                  {/* {profile?.jobApplication.length} */}
+                  {profile?._count?.jobApplication}
                 </span>
                 <span className="text-sm text-muted-foreground">
                   Applied Jobs
@@ -118,7 +118,7 @@ export function MiniProfile({
 
               <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
                 <span className="text-2xl font-bold">
-                  {/* {profile?.savedJobs.length} */}
+                  {profile?._count?.savedJobs}
                 </span>
                 <span className="text-sm text-muted-foreground">
                   Saved Jobs

@@ -185,9 +185,9 @@ export default function Dashboard() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="onsite">On Site</SelectItem>
-                      <SelectItem value="workfromhome">
-                        Work From Home
+                      <SelectItem value="OnSite">On Site</SelectItem>
+                      <SelectItem value="Remote">
+                        Remote
                       </SelectItem>
                     </SelectContent>
                   </Select>

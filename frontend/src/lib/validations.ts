@@ -1,8 +1,8 @@
 import z from "zod";
 
 enum jobType {
-  onSite = "onsite",
-  workFromHome = "workfromhome"
+  OnSite = "OnSite",
+  Remote = "Remote"
 }
 
 export const signupValidation = z.object({

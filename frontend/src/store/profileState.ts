@@ -5,7 +5,7 @@ import { create } from 'zustand';
 
 
 interface ProfileState {
-  profile: User | null;
+  profile: User
   isLoading: boolean;
   error: string | null;
   fetchProfile: () => Promise<void>;
@@ -20,7 +20,7 @@ export const getAuthHeaders = () => {
 };
 
 const useProfileStore = create<ProfileState>((set) => ({
-  profile: null,
+  profile: {} as User,
   isLoading: false,
   error: null,
 
@@ -46,7 +46,7 @@ const useProfileStore = create<ProfileState>((set) => ({
 
   updateProfile: (data: Partial<ProfileState>) =>
     set((state) => ({
-      profile: state.profile ? { ...state.profile, ...data } : null,
+      profile: state.profile && { ...state.profile, ...data },
     })),
 }));
 

@@ -19,10 +19,16 @@ import { Separator } from "@/components/ui/separator";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { WEB_URL } from "@/Config";
-import { getAuthHeaders } from "@/store/profileState";
+import useProfileStore, { getAuthHeaders } from "@/store/profileState";
 import { editProfileSchema } from "@/lib/validations";
 import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 
 const ACCEPTED_IMAGE_TYPES = [
@@ -34,6 +40,7 @@ const ACCEPTED_IMAGE_TYPES = [
 const ACCEPTED_RESUME_TYPES = ["application/pdf"];
 
 export default function EditUserDetails() {
+  const { profile } = useProfileStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -42,10 +49,11 @@ export default function EditUserDetails() {
   const form = useForm<z.infer<typeof editProfileSchema>>({
     resolver: zodResolver(editProfileSchema),
     defaultValues: {
-      fullName: "",
-      skills: "",
-      bio: "",
-      experience: "",
+      fullName: profile.fullName,
+      skills: profile.skills,
+      bio: profile.bio,
+      experience: profile.experience,
+      // education: profile.education || "",
     },
   });
 
@@ -99,9 +107,9 @@ export default function EditUserDetails() {
         variant: "destructive",
       });
       console.error("Error submitting form:", error);
-    }finally {
+    } finally {
       setIsLoading(false);
-    } 
+    }
   }
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -260,14 +268,19 @@ export default function EditUserDetails() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Education</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select your education level" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="High School">High School</SelectItem>
+                            <SelectItem value="High School">
+                              High School
+                            </SelectItem>
                             <SelectItem value="Bachelors">Bachelors</SelectItem>
                             <SelectItem value="Masters">Masters</SelectItem>
                             <SelectItem value="Doctorate">Doctorate</SelectItem>
@@ -322,4 +335,3 @@ export default function EditUserDetails() {
     </div>
   );
 }
-

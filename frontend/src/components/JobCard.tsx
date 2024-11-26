@@ -1,5 +1,9 @@
-import { Bookmark, MapPin } from "lucide-react";
-import { Button } from "./ui/button";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { Bookmark, Loader2, MapPin, Calendar } from "lucide-react";
+import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,48 +11,41 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/card";
-import { Link } from "react-router-dom";
-import axios from "axios";
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { WEB_URL } from "@/Config";
 import { toast } from "@/hooks/use-toast";
-import { useState } from "react";
-import { ClipLoader } from "react-spinners";
 import { getAuthHeaders } from "@/store/profileState";
+import { Company, Job } from "@/types/types";
 
-interface CardType {
-  id: string;
-  description: string;
-  location: string;
-  title: string;
-  companyLogo: string;
-  companyName: string;
+interface CardType extends Job {
+  company: Company;
 }
 
-const JobCard = ({
-  id,
-  description,
-  location,
-  title,
-  companyLogo,
-  companyName,
-}: CardType) => {
+const JobCard = (job: CardType) => {
   const role = localStorage.getItem("role");
-  const jobId = id;
+  const jobId = job.id;
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { Authorization} = getAuthHeaders()
+  const { Authorization } = getAuthHeaders();
+  console.log(job.jobRole);
 
   const HandleSaveJob = async () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${WEB_URL}/api/v1/job/saved`,
+        `${WEB_URL}/api/v1/job/save`,
         { jobId },
         {
           headers: {
-            Authorization
+            Authorization,
           },
         }
       );
@@ -56,8 +53,8 @@ const JobCard = ({
       setLoading(false);
       if (response.status == 201) {
         toast({
-          title: "!!Saved",
-          description: "Job Saved Succesfully",
+          title: "Job Saved",
+          description: "Job saved successfully",
           variant: "success",
         });
       }
@@ -65,61 +62,87 @@ const JobCard = ({
       setLoading(false);
       toast({
         title: "Saving Error",
-        description: "Error While Saving Job",
+        description: "Error while saving job",
         variant: "destructive",
       });
     }
   };
   
-
   return (
-    <div>
-      <Card className="dark:bg-neutral-900 flex flex-col justify-between bg-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors duration-500">
-        <CardHeader>
-          <CardTitle className="text-xl">{title}</CardTitle>
-        </CardHeader>
-        <CardContent className="flex h-20 overflow-hidden items-center justify-between border-b">
-          <div className="logo ">
-            {companyLogo && (
-              <img
-                className="w-16 object-cover"
-                src={companyLogo}
-                alt={`${companyName} logo`}
-              />
-            )}
+    <Card className="dark:bg-neutral-900 flex flex-col justify-between bg-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors duration-500">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <CardTitle className="text-xl font-bold">{job.title}</CardTitle>
+          <Badge
+            variant="outline"
+            className={`${
+              job.type.toString() === "Remote"
+                ? "bg-green-100 text-green-800"
+                : "bg-blue-100 text-blue-800"
+            }`}
+          >
+            {job.type}
+          </Badge>
+        </div>
+        <CardDescription className="text-sm font-medium text-muted-foreground">
+          {job.company.name}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="py-2">
+        <div className="flex items-center justify-between mb-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <MapPin className="w-4 h-4" />
+            <span>{job.location}</span>
           </div>
-          <div className="flex items-center justify-center gap-1">
-            <MapPin />
-            <div className="location font-semibold">{location}</div>
+          <div className="flex items-center gap-1">
+            <Calendar className="w-4 h-4" />
+            <span>{format(new Date(job.createdAt), "MMM d, yyyy")}</span>
           </div>
-        </CardContent>
-        <CardContent className="pt-2 h-28">
-          <CardDescription>
-            {description?.length > 180
-              ? description?.substring(0, 180) + "..."
-              : description}
-          </CardDescription>
-        </CardContent>
-        <CardFooter className="flex items-center gap-4 justify-between">
-          <Link to={`/jobs/${id}`}>
-            <Button className="w-full">More Details</Button>
-          </Link>
-          {role === "Candidate" && (
-            <button
-              disabled={success}
-              className="saveJob"
-              onClick={HandleSaveJob}
-            >
-              {loading ? (
-                <ClipLoader color="white" />
-              ) : (
-                <Bookmark fill={success ? "white" : "transparent"} size={30} />
-              )}
-            </button>
+        </div>
+        <div className="logo mb-4">
+          {job.company.logo && (
+            <img
+              className="w-16 h-16 object-contain"
+              src={job.company.logo}
+              alt={`${job.company.name} logo`}
+            />
           )}
-        </CardFooter>
-      </Card>
-    </div>
+        </div>
+        <CardDescription className="text-sm line-clamp-3">
+          {job.description}
+        </CardDescription>
+      </CardContent>
+      <CardFooter className="flex items-center gap-4 justify-between pt-4">
+        <Link to={`/jobs/${job.id}`} className="flex-grow">
+          <Button className="w-full">View Details</Button>
+        </Link>
+        {role === "Candidate" && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="saveJob"
+                  onClick={HandleSaveJob}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Bookmark className={success ? "fill-current" : ""} />
+                  )}
+                  <span className="sr-only">Save job</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{success ? "Job Saved" : "Save Job"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </CardFooter>
+    </Card>
   );
 };
 

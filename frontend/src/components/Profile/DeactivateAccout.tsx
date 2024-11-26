@@ -64,7 +64,7 @@ export default function DeactivateAccout() {
     };
 
   return (
-    <div className="flex md:space-x-4 gap-1 bg-neutral-700 p-2 rounded-lg">
+    <div className="flex md:space-x-4 gap-1 dark:bg-zinc-700 bg-blue-100 p-2 rounded-lg">
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="destructive" size={"sm"} className="flex items-center">
