@@ -99,7 +99,7 @@ export function MiniProfile({
           {profile?.role === "Recruiter" ? (
             <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
               <span className="text-2xl font-bold">
-                {profile?.createdJobs.length}
+                {/* {profile?.createdJobs.length} */}
               </span>
               <span className="text-sm text-muted-foreground">
                 Created Jobs
@@ -109,7 +109,7 @@ export function MiniProfile({
             <div className="grid grid-cols-2 gap-2">
               <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
                 <span className="text-2xl font-bold">
-                  {profile?.jobApplication.length}
+                  {/* {profile?.jobApplication.length} */}
                 </span>
                 <span className="text-sm text-muted-foreground">
                   Applied Jobs
@@ -118,7 +118,7 @@ export function MiniProfile({
 
               <div className="flex flex-col items-center p-3 bg-accent rounded-lg">
                 <span className="text-2xl font-bold">
-                  {profile?.savedJobs.length}
+                  {/* {profile?.savedJobs.length} */}
                 </span>
                 <span className="text-sm text-muted-foreground">
                   Saved Jobs

@@ -39,8 +39,6 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
     resume: profile?.resume,
   });
 
-  console.log(data);
-
   const isProfileComplete =
     data.education && data.experience && data.skills && data.resume;
   const handleApplyClick = () => {

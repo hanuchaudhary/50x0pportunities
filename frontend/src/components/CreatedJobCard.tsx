@@ -30,6 +30,7 @@ import { WEB_URL } from "@/Config";
 import { toast } from "@/hooks/use-toast";
 import { Label } from "./ui/label";
 import EditJob from "./EditJob";
+import { CreatedJobs } from "@/store/userJobsStore";
 
 export enum ApplicationStatus {
   Rejected = "Rejected",
@@ -38,7 +39,7 @@ export enum ApplicationStatus {
   Hired = "Hired",
 }
 
-export default function CreatedJobCard({ job }: any) {
+export default function CreatedJobCard( job : CreatedJobs) {
   return (
     <Card className="w-full">
       <CardHeader>
@@ -94,7 +95,7 @@ export default function CreatedJobCard({ job }: any) {
         </div>
       </CardContent>
       <CardFooter className="flex sm:flex-row justify-between gap-2">
-        <ApplicationDialog job={job} />
+        <ApplicationDialog job={job.jobApplication} />
         <EditJob isOpen={job.isOpen} id={job.id} />
       </CardFooter>
     </Card>
@@ -102,7 +103,7 @@ export default function CreatedJobCard({ job }: any) {
 }
 
 function ApplicationDialog({ job }: any) {
-  const [applications, setApplications] = useState(job.jobApplication);
+  const [applications, setApplications] = useState(job);
   const updateApplicationStatus = async (
     applicationId: string,
     status: ApplicationStatus

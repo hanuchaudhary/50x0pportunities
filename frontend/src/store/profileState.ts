@@ -1,75 +1,15 @@
 import { WEB_URL } from '@/Config';
+import { User } from '@/types/types';
 import axios from 'axios';
 import { create } from 'zustand';
 
-export enum Role {
-  Candidate = "Candidate",
-  Recruiter = "Recruiter",
-}
-
-export interface Company {
-  id: string
-  logo: string;
-  name: string;
-}
-
-enum ApplicationStatus {
-  Rejected = "Rejected",
-  Applied = "Applied",
-  Interviewing = "Interviewing",
-  Hired = "Hired",
-}
-
-export interface JobApplication {
-  id: string;
-  title: string;
-  education: string;
-  experience: string;
-  skills: string;
-  status: ApplicationStatus;
-  createdAt: string;
-  job: Job;
-  company: Company;
-}
-
-export interface Job {
-  jobApplication: JobApplication[];
-  companyId: string;
-  id: string;
-  title: string;
-  description: string;
-  jobRole?: string;
-  location: string;
-  type: string;
-  requirement: string;
-  isOpen: boolean;
-  recruiterId: string;
-  createdAt: string;
-  company: Company
-}
-
-export interface ProfileData {
-  id: string;
-  fullName: string;
-  email: string;
-  experience: string;
-  education: string;
-  resume: string;
-  avatar: string;
-  bio: string;
-  skills: string;
-  role: Role;
-  createdJobs?: Job[];
-  jobApplication?: JobApplication[];
-  savedJobs?: Job[];
-}
 
 interface ProfileState {
-  profile: ProfileData | null;
+  profile: User | null;
   isLoading: boolean;
   error: string | null;
   fetchProfile: () => Promise<void>;
-  updateProfile: (data: Partial<ProfileData>) => void;
+  updateProfile: (data: Partial<User>) => void;
 }
 
 export const getAuthHeaders = () => {
@@ -78,8 +18,6 @@ export const getAuthHeaders = () => {
     Authorization: token ? `Bearer ${token}` : "",
   };
 };
-
-// add education and experience to ProfileData
 
 const useProfileStore = create<ProfileState>((set) => ({
   profile: null,
@@ -106,7 +44,7 @@ const useProfileStore = create<ProfileState>((set) => ({
     }
   },
 
-  updateProfile: (data: Partial<ProfileData>) =>
+  updateProfile: (data: Partial<ProfileState>) =>
     set((state) => ({
       profile: state.profile ? { ...state.profile, ...data } : null,
     })),

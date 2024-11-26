@@ -31,3 +31,4 @@ export const useJobsStore = create<JobsStore>((set) => ({
     }
   },
 }));
+

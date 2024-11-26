@@ -41,9 +41,9 @@ jobRouter.post("/create", async (c) => {
     }).$extends(withAccelerate());
 
     try {
-        const { title, description, location, isOpen, type, requirement, companyId } = await c.req.json();
+        const { title, description, jobRole, location, isOpen, type, requirement, companyId } = await c.req.json();
 
-        const { success, error } = jobValidation.safeParse({ title, description, location, isOpen, type, requirement, companyId });
+        const { success, error } = jobValidation.safeParse({ title, jobRole, description, location, isOpen, type, requirement, companyId });
         if (!success) {
             return c.json({
                 success: false,
@@ -78,7 +78,8 @@ jobRouter.post("/create", async (c) => {
                 type,
                 requirement,
                 recruiterId: recruiter.id,
-                companyId: companyId
+                companyId: companyId,
+                jobRole
             }
         });
 
@@ -145,6 +146,127 @@ jobRouter.get("/bulk", async (c) => {
     }
 })
 
+
+jobRouter.get("/created", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const userId = c.get("userId");
+        const jobs = await prisma.job.findMany({
+            where: {
+                recruiterId: userId
+            },
+            orderBy: {
+                createdAt: "desc"
+            },
+            include: {
+                jobApplication: {
+                    include: {
+                        applicant: {
+                            select: {
+                                fullName: true,
+                                email: true,
+                                id: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        return c.json({
+            success: true,
+            message: "Jobs fetched successfully",
+            jobs
+        }, 200)
+
+    } catch (error: any) {
+        return c.json({
+            success: false,
+            message: 'Server error during fetching jobs',
+            error: error.message,
+        }, 500);
+    }
+});
+
+
+jobRouter.get("/saved", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const userId = c.get("userId");
+        const jobs = await prisma.savedJobs.findMany({
+            where: {
+                userId
+            },
+            orderBy: {
+                createdAt: "desc"
+            },
+            include: {
+                job: {
+                    include: {
+                        company: true
+                    }
+                }
+            }
+        })
+
+        return c.json({
+            success: true,
+            message: "Jobs fetched successfully",
+            jobs
+        }, 200)
+
+    } catch (error: any) {
+        return c.json({
+            success: false,
+            message: 'Server error during fetching jobs',
+            error: error.message,
+        }, 500);
+    }
+});
+
+jobRouter.get("/applied", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const userId = c.get("userId");
+        const appliedJobs = await prisma.jobApplication.findMany({
+            where: {
+                applicantId: userId
+            },
+            orderBy: {
+                createdAt: "desc"
+            },
+            include: {
+                job: {
+                    include: {
+                        company: true,
+                    }
+                }
+            }
+        })
+
+        return c.json({
+            success: true,
+            message: "Jobs fetched successfully",
+            appliedJobs
+        }, 200)
+
+    } catch (error: any) {
+        return c.json({
+            success: false,
+            message: 'Server error during fetching jobs',
+            error: error.message,
+        }, 500);
+    }
+});
 
 jobRouter.get("/:id", async (c) => {
     const prisma = new PrismaClient({
@@ -348,15 +470,12 @@ jobRouter.post("/removesave", async (c) => {
 
     try {
         const { id } = await c.req.json();
-        console.log(id);
 
         const savedJobExist = await prisma.savedJobs.findUnique({
             where: {
                 id: id
             }
         })
-
-        console.log(savedJobExist);
 
         if (!savedJobExist) {
             return c.json({

@@ -64,10 +64,10 @@ export default function DeactivateAccout() {
     };
 
   return (
-    <div className="flex space-x-4">
+    <div className="flex md:space-x-4 gap-1 bg-neutral-700 p-2 rounded-lg">
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" className="flex items-center">
+        <Button variant="destructive" size={"sm"} className="flex items-center">
           <UserMinus className="mr-2 h-4 w-4" />
           Deactivate
         </Button>
@@ -100,7 +100,7 @@ export default function DeactivateAccout() {
 
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="secondary" className="flex items-center">
+        <Button size={"sm"} variant="secondary" className="flex items-center">
           <LogOut className="mr-2 h-4 w-4" />
           Logout
         </Button>

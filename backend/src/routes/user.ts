@@ -217,55 +217,15 @@ userRouter.get('/me', async (c) => {
             where: { id: userId },
             select: {
                 id: true,
-                fullName: true,
                 email: true,
+                fullName: true,
                 role: true,
+                skills: true,
+                bio: true,
                 avatar: true,
                 resume: true,
                 education: true,
                 experience: true,
-                bio: true,
-                skills: true,
-                jobApplication: {
-                    orderBy: {
-                        createdAt: "asc"
-                    },
-                    include: {
-                        job: {
-                            include: {
-                                company: true
-                            }
-                        }
-                    }
-                },
-                createdJobs: {
-                    include: {
-                        jobApplication: {
-                            include: {
-                                applicant: true
-                            }
-                        }
-                    }
-                },
-                savedJobs: {
-                    include: {
-                        job: {
-                            select: {
-                                id: true,
-                                title: true,
-                                description: true,
-                                location: true,
-                                company: {
-                                    select: {
-                                        id: true,
-                                        logo: true,
-                                        name: true
-                                    }
-                                }
-                            }
-                        },
-                    }
-                }
             },
         });
 

@@ -25,6 +25,7 @@ export const signinValidation = z.object({
 export const jobValidation = z.object({
     title: z.string().min(5, { message: "Job title must be at least 5 characters long." }),
     description: z.string().min(10, { message: "Job description must be at least 10 characters long." }),
+    jobRole: z.string().min(1, { message: "Job Role must Required" }),
     location: z.string().min(1, { message: "Location is required." }),
     isOpen: z.boolean().default(true).optional(),
     type: z.nativeEnum(jobType, { message: "Job type must be either 'On Site' or 'Work From Home'." }),

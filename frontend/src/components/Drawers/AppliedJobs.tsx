@@ -9,13 +9,16 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "../ui/button";
 import ApplicationCard from "../ApplicationCard";
-import {  JobApplication } from "@/store/profileState";
+import { useAppliedJobsStore } from "@/store/userJobsStore";
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
 
-interface appliedJobs {
-  data: JobApplication[];
-}
+export default function AppliedJobs() {
+  const { appliedJobs, fetchAppliedJobs, loading } = useAppliedJobsStore();
+  useEffect(() => {
+    fetchAppliedJobs();
+  }, []);
 
-export default function AppliedJobs({ data }: appliedJobs) {
   return (
     <div>
       <Drawer>
@@ -33,25 +36,13 @@ export default function AppliedJobs({ data }: appliedJobs) {
               </DrawerDescription>
             </DrawerHeader>
             <div className="p-4 space-y-4 max-h-[60vh] my-2 overflow-y-auto custom-scrollbar">
-              {data.length > 0 ? (
-                data.map((e) => {
-                  console.log();
-                  
-                  return (
-                    <ApplicationCard
-                      key={e.id}
-                      jobId={e.id}
-                      title={e.title}
-                      createdAt={e.createdAt}
-                      description={e.job.description}
-                      isOpen={e.job.isOpen}
-                      location={e.job.location}
-                      jobType={e.job.type}
-                      status={e.status}
-                      companyName={e.job.company.name}
-                      companyLogo={e.job.company.logo}
-                    />
-                  );
+              {loading ? (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Loader2 className="animate-spin"/>
+                </div>
+              ) : appliedJobs.length > 0 ? (
+                appliedJobs.map((e) => {
+                  return <ApplicationCard key={e.id} {...e} />;
                 })
               ) : (
                 <div>NoT applied Yet</div>

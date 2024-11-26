@@ -9,20 +9,17 @@ import {
 } from "@/components/ui/drawer";
 import JobCard from "../JobCard";
 import { Button } from "../ui/button";
-import { Job } from "@/store/profileState";
+import { useSavedJobsStore } from "@/store/userJobsStore";
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
 
-interface savedJob {
-  id: string;
-  jobId: string;
-  userId: string;
-  job: Job;
-}
+export default function SavedJobs() {
+  const { fetchSavedJobs, loading, savedJobs } = useSavedJobsStore();
+  const data = savedJobs;
+  useEffect(() => {
+    fetchSavedJobs();
+  }, []);
 
-interface savedJobs {
-  data: savedJob[];
-}
-
-export default function SavedJobs({ data }: savedJobs) {
   return (
     <div>
       <Drawer>
@@ -41,19 +38,25 @@ export default function SavedJobs({ data }: savedJobs) {
             </DrawerHeader>
             <div className="p-4 space-y-4 max-h-[60vh] my-2 overflow-y-auto custom-scrollbar">
               {data.length > 0 ? (
-                data?.map(({job}) => {
-                  return (
-                    <JobCard
-                      key={job.id}
-                      companyLogo={job.company.logo || ""}
-                      companyName={job.company.name || ""}
-                      description={job.description}
-                      title={job.title}
-                      location={job.location}
-                      id={job.id}
-                    />
-                  );
-                })
+                loading ? (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Loader2 className="animate-spin" />
+                  </div>
+                ) : (
+                  data?.map(({ job }) => {
+                    return (
+                      <JobCard
+                        key={job.id}
+                        companyLogo={job.company.logo || ""}
+                        companyName={job.company.name || ""}
+                        description={job.description}
+                        title={job.title}
+                        location={job.location}
+                        id={job.id}
+                      />
+                    );
+                  })
+                )
               ) : (
                 <div>No Job Found</div>
               )}
