@@ -85,8 +85,8 @@ export const editProfileValidation = z.object({
     .min(2, {
       message: "Skills must be at least 2 characters.",
     })
-    .max(100, {
-      message: "Skills must not exceed 100 characters.",
+    .max(500, {
+      message: "Skills must not exceed 500 characters.",
     }),
 
   avatar: z

@@ -113,4 +113,3 @@ companyRouter.get("/bulk", async (c) => {
         }, 500);
     }
 })
-
