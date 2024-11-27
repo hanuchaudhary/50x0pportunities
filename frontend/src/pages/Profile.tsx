@@ -84,10 +84,10 @@ export default function Profile() {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 md:gap-6 gap-2">
-              <div className="bg-card rounded-lg shadow-lg md:p-3 hover:shadow-xl transition-shadow duration-300">
+              <div className="bg-card w-full rounded-lg shadow-lg md:p-3 hover:shadow-xl transition-shadow duration-300">
                 <SavedJobs />
               </div>
-              <div className="bg-card rounded-lg shadow-lg md:p-3 hover:shadow-xl transition-shadow duration-300">
+              <div className="bg-card w-full rounded-lg shadow-lg md:p-3 hover:shadow-xl transition-shadow duration-300">
                 <AppliedJobs />
               </div>
             </div>

@@ -68,7 +68,7 @@ export default function Navbar() {
                 onClick={() => setMenu((prev) => !prev)}
                 className="cursor-pointer hover:ring-2 hover:ring-primary transition-all duration-200"
               >
-                <AvatarImage src={profile?.avatar} alt="@shadcn" />
+                <AvatarImage className="object-cover" src={profile?.avatar} alt="@shadcn" />
                 <AvatarFallback className="uppercase font-semibold">
                   <User2Icon/>
                 </AvatarFallback>

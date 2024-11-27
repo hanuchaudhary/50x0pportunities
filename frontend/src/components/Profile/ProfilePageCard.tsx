@@ -20,7 +20,11 @@ export default function ProfilePageCard(user: User) {
       <div className="p-2">
         <CardHeader className="flex rounded-lg dark:bg-zinc-800 bg-blue-100 md:flex-row md:gap-4 items-center space-y-4 md:text-start text-center">
           <Avatar className="md:w-40 md:h-40 h-20 w-20">
-            <AvatarImage src={user.avatar} alt={user.fullName} />
+            <AvatarImage
+              className="object-cover"
+              src={user.avatar}
+              alt={user.fullName}
+            />
             <AvatarFallback className="text-4xl bg-red-900 font-bold uppercase">
               {user.email.length > 0
                 ? user.email
@@ -51,20 +55,6 @@ export default function ProfilePageCard(user: User) {
                 <h3 className="font-semibold mb-2">Bio</h3>
                 <p className="text-muted-foreground">{user.bio}</p>
               </div>
-              <div>
-                <h3 className="font-semibold mb-2">Skills</h3>
-                <div className="flex flex-wrap gap-2">
-                  {user.skills.length > 0 ? (
-                    user.skills.split(",").map((skill, index) => (
-                      <Badge key={index} variant="destructive">
-                        {skill.trim()}
-                      </Badge>
-                    ))
-                  ) : (
-                    <p className="text-muted-foreground">No skills added</p>
-                  )}
-                </div>
-              </div>
             </div>
             <div className="space-y-6 md:border-l md:pl-6">
               <div>
@@ -88,6 +78,22 @@ export default function ProfilePageCard(user: User) {
                   </p>
                 )}
               </div>
+
+              <Separator className="my-4" />
+              <div>
+                <h3 className="font-semibold mb-2">Skills</h3>
+                <div className="flex flex-wrap gap-2">
+                  {user.skills.length > 0 ? (
+                    user.skills.split(",").map((skill, index) => (
+                      <Badge key={index} variant="destructive">
+                        {skill.trim()}
+                      </Badge>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground">No skills added</p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -100,7 +106,9 @@ export default function ProfilePageCard(user: User) {
           </Button>
         ) : (
           <Link to={"/dashboard"}>
-            <Button size={"sm"} variant={"outline"}>Create Job</Button>
+            <Button size={"sm"} variant={"outline"}>
+              Create Job
+            </Button>
           </Link>
         )}
         <DeactivateAccout />

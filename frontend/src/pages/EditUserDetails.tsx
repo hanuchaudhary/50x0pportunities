@@ -173,7 +173,8 @@ export default function EditUserDetails() {
                       <FormItem>
                         <FormLabel>Skills</FormLabel>
                         <FormControl>
-                          <Input
+                          <Textarea
+                            className="resize-none h-32"
                             placeholder="JavaScript, React, Node.js"
                             {...field}
                           />
@@ -201,22 +202,6 @@ export default function EditUserDetails() {
                         <FormDescription>
                           A brief description about yourself and your
                           experience.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="experience"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Experience</FormLabel>
-                        <FormControl>
-                          <Input placeholder="2 years" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          How many years of experience do you have?
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -256,6 +241,23 @@ export default function EditUserDetails() {
                         <FormDescription>
                           Upload a profile picture (JPEG, JPG, PNG, or WebP, max
                           5MB).
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="experience"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Experience</FormLabel>
+                        <FormControl>
+                          <Input placeholder="2 years" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          How many years of experience do you have?
                         </FormDescription>
                         <FormMessage />
                       </FormItem>

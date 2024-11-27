@@ -615,10 +615,10 @@
   resolved "https://registry.npmjs.org/@floating-ui/utils/-/utils-0.2.8.tgz"
   integrity sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig==
 
-"@hanuchaudhary/job@^1.0.8":
-  version "1.0.8"
-  resolved "https://registry.npmjs.org/@hanuchaudhary/job/-/job-1.0.8.tgz"
-  integrity sha512-NBp690DuxG/NBXLFdwWSxIOENZ8nR9hxSXpfTn8lO8Gi6CbTEKM+tfZvLp7ByqybBaheUsT+LCbNhniuoDIbXQ==
+"@hanuchaudhary/job@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.npmjs.org/@hanuchaudhary/job/-/job-1.0.9.tgz"
+  integrity sha512-qMaIqavxUnkaDWk+ycbcrergsHrwoJXNVFBMQ+mZ7sNeLMM4VcEwGhOAD1DE21YJml/mMq2LGgI071agqnvJ0A==
   dependencies:
     zod "^3.23.8"
 

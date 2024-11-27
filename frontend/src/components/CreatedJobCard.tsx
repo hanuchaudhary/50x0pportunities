@@ -102,7 +102,7 @@ export default function CreatedJobCard(job: CreatedJobs) {
     </Card>
   );
 }
-const { Authorization } = getAuthHeaders();
+
 function ApplicationDialog({ job }: any) {
   const [applications, setApplications] = useState(job);
   const updateApplicationStatus = async (
@@ -118,7 +118,7 @@ function ApplicationDialog({ job }: any) {
         },
         {
           headers: {
-            Authorization,
+            Authorization: getAuthHeaders().Authorization,
           },
         }
       );

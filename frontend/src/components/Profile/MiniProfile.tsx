@@ -103,7 +103,7 @@ export function MiniProfile({
                   whileTap={{ scale: 0.9 }}
                 >
                   <Avatar className="w-16 h-16 border-2 border-primary">
-                    <AvatarImage src={profile.avatar} alt="User avatar" />
+                  <AvatarImage className="object-cover" src={profile.avatar} alt="User avatar" />
                     <AvatarFallback className="text-2xl uppercase font-semibold bg-primary text-primary-foreground">
                       {profile.email.split("@")[0][0] || "UN"}
                     </AvatarFallback>

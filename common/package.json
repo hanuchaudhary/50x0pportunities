@@ -1,5 +1,5 @@
 {
- "name": "@hanuchaudhary/job",  "version": "1.0.8",
+ "name": "@hanuchaudhary/job",  "version": "1.0.9",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
