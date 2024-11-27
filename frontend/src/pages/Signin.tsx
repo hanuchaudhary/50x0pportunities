@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,7 +19,7 @@ import {
 } from "@/components/ui/form"
 import { WEB_URL } from "@/Config"
 import { toast } from "@/hooks/use-toast"
-import { signinValidation } from "@/lib/validations"
+import { signinValidation } from "@hanuchaudhary/job"
 
 type SigninValues = z.infer<typeof signinValidation>
 

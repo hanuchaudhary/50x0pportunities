@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -26,50 +26,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useFetchCompanies } from "@/hooks/FetchCompanies";
 import { getAuthHeaders } from "@/store/profileState";
 import { WEB_URL } from "@/Config";
 import { CompanyDrawer } from "@/components/CreateCompany";
 import { useNavigate } from "react-router-dom";
+import { useCompaniesStore } from "@/store/companiesState";
 
-const formSchema = z.object({
-  title: z.string().min(2, {
-    message: "Job title must be at least 2 characters.",
-  }),
-  description: z.string().min(10, {
-    message: "Job description must be at least 10 characters.",
-  }),
-  location: z.string().min(1, {
-    message: "Please select a location.",
-  }),
-  type: z.string().min(1, {
-    message: "Please select a job type.",
-  }),
-  jobRole: z.string().min(1, {
-    message: "Please select a job jobRole.",
-  }),
-  companyId: z.string().min(1, {
-    message: "Please select a company.",
-  }),
-  isOpen: z.boolean(),
-  requirement: z.string().min(10, {
-    message: "Requirements must be at least 10 characters.",
-  }),
-});
+import { jobValidation } from "@hanuchaudhary/job";
 
 export default function Dashboard() {
-  const { companies } = useFetchCompanies();
-  const { Authorization } = getAuthHeaders();
+  const { companies, fetchCompanies } = useCompaniesStore();
+
+  useEffect(() => {
+    fetchCompanies();
+  }, []);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof jobValidation>>({
+    resolver: zodResolver(jobValidation),
     defaultValues: {
       title: "",
       description: "",
       location: "",
-      type: "",
       jobRole: "",
       companyId: "",
       isOpen: true,
@@ -77,11 +56,11 @@ export default function Dashboard() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof jobValidation>) {
     setLoading(true);
     try {
       await axios.post(`${WEB_URL}/api/v1/job/create`, values, {
-        headers: { Authorization },
+        headers: { Authorization : getAuthHeaders().Authorization },
       });
       toast({
         title: "Success",
@@ -101,7 +80,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="container mx-auto px-4 md:px-32 pt-24 py-8">
+    <div className="container mx-auto px-4 md:px-40 pt-24 py-8">
       <h1 className="text-3xl font-bold text-center mb-8">
         Create a New Job Posting
       </h1>
@@ -186,9 +165,7 @@ export default function Dashboard() {
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="OnSite">On Site</SelectItem>
-                      <SelectItem value="Remote">
-                        Remote
-                      </SelectItem>
+                      <SelectItem value="Remote">Remote</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

@@ -20,7 +20,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { WEB_URL } from "@/Config";
 import useProfileStore, { getAuthHeaders } from "@/store/profileState";
-import { editProfileSchema } from "@/lib/validations";
+import { editProfileValidation } from "@hanuchaudhary/job";
 import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
 import {
   Select,
@@ -46,8 +46,8 @@ export default function EditUserDetails() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [resumeName, setResumeName] = useState<string | null>(null);
   const { Authorization } = getAuthHeaders();
-  const form = useForm<z.infer<typeof editProfileSchema>>({
-    resolver: zodResolver(editProfileSchema),
+  const form = useForm<z.infer<typeof editProfileValidation>>({
+    resolver: zodResolver(editProfileValidation),
     defaultValues: {
       fullName: profile.fullName,
       skills: profile.skills,
@@ -57,7 +57,7 @@ export default function EditUserDetails() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof editProfileSchema>) {
+  async function onSubmit(values: z.infer<typeof editProfileValidation>) {
     try {
       setIsLoading(true);
       const formData = new FormData();
@@ -133,7 +133,7 @@ export default function EditUserDetails() {
   };
 
   return (
-    <div className="mt-24 w-full max-w-4xl mx-auto">
+    <div className="mt-24 w-full max-w-4xl px-2 mx-auto">
       <Link to="/profile" replace={true}>
         <Button size="sm" variant="outline" className="my-2">
           Back

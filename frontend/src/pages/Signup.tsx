@@ -1,4 +1,3 @@
-'use client'
 
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -36,7 +35,7 @@ import {
 import { toast } from "@/hooks/use-toast"
 
 import { WEB_URL } from "@/Config"
-import { signupValidation } from "@/lib/validations"
+import { signupValidation } from "@hanuchaudhary/job"
 
 type SignupValues = z.infer<typeof signupValidation>
 
@@ -49,7 +48,6 @@ export default function SignupPage() {
     defaultValues: {
       email: "",
       password: "",
-      role: "Candidate",
     },
   })
 

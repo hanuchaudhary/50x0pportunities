@@ -64,6 +64,7 @@ model Job {
   company        Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
   jobApplication jobApplication[]
   savedJobs      SavedJobs[]
+  
 }
 
 model SavedJobs {

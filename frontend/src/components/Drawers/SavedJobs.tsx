@@ -43,14 +43,11 @@ export default function SavedJobs() {
                     <Loader2 className="animate-spin" />
                   </div>
                 ) : (
-                  data?.map(({ job }) => {
-                    return (
-                      <JobCard
-                        key={job.id}
-                        {...job}
-                      />
-                    );
-                  })
+                  <div className="grid md:grid-cols-3 grid-cols-1 gap-2">
+                    {data?.map(({ job }) => {
+                      return <JobCard key={job.id} {...job} />;
+                    })}
+                  </div>
                 )
               ) : (
                 <div>No Job Found</div>

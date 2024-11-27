@@ -24,6 +24,7 @@ import {
 import { WEB_URL } from "@/Config";
 import { toast } from "@/hooks/use-toast";
 import { getAuthHeaders } from "@/store/profileState";
+import { useCreatedJobsStore } from "@/store/userJobsStore";
 
 interface editTypes {
   isOpen: boolean;
@@ -31,6 +32,7 @@ interface editTypes {
 }
 
 export default function EditJob({ isOpen, id }: editTypes) {
+  const { fetchCreatedJobs } = useCreatedJobsStore();
   const [delLoading, setDelLoading] = useState(false);
   const [openLoading, setOpenLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -49,6 +51,7 @@ export default function EditJob({ isOpen, id }: editTypes) {
         }
       );
       if (response) {
+        fetchCreatedJobs();
         setDelLoading(false);
         setDialogOpen(false);
         setAlertDialogOpen(false);
@@ -81,6 +84,7 @@ export default function EditJob({ isOpen, id }: editTypes) {
         }
       );
       if (response.status === 200) {
+        fetchCreatedJobs();
         setOpenLoading(false);
         setDialogOpen(false);
         toast({

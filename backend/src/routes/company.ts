@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
-import { companyValidation, jobValidation } from "../Validation";
+import { companyValidation } from "@hanuchaudhary/job";
 
 export const companyRouter = new Hono<{
     Bindings: {

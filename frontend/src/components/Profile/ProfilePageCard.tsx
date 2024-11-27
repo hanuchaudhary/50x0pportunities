@@ -18,8 +18,8 @@ export default function ProfilePageCard(user: User) {
   return (
     <Card className="w-full dark:bg-zinc-900 bg-blue-50 bg-opacity-75">
       <div className="p-2">
-        <CardHeader className="flex rounded-lg dark:bg-zinc-800 bg-blue-100 md:flex-row gap-4 items-center space-y-4 md:text-start text-center">
-          <Avatar className="w-40 h-40">
+        <CardHeader className="flex rounded-lg dark:bg-zinc-800 bg-blue-100 md:flex-row md:gap-4 items-center space-y-4 md:text-start text-center">
+          <Avatar className="md:w-40 md:h-40 h-20 w-20">
             <AvatarImage src={user.avatar} alt={user.fullName} />
             <AvatarFallback className="text-4xl bg-red-900 font-bold uppercase">
               {user.email.length > 0
@@ -94,10 +94,14 @@ export default function ProfilePageCard(user: User) {
       </CardContent>
 
       <CardFooter className="flex justify-between">
-        {role === "Candidate" && (
+        {role === "Candidate" ? (
           <Button variant="outline" asChild>
             <Link to="/edit">Edit Profile</Link>
           </Button>
+        ) : (
+          <Link to={"/dashboard"}>
+            <Button size={"sm"} variant={"outline"}>Create Job</Button>
+          </Link>
         )}
         <DeactivateAccout />
       </CardFooter>

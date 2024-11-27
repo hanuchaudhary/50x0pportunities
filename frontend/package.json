@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hanuchaudhary/job": "^1.0.7",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-avatar": "^1.1.0",
@@ -29,7 +30,7 @@
     "clsx": "^2.1.1",
     "country-state-city": "^3.2.1",
     "date-fns": "^4.1.0",
-    "framer-motion": "^11.9.0",
+    "framer-motion": "^11.11.17",
     "lucide-react": "^0.446.0",
     "mini-svg-data-uri": "^1.4.4",
     "react": "^18.3.1",

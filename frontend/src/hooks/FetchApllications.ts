@@ -36,5 +36,5 @@ export const useApplications = () => {
         }
     }, [id, token]);
 
-    return { loading, applications }; // Returns loading status and job data
+    return { loading, applications }; 
 };

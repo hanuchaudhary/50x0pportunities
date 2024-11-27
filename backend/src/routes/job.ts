@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
-import { jobValidation } from "../Validation";
+import { jobValidation } from "@hanuchaudhary/job";
 
 export const jobRouter = new Hono<{
     Bindings: {
@@ -383,7 +383,6 @@ jobRouter.put("/open", async (c) => {
 
 
 //saved jobs route
-
 jobRouter.post("/save", async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -396,59 +395,75 @@ jobRouter.post("/save", async (c) => {
         if (!jobId) {
             return c.json({
                 success: false,
-                message: "Job ID is required"
+                message: "Job ID is required",
             }, 400);
         }
 
         const user = await prisma.user.findUnique({
-            where :{
-                id:  userId,
-            }
-        })
-
-        if (user?.role != "Candidate") {
-            return c.json({
-                success : false,
-                message : "Only Candidate can Save Jobs",
-            },403)
-        }
-
-        const existJob = await prisma.savedJobs.findFirst({
-            where: {
-                userId, jobId
-            }
+            where: { id: userId },
         });
 
-        if (existJob) {
-            await prisma.savedJobs.delete({
-                where: {
-                    id: existJob.id
-                }
-            })
-
+        if (!user) {
             return c.json({
-                success : true,
-                message : "Job Unsaved",
-            })
+                success: false,
+                message: "User not found",
+            }, 404);
         }
 
-        const saveJob = await prisma.savedJobs.create({
-            data: {
-                jobId, userId
-            }
-        })
+        if (user.role !== "Candidate") {
+            return c.json({
+                success: false,
+                message: "Only Candidates can save jobs",
+            }, 403);
+        }
+
+        const jobExists = await prisma.job.findUnique({
+            where: { id: jobId },
+        });
+
+        if (!jobExists) {
+            return c.json({
+                success: false,
+                message: "Job does not exist",
+            }, 404);
+        }
+
+        const existingJob = await prisma.savedJobs.findFirst({
+            where: { userId, jobId },
+        });
+
+        if (existingJob) {
+            await prisma.savedJobs.delete({
+                where: { id: existingJob.id },
+            });
+
+            return c.json({
+                success: true,
+                message: "Job unsaved successfully",
+                jobId,
+            }, 200);
+        }
+
+        const savedJob = await prisma.savedJobs.create({
+            data: { userId, jobId },
+        });
 
         return c.json({
             success: true,
             message: "Job saved successfully",
-            saveJob
+            savedJob,
         }, 201);
 
     } catch (error: any) {
+        console.error("Error saving job:", error);
+
         return c.json({
             success: false,
             message: "Server error during saving job",
             error: error.message,
         }, 500);
+    } finally {
+        await prisma.$disconnect();
     }
 });
+

@@ -51,6 +51,7 @@ export default function DeactivateAccout() {
         }
         localStorage.removeItem("role");
         localStorage.removeItem("token");
+        localStorage.removeItem("savedJobs");
         navigate("/signup");
 
       } catch (error) {

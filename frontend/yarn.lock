@@ -615,6 +615,13 @@
   resolved "https://registry.npmjs.org/@floating-ui/utils/-/utils-0.2.8.tgz"
   integrity sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig==
 
+"@hanuchaudhary/job@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.npmjs.org/@hanuchaudhary/job/-/job-1.0.7.tgz"
+  integrity sha512-6e/pJ8YgV+ZfdEUtdDDIeQs8cCASH020TirU07Tqirl5AqK+dva6emxkXqcbxlFllw18A9ABVm7qbDu3Ll8Sew==
+  dependencies:
+    zod "^3.23.8"
+
 "@hookform/resolvers@^3.9.1":
   version "3.9.1"
   resolved "https://registry.npmjs.org/@hookform/resolvers/-/resolvers-3.9.1.tgz"
@@ -2266,10 +2273,10 @@ fraction.js@^4.3.7:
   resolved "https://registry.npmjs.org/fraction.js/-/fraction.js-4.3.7.tgz"
   integrity sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==
 
-framer-motion@^11.9.0:
-  version "11.9.0"
-  resolved "https://registry.npmjs.org/framer-motion/-/framer-motion-11.9.0.tgz"
-  integrity sha512-nCfGxvsQecVLjjYDu35G2F5ls+ArE3FBfhxV0RSiisMaUKqteq5DMBFNRKwMyVj+VqKTNhawt+BV480YCHKFlQ==
+framer-motion@^11.11.17:
+  version "11.11.17"
+  resolved "https://registry.npmjs.org/framer-motion/-/framer-motion-11.11.17.tgz"
+  integrity sha512-O8QzvoKiuzI5HSAHbcYuL6xU+ZLXbrH7C8Akaato4JzQbX2ULNeniqC2Vo5eiCtFktX9XsJ+7nUhxcl2E2IjpA==
   dependencies:
     tslib "^2.4.0"
 

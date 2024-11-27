@@ -2,8 +2,8 @@ import { Hono } from 'hono';
 import bcrypt from 'bcryptjs';
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
-import { verify, sign, jwt } from "hono/jwt";
-import { applicationValidation, signinValidation, signupValidation, statusValidation } from '../Validation';
+import { verify } from "hono/jwt";
+import { applicationValidation, signinValidation, signupValidation, statusValidation } from '@hanuchaudhary/job';
 import { Jwt } from 'hono/utils/jwt';
 
 export const userRouter = new Hono<{
@@ -204,7 +204,6 @@ userRouter.get('/bulk', async (c) => {
     }
 });
 
-
 userRouter.get('/me', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -226,9 +225,9 @@ userRouter.get('/me', async (c) => {
                 education: true,
                 experience: true,
                 _count: {
-                    select:{
+                    select: {
                         createdJobs: true,
-                        jobApplication:true,
+                        jobApplication: true,
                         savedJobs: true
                     }
                 }
@@ -613,21 +612,3 @@ userRouter.put("/status", async (c) => {
         }, 500);
     }
 });
-
-
-// userRouter.post("/delall", async (c) => {
-//     const prisma = new PrismaClient({
-//         datasourceUrl: c.env.DATABASE_URL,
-//     }).$extends(withAccelerate());
-
-//     const del =  await prisma.user.deleteMany({
-//         where :{
-//             role : 'Recruiter'
-//         }
-//     })
-
-//     return c.json({
-//         success : true,
-//         del
-//     },201)
-// })

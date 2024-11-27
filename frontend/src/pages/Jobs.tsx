@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { State } from "country-state-city";
+import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,10 +12,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import JobCard from "@/components/JobCard";
-import { useFetchCompanies } from "@/hooks/FetchCompanies";
 import { BarLoader } from "react-spinners";
 import { useJobsStore } from "@/store/jobsState";
 import useProfileStore from "@/store/profileState";
+import { Search, MapPin, Building, X } from 'lucide-react';
+import { useCompaniesStore } from "@/store/companiesState";
 
 export default function Jobs() {
   const { fetchProfile } = useProfileStore();
@@ -22,11 +24,11 @@ export default function Jobs() {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-      fetchJobs(filter);
-      fetchProfile();
+    fetchJobs(filter);
+    fetchProfile();
   }, [filter]);
 
-  const { companies } = useFetchCompanies();
+  const { companies } = useCompaniesStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [selectedCompany, setSelectedCompany] = useState("");
@@ -54,24 +56,38 @@ export default function Jobs() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-3 md:pt-32 pt-24 pb-4 lg:px-8">
-        <h1 className="text-3xl font-bold text-center mb-8 sm:text-4xl">
-          Latest Jobs
-        </h1>
-        <section className="space-y-3 mb-12">
-          <Input
-            value={searchTerm}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="w-full dark:bg-neutral-900 dark:bg-opacity-50"
-            placeholder="Search by title or location"
-          />
-          <div className="grid gap-2 sm:grid-cols-3">
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
+      <main className="container mx-auto px-4 md:pt-32 pt-24 pb-12 lg:px-8">
+        <motion.h1 
+          className="text-4xl font-bold text-center mb-12 sm:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Discover Your Next Opportunity
+        </motion.h1>
+        <motion.section 
+          className="space-y-4 mb-16 max-w-4xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <div className="relative">
+            <Input
+              value={searchTerm}
+              onChange={(e) => handleSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 rounded-full shadow-lg dark:bg-neutral-800 dark:bg-opacity-50 focus:ring-2 focus:ring-primary transition-all duration-300"
+              placeholder="Search by title or location"
+            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
             <Select value={selectedState} onValueChange={handleStateChange}>
-              <SelectTrigger className="dark:bg-neutral-900 dark:bg-opacity-50">
+              <SelectTrigger className="rounded-full shadow-md dark:bg-neutral-800 dark:bg-opacity-50 focus:ring-2 focus:ring-primary transition-all duration-300">
+                <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
                 <SelectValue placeholder="Select State" />
               </SelectTrigger>
-              <SelectContent className="dark:bg-neutral-900 dark:bg-opacity-85 backdrop-blur-lg">
+              <SelectContent className="dark:bg-neutral-800 dark:bg-opacity-85 backdrop-blur-lg rounded-lg">
                 {State.getStatesOfCountry("IN").map((item: any) => (
                   <SelectItem key={item.isoCode} value={item.name}>
                     {item.name}
@@ -80,10 +96,11 @@ export default function Jobs() {
               </SelectContent>
             </Select>
             <Select value={selectedCompany} onValueChange={handleCompanyChange}>
-              <SelectTrigger className="dark:bg-neutral-900 dark:bg-opacity-50">
+              <SelectTrigger className="rounded-full shadow-md dark:bg-neutral-800 dark:bg-opacity-50 focus:ring-2 focus:ring-primary transition-all duration-300">
+                <Building className="w-4 h-4 mr-2 text-muted-foreground" />
                 <SelectValue placeholder="Select Company" />
               </SelectTrigger>
-              <SelectContent className="dark:bg-neutral-900 dark:bg-opacity-85 backdrop-blur-lg">
+              <SelectContent className="dark:bg-neutral-800 dark:bg-opacity-85 backdrop-blur-lg rounded-lg">
                 {companies.length > 0 ? (
                   companies.map((item) => (
                     <SelectItem key={item.id} value={item.id}>
@@ -97,38 +114,55 @@ export default function Jobs() {
             </Select>
             <Button
               onClick={clearFilters}
-              variant="destructive"
-              className="w-full"
+              variant="outline"
+              className="rounded-full shadow-md hover:bg-destructive hover:text-destructive-foreground transition-all duration-300"
             >
+              <X className="w-4 h-4 mr-2" />
               Clear Filters
             </Button>
           </div>
-        </section>
+        </motion.section>
         <div>
           {loading ? (
-            <div className="flex justify-center items-center w-full">
-              <BarLoader color="white" width={"100%"} />
+            <div className="flex justify-center items-center w-full h-64">
+              <BarLoader color="hsl(var(--primary))" width={150} />
             </div>
           ) : (
-            <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <motion.section 
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
               {jobs.length > 0 ? (
-                jobs.map((job) => (
-                  <JobCard
+                jobs.map((job, index) => (
+                  <motion.div
                     key={job.id}
-                    {...job}
-                  />
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <JobCard {...job} />
+                  </motion.div>
                 ))
               ) : (
-                <div>
-                  <h1 className="bg-red-300 text-red-950 font-semibold rounded-md  px-2 select-none">
-                    !No Job Available
-                  </h1>
-                </div>
+                <motion.div
+                  className="col-span-full text-center py-12"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <h2 className="text-2xl font-semibold mb-4">No Jobs Available</h2>
+                  <p className="text-muted-foreground">
+                    We couldn't find any jobs matching your criteria. Try adjusting your filters or check back later.
+                  </p>
+                </motion.div>
               )}
-            </section>
+            </motion.section>
           )}
         </div>
       </main>
     </div>
   );
 }
+
