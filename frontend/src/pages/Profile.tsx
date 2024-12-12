@@ -7,16 +7,15 @@ import useProfileState from "@/store/profileState";
 import AppliedJobs from "@/components/Drawers/AppliedJobs";
 import ProfilePageCard from "@/components/Profile/ProfilePageCard";
 import { Role } from "@/types/types";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { ChevronLeft,Briefcase } from 'lucide-react';
+import { Briefcase } from "lucide-react";
+import BackButton from "@/components/BackButton";
 
 export default function Profile() {
   const { fetchProfile, isLoading, profile } = useProfileState();
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [fetchProfile]);
 
   if (isLoading) {
     return (
@@ -35,21 +34,12 @@ export default function Profile() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="container mt-20 md:mt-24 p-3 min-h-screen bg-gradient-to-b from-background to-background/80"
+      className="container mt-20 md:mt-24 p-3 bg-gradient-to-b from-background to-background/80"
     >
       <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Link to="/jobs">
-            <Button size={"sm"} variant={"outline"} className="flex items-center my-3 hover:bg-primary hover:text-primary-foreground transition-colors duration-300">
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Back to Jobs
-            </Button>
-          </Link>
-        </motion.div>
+        <div className="mb-3">
+          <BackButton href="/jobs" title="Back to jobs" />
+        </div>
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -97,4 +87,3 @@ export default function Profile() {
     </motion.div>
   );
 }
-

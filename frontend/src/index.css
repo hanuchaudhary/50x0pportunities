@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -66,6 +65,15 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  @font-face {
+    font-family: 'instrument-regular';
+    font-style: normal;
+    font-display: swap;
+    src: url(/fonts/InstrumentSerif-Regular.ttf) format('ttf');
   }
 }
 

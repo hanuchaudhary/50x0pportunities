@@ -19,7 +19,7 @@ export const userRouter = new Hono<{
 
 userRouter.use("/*", async (c, next) => {
     const path = c.req.url;
-    if (path.includes("/signin") || path.includes("/signup")) {
+    if (path.includes("/signin") || path.includes("/signup") || path.includes("/forgot-password") || path.includes("/set-password")) {
         await next();
         return;
     }
@@ -163,7 +163,9 @@ userRouter.post('/signin', async (c) => {
             success: true,
             message: 'User signed in successfully',
             token,
-            user
+            user : {
+                email,
+            }
         }, 200);
     } catch (error: any) {
         return c.json({
@@ -315,6 +317,76 @@ userRouter.put('/update-password', async (c) => {
         }, 500);
     }
 });
+
+userRouter.post('/forgot-password', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    try {
+        const { email } = await c.req.json();
+        const user = await prisma.user.findUnique({
+            where: { email },
+        });
+
+        if (!user) {
+            return c.json({
+                success: false,
+                message: 'Account not found with this email',
+            }, 404);
+        }
+
+        return c.json({
+            success: true,
+            message: 'User Found',
+        }, 201);
+
+    } catch (error: any) {
+        return c.json({
+            success: false,
+            message: 'Server error during sending email',
+            error: error.message,
+        }, 500);
+    }
+
+}
+);
+
+userRouter.put('/set-password', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    try {
+        const { password , email} = await c.req.json();
+        const user = await prisma.user.findUnique({
+            where: { email },
+        });
+
+        const newPassword = await bcrypt.hash(password, 10);
+
+        await prisma.user.update({
+            where: { id: user?.id },
+            data: {
+                password: newPassword
+            }
+        });
+
+        return c.json({
+            success: true,
+            message: 'Password updated successfully',
+        }, 201);
+
+    } catch (error: any) {
+        return c.json({
+            success: false,
+            message: 'Server error during sending email',
+            error: error.message,
+        }, 500);
+    }
+
+}
+);
 
 userRouter.put('/update-profile', async (c) => {
     const prisma = new PrismaClient({

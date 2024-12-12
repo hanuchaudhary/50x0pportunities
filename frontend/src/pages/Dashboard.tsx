@@ -6,8 +6,6 @@ import { State } from "country-state-city";
 import MarkdownEditor from "@uiw/react-markdown-editor";
 import axios from "axios";
 import { toast } from "@/hooks/use-toast";
-
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -33,6 +31,7 @@ import { useNavigate } from "react-router-dom";
 import { useCompaniesStore } from "@/store/companiesState";
 
 import { jobValidation } from "@hanuchaudhary/job";
+import LoadingButton from "@/components/LoadingButton";
 
 export default function Dashboard() {
   const { companies, fetchCompanies } = useCompaniesStore();
@@ -60,7 +59,7 @@ export default function Dashboard() {
     setLoading(true);
     try {
       await axios.post(`${WEB_URL}/api/v1/job/create`, values, {
-        headers: { Authorization : getAuthHeaders().Authorization },
+        headers: { Authorization: getAuthHeaders().Authorization },
       });
       toast({
         title: "Success",
@@ -261,9 +260,14 @@ export default function Dashboard() {
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Creating..." : "Create Job Posting"}
-          </Button>
+          <div className="flex justify-center">
+            <LoadingButton
+              isLoading={loading}
+              loadingTitle="Creating..."
+              title="Create Job"
+              type="submit"
+            />
+          </div>
         </form>
       </Form>
     </div>

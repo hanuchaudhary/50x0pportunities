@@ -1,4 +1,5 @@
 import ApplyForJob from "@/components/ApplyForJob";
+import BackButton from "@/components/BackButton";
 import SingleJobSkeleton from "@/components/SingleJobSkeleton";
 import { useSingleJobStore } from "@/store/useSingleJobState";
 import MarkdownEditor from "@uiw/react-markdown-editor";
@@ -12,17 +13,20 @@ const FullViewJob = () => {
   useEffect(() => {
     fetchSingleJob(id as string);
   }, []);
-  
+
   console.log(singleJob);
 
   const role = localStorage.getItem("role");
   return (
     <div>
-      <div className="pt-28 px-4 md:px-40">
+      <div className="pt-28 px-5 md:max-w-3xl lg:max-w-4xl mx-auto">
         {isLoading ? (
           <SingleJobSkeleton />
         ) : (
           <>
+            <div>
+              <BackButton href="/jobs" title="Back to jobs" />
+            </div>
             <div className="title flex items-center justify-between">
               <h1 className="text-3xl capitalize font-semibold">
                 {singleJob?.title || "Job Title"}{" "}

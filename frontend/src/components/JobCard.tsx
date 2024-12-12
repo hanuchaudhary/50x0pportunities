@@ -132,7 +132,7 @@ const JobCard = (job: CardType) => {
             <div className="logo">
               {job.company.logo && (
                 <img
-                  className="w-16 h-16 object-contain rounded-full"
+                  className="w-16 h-16 object-contain"
                   src={job.company.logo}
                   alt={`${job.company.name} logo`}
                 />

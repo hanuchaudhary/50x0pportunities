@@ -34,9 +34,9 @@ export default function Navbar() {
     <div className="w-full flex justify-center fixed top-4 left-0 right-0 z-50 px-4">
       <header className="flex w-full justify-between bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:px-3 py-3 rounded-2xl">
         <div className="container flex justify-between items-center">
-          <Link to="/jobs" className="md:text-2xl font-bold text-primary">
-            50<span className="text-blue-500">x</span>Opportunities
-          </Link>
+          <div className="md:text-xl select-none leading-none tracking-tighter font-[instrumental-regular] text-primary">
+            50<span className="text-green-500">x</span>Opportunities
+          </div>
           <div className="flex items-center space-x-1 md:space-x-4">
             <Button
               variant="ghost"
@@ -56,21 +56,27 @@ export default function Navbar() {
               path !== "/signin" &&
               path !== "/signup" && (
                 <Link to={"/dashboard"}>
-                  <Button size={"sm"}>Post Job</Button>
+                  <Button variant={"green"} className="rounded-xl" size={"sm"}>Create Job</Button>
                 </Link>
               )}
             {path === "/" || path === "/signup" || path === "/signin" ? (
-              <Button size={"sm"} asChild>
-                <Link to="/signin">Sign in</Link>
-              </Button>
+              <Link to="/signin">
+                <Button variant={"green"} size={"sm"} asChild>
+                  Sign in
+                </Button>
+              </Link>
             ) : (
               <Avatar
                 onClick={() => setMenu((prev) => !prev)}
                 className="cursor-pointer hover:ring-2 hover:ring-primary transition-all duration-200"
               >
-                <AvatarImage className="object-cover" src={profile?.avatar} alt="@shadcn" />
+                <AvatarImage
+                  className="object-cover"
+                  src={profile?.avatar}
+                  alt="@shadcn"
+                />
                 <AvatarFallback className="uppercase font-semibold">
-                  <User2Icon/>
+                  <User2Icon />
                 </AvatarFallback>
               </Avatar>
             )}

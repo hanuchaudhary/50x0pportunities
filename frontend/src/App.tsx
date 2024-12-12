@@ -14,6 +14,8 @@ import Profile from './pages/Profile'
 import SignupPage from './pages/Signup'
 import SigninPage from './pages/Signin'
 import EditUserDetails from './pages/EditUserDetails'
+import ForgotPassword from './pages/ForgotPass/ForgotPassword'
+import SetNewPassword from './pages/ForgotPass/SetPassword'
 
 type Role = 'Candidate' | 'Employer' | null
 
@@ -76,6 +78,22 @@ const App: React.FC = () => {
           element={
             <PageTransition>
               <SigninPage />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <PageTransition>
+              <ForgotPassword />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/set-password/:email"
+          element={
+            <PageTransition>
+              <SetNewPassword />
             </PageTransition>
           }
         />

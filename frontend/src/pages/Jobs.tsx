@@ -26,7 +26,7 @@ export default function Jobs() {
   useEffect(() => {
     fetchJobs(filter);
     fetchProfile();
-  }, [filter]);
+  }, [filter,fetchJobs,fetchProfile]);
 
   const { companies } = useCompaniesStore();
   const [searchTerm, setSearchTerm] = useState("");
@@ -122,7 +122,7 @@ export default function Jobs() {
             </Button>
           </div>
         </motion.section>
-        <div>
+        <div className="max-w-6xl mx-auto">
           {loading ? (
             <div className="flex justify-center items-center w-full h-64">
               <BarLoader color="hsl(var(--primary))" width={150} />
