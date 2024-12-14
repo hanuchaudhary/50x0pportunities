@@ -165,6 +165,7 @@ userRouter.post('/signin', async (c) => {
             token,
             user : {
                 email,
+                role: user.role,
             }
         }, 200);
     } catch (error: any) {
@@ -256,7 +257,6 @@ userRouter.get('/me', async (c) => {
         }, 500);
     }
 });
-
 
 userRouter.post('/remove', async (c) => {
     const prisma = new PrismaClient({
@@ -612,6 +612,49 @@ userRouter.get("/allapplications/:id", async (c) => {
         );
     }
 });
+
+userRouter.get("/job-count",async (c)=> {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const userId = c.get("userId");
+
+        const userJobCount = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }, include: {
+                _count: {
+                    select: {
+                        createdJobs: true,
+                        savedJobs: true,
+                        jobApplication: true
+                    }
+                }
+            }
+        })
+
+        return c.json({
+            success: true,
+            message: "Job count fetched successfully",
+            userJobCount: {
+                createdJobs: userJobCount?._count.createdJobs,
+                savedJobs: userJobCount?._count.savedJobs,
+                appliedJobs: userJobCount?._count.jobApplication
+            }
+        }, 200)
+
+    } catch (error: any) {
+        return c.json({
+            success: false,
+            message: 'Server error during fetching job count',
+            error: error.message,
+        }, 500);
+    }
+});
+
+
 
 //update status route
 

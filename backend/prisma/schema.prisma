@@ -13,8 +13,17 @@ enum Role {
 }
 
 enum jobType {
+  FullTime
+  PartTime
+  Contract
+  Internship
+  Temporary
+  Volunteer
   Remote
-  OnSite
+  Freelance
+  Apprenticeship
+  Seasonal
+  Other
 }
 
 enum applicationStatus {
@@ -50,21 +59,25 @@ model Company {
 
 model Job {
   id             String           @unique @default(uuid())
-  recruiterId    String
-  companyId      String?
-  jobRole        String           @default("")
   title          String
+  companyId      String?
+  position       String           @default("")
   description    String
+  skills         String           @default("")
   location       String
-  type           jobType
+  experience     String           @default("")
+  package        String           @default("")
+  jobType           jobType
+  salaryFrom     String           @default("")
+  salaryTo       String           @default("")
   requirement    String
   isOpen         Boolean          @default(true)
   createdAt      DateTime         @default(now())
+  recruiterId    String
   recruiter      User             @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   company        Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
   jobApplication jobApplication[]
   savedJobs      SavedJobs[]
-  
 }
 
 model SavedJobs {

@@ -23,7 +23,6 @@ const useProfileStore = create<ProfileState>((set) => ({
   profile: {} as User,
   isLoading: false,
   error: null,
-
   fetchProfile: async () => {
     set({ isLoading: true, error: null });
     try {

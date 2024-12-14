@@ -1,89 +1,116 @@
 import ApplyForJob from "@/components/ApplyForJob";
 import BackButton from "@/components/BackButton";
-import SingleJobSkeleton from "@/components/SingleJobSkeleton";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { useSingleJobStore } from "@/store/useSingleJobState";
 import MarkdownEditor from "@uiw/react-markdown-editor";
-import { MapPin } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 const FullViewJob = () => {
   const { id } = useParams();
-  const { fetchSingleJob, isLoading, singleJob } = useSingleJobStore();
+  const { fetchSingleJob, fetchIsApplied, isApplied, isLoading, singleJob } =
+    useSingleJobStore();
   useEffect(() => {
+    fetchIsApplied(id as string);
     fetchSingleJob(id as string);
-  }, []);
-
-  console.log(singleJob);
+  }, [fetchSingleJob, fetchIsApplied, id]);
 
   const role = localStorage.getItem("role");
-  return (
-    <div>
-      <div className="pt-28 px-5 md:max-w-3xl lg:max-w-4xl mx-auto">
-        {isLoading ? (
-          <SingleJobSkeleton />
-        ) : (
-          <>
-            <div>
-              <BackButton href="/jobs" title="Back to jobs" />
-            </div>
-            <div className="title flex items-center justify-between">
-              <h1 className="text-3xl capitalize font-semibold">
-                {singleJob?.title || "Job Title"}{" "}
-                <span className="md:text-sm text-xs bg-green-300 font-bold select-none text-green-900 rounded-md inline-block py-1 px-2 mr-2">
-                  {singleJob?.type?.toString() === "Remote"
-                    ? "Remote"
-                    : "On Site"}
-                </span>
-                {singleJob?.isOpen ? (
-                  <span className="md:text-sm text-xs bg-green-300 font-bold select-none text-green-900 rounded-md inline-block py-1 px-2">
-                    Open For Hiring
-                  </span>
-                ) : (
-                  <span className="text-xs md:text-sm bg-red-300 font-bold select-none text-red-900 rounded-md inline-block py-1 px-2">
-                    Hiring Closed
-                  </span>
-                )}
-              </h1>
-              <div>
-                <img src={singleJob?.company.logo} className="w-20" alt="" />
-              </div>
-            </div>
-            <div className="flex items-center w-full justify-between pt-2">
-              <h1 className="text-xs md:text-sm bg-orange-300 font-semibold text-orange-800 rounded-md inline-block py-1 px-2">
-                {singleJob?.createdAt
-                  ? new Date(singleJob.createdAt).toLocaleDateString("en-US", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })
-                  : "00 September, 0000"}
-              </h1>
 
-              <div className="text-xs md:text-sm bg-orange-300 font-semibold text-orange-800 rounded-md gap-1 py-1 px-2 flex ">
-                <MapPin size={20} />
-                <h1>{singleJob?.location || "Location"}</h1>
-              </div>
-            </div>
-            <div className="desc py-5">
-              {singleJob?.description || "No description available"}
-            </div>
-            <div>
-              <MarkdownEditor.Markdown
-                className="text-black dark:text-neutral-100 bg-background p-2 hover:bg-neutral-100 bg-neutral-200 dark:hover:bg-neutral-800 dark:bg-neutral-900 transition-colors duration-500 rounded-lg"
-                source={singleJob?.requirement || "requirements"}
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[70vh]">
+        <Loader2 className="animate-spin text-green-600" />
+      </div>
+    );
+  }
+  return (
+    <div className="max-w-4xl mx-auto">
+      <div className="py-3">
+        <BackButton href="/jobs" title="" />
+      </div>
+      <Separator />
+      <div>
+        <div className="py-3 dark:bg-neutral-900/30 px-3 bg-neutral-100 my-2 rounded-xl">
+          <div className="flex items-center justify-between pb-8 ">
+            <div className="flex items-center justify-between border dark:border-neutral-800 bg-secondary border-neutral-200 p-2 rounded-3xl w-20 h-20">
+              <img
+                src={singleJob?.company.logo}
+                className="w-full h-full object-contain"
+                alt="company logo"
               />
             </div>
-            <div className="w-full py-5">
-              {role === "Candidate" && singleJob?.isOpen === true && (
-                <ApplyForJob
-                  companyName={singleJob?.company.name as string}
-                  jobTitle={singleJob?.title as string}
-                />
-              )}
+            {role === "Candidate" && (
+              <ApplyForJob
+                companyName={singleJob?.company.name}
+                jobTitle={singleJob?.position}
+                isApplied={isApplied}
+              />
+            )}
+          </div>
+          <div>
+            <h1 className="font-semibold text-2xl">{singleJob?.title}</h1>
+            <div className="flex items-center gap-2 pb-4">
+              <p>at {singleJob?.company.name} |</p>
+              <p>{singleJob?.jobType}</p>
             </div>
-          </>
-        )}
+            <div className="flex gap-8 pb-4">
+              <div>
+                <p className="text-sm dark:text-neutral-400 text-neutral-600">
+                  Experience
+                </p>
+                <p className="text-sm font-semibold">
+                  0 - {singleJob?.experience}Years
+                </p>
+              </div>
+              <div>
+                <p className="text-sm dark:text-neutral-400 text-neutral-600">
+                  Location
+                </p>
+                <p className="text-sm font-semibold">
+                  {singleJob?.jobType === "Remote" ? (
+                    "Remote"
+                  ) : (
+                    <>
+                      ({singleJob?.jobType}) {singleJob?.location}
+                    </>
+                  )}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm dark:text-neutral-400 text-neutral-600">
+                  Role
+                </p>
+                <p className="text-sm font-semibold">{singleJob?.position}</p>
+              </div>
+              <div>
+                <p className="text-sm dark:text-neutral-400 text-neutral-600">
+                  Salary
+                </p>
+                <p className="text-sm font-semibold">
+                  {singleJob?.salaryFrom}Lpa - {singleJob?.salaryTo}Lpa
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <Separator />
+        <div className="py-5">
+          <h1 className="pb-3 font-semibold">Must have Skills</h1>
+          <div className="flex flex-wrap gap-1">
+            {singleJob?.skills.split(",").map((skill) => (
+              <Badge key={skill} variant="outline" className="mr-2">
+                {skill}
+              </Badge>
+            ))}
+            <div className="py-4">
+              <h1 className="pb-3 font-semibold">Job Description</h1>
+              <MarkdownEditor.Markdown source={singleJob?.requirement} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

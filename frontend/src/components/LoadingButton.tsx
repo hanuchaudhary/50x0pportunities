@@ -8,6 +8,7 @@ interface LoadingButton {
   title: string;
   type: "button" | "submit" | "reset";
   icon?: ReactElement;
+  onClick ?: () => void;
 }
 
 export default function LoadingButton({
@@ -16,9 +17,10 @@ export default function LoadingButton({
   title,
   type,
   icon,
+  onClick
 }: LoadingButton) {
   return (
-    <Button type={type} size={"rounded"} disabled={isLoading}>
+    <Button onClick={onClick} type={type} size={"rounded"} disabled={isLoading}>
       {isLoading ? (
         <div className="flex items-center gap-1">
           <Loader2 className="animate-spin h-4 w-4" />

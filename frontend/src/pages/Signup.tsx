@@ -80,7 +80,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center flex-col bg-background px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center flex-col bg-background px-4 py-12 sm:px-6 lg:px-8">
       <div className="text-center text-4xl py-4">
         <span className="font-[instrument-regular] tracking-tighter leading-none">
           Sign up & create your <span className="text-green-500">profile.</span>
@@ -190,7 +190,7 @@ export default function SignupPage() {
           <Link
             replace
             to="/signin"
-            className="text-primary hover:underline text-green-500 transition-colors font-semibold"
+            className="hover:underline text-green-500 transition-colors font-semibold"
           >
             Sign In
           </Link>

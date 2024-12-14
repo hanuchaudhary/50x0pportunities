@@ -15,13 +15,20 @@ import { useToast } from "@/hooks/use-toast";
 
 import { WEB_URL } from "@/Config";
 import useProfileStore, { getAuthHeaders } from "@/store/profileState";
+import { ArrowUpRight } from "lucide-react";
+import LoadingButton from "./LoadingButton";
 
 interface ApplyForJobProps {
   companyName?: string;
   jobTitle?: string;
+  isApplied?: boolean;
 }
 
-const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
+const ApplyForJob: React.FC<ApplyForJobProps> = ({
+  companyName,
+  jobTitle,
+  isApplied,
+}) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [incompleteProfileDialogOpen, setIncompleteProfileDialogOpen] =
@@ -138,8 +145,8 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
       >
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">
-              Confirm Application
+            <DialogTitle className="text-xl font-[instrumental-regular] font-thin tracking-tighter">
+              Confirm <span className="text-green-500">Application.</span>
             </DialogTitle>
             <DialogDescription className="text-base">
               Are you sure you want to apply for the position of {jobTitle} at{" "}
@@ -160,9 +167,13 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
             >
               Cancel
             </Button>
-            <Button onClick={handleSubmitApplication} disabled={loading}>
-              {loading ? "Submitting..." : "Confirm and Apply"}
-            </Button>
+            <LoadingButton
+              isLoading={loading}
+              loadingTitle="Applying..."
+              title="Confirm and Apply"
+              onClick={handleSubmitApplication}
+              type="button"
+            />
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -171,14 +182,15 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
         <div className="flex justify-center space-x-4">
           <Button
             onClick={handleApplyClick}
-            disabled={loading || success}
-            className="w-full max-w-xs"
+            disabled={loading || success || isApplied}
+            className="rounded-xl"
           >
             {loading
               ? "Submitting Application..."
-              : success
+              : success || isApplied
               ? "Application Submitted"
-              : "Apply Now"}
+              : "Apply"}
+            <ArrowUpRight className="w-5 h-5" />
           </Button>
           <Link to="/profile">
             <Button variant="outline" asChild className="w-full max-w-xs">
@@ -188,8 +200,8 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({ companyName, jobTitle }) => {
         </div>
       </div>
 
-      {success && (
-        <p className="text-center text-green-900 font-semibold rounded-lg bg-green-300">
+      {success || isApplied && (
+        <p className="text-center w-full h-12 fixed bottom-0 left-0 text-base flex items-center justify-center font-semibold bg-green-500/30 backdrop-blur-xl text-green-50 border border-green-700">
           Your application has been successfully submitted. We'll be in touch
           soon!
         </p>

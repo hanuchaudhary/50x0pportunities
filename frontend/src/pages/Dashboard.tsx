@@ -30,32 +30,56 @@ import { CompanyDrawer } from "@/components/CreateCompany";
 import { useNavigate } from "react-router-dom";
 import { useCompaniesStore } from "@/store/companiesState";
 
-import { jobValidation } from "@hanuchaudhary/job";
 import LoadingButton from "@/components/LoadingButton";
+import { Separator } from "@/components/ui/separator";
+import BackButton from "@/components/BackButton";
+import { jobValidation } from "@hanuchaudhary/job";
+
+enum JobType {
+  FullTime = "FullTime",
+  PartTime = "Part Time",
+  Contract = "Contract",
+  Internship = "Internship",
+  Temporary = "Temporary",
+  Volunteer = "Volunteer",
+  Remote = "Remote",
+  Freelance = "Freelance",
+  Apprenticeship = "Apprenticeship",
+  Seasonal = "Seasonal",
+  Other = "Other",
+}
 
 export default function Dashboard() {
   const { companies, fetchCompanies } = useCompaniesStore();
 
   useEffect(() => {
     fetchCompanies();
-  }, []);
+  }, [fetchCompanies]);
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof jobValidation>>({
     resolver: zodResolver(jobValidation),
-    defaultValues: {
-      title: "",
-      description: "",
-      location: "",
-      jobRole: "",
-      companyId: "",
-      isOpen: true,
-      requirement: "# Requirements",
-    },
+    // defaultValues: {
+    //   title: "",
+    //   description: "",
+    //   location: "",
+    //   position: "",
+    //   companyId: "",
+    //   isOpen: true,
+    //   requirement: "# Requirements",
+    //   salaryFrom: "",
+    //   salaryTo: "",
+    //   skills: "",
+    //   experience: 1,
+    // },
   });
-
+  
   async function onSubmit(values: z.infer<typeof jobValidation>) {
+    console.log("clicked");
+    console.log(values);
+
     setLoading(true);
     try {
       await axios.post(`${WEB_URL}/api/v1/job/create`, values, {
@@ -63,8 +87,9 @@ export default function Dashboard() {
       });
       toast({
         title: "Success",
-        description: "Job posted successfully!",
+        description: "Congratulations! Job created successfully.",
       });
+      console.log(values);
       navigate("/jobs", { replace: true });
     } catch (error) {
       console.error(error);
@@ -79,38 +104,43 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="container mx-auto px-4 md:px-40 pt-24 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8">
-        Create a New Job Posting
+    <div className="container max-w-4xl mx-auto px-4 py-8">
+      <BackButton href="/jobs" title="Jobs" replace={true} />
+      <h1 className="text-3xl font-[instrumental-regular] tracking-tighter text-center mb-8">
+        Create a New <span className="text-green-500">Job Posting.</span>
       </h1>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 gap-6">
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Job Title</FormLabel>
-                  <FormControl>
+                <FormItem className="grid grid-cols-4 items-center">
+                  <FormLabel className="text-left">Job Title</FormLabel>
+                  <FormControl className="col-span-3">
                     <Input placeholder="Enter the job title" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormDescription className="col-start-2 col-span-3">
+                    Be specific and include the job role in the title.
+                  </FormDescription>
+                  <FormMessage className="col-start-2 col-span-3" />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="location"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location</FormLabel>
+                <FormItem className="grid grid-cols-4 items-center">
+                  <FormLabel className="text-left">Location</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="col-span-3">
                         <SelectValue placeholder="Select State" />
                       </SelectTrigger>
                     </FormControl>
@@ -122,78 +152,97 @@ export default function Dashboard() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormDescription className="col-start-2 col-span-3">
+                    Select the state where the job is located.
+                  </FormDescription>
+                  <FormMessage className="col-start-2 col-span-3" />
                 </FormItem>
               )}
             />
-          </div>
 
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Job Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Enter job description"
-                    className="min-h-[100px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <FormField
               control={form.control}
-              name="type"
+              name="description"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Job Type</FormLabel>
+                <FormItem className="grid grid-cols-4 items-start">
+                  <FormLabel className="text-left pt-2">
+                    Job Description
+                  </FormLabel>
+                  <FormControl className="col-span-3">
+                    <Textarea
+                      placeholder="Enter job description"
+                      className="min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="col-start-2 col-span-3">
+                    Describe the job role and responsibilities in brief.
+                  </FormDescription>
+                  <FormMessage className="col-start-2 col-span-3" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="jobType"
+              render={({ field }) => (
+                <FormItem className="grid grid-cols-4 items-center">
+                  <FormLabel className="text-left">Job Type</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="col-span-3">
                         <SelectValue placeholder="Select Job Type" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="OnSite">On Site</SelectItem>
-                      <SelectItem value="Remote">Remote</SelectItem>
+                      {Object.entries(JobType).map(([key, value]) => (
+                        <SelectItem key={key} value={key}>
+                          {value}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormDescription className="col-start-2 col-span-3">
+                    Select the type of job you are posting.
+                  </FormDescription>
+                  <FormMessage className="col-start-2 col-span-3" />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
-              name="jobRole"
+              name="position"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Job Role</FormLabel>
-                  <Input placeholder="Enter job role" {...field} />
-                  <FormMessage />
+                <FormItem className="grid grid-cols-4 items-center">
+                  <FormLabel className="text-left">Job Position</FormLabel>
+                  <FormControl className="col-span-3">
+                    <Input placeholder="Data Scientist" {...field} />
+                  </FormControl>
+                  <FormDescription className="col-start-2 col-span-3">
+                    Specify the position or job role.
+                  </FormDescription>
+                  <FormMessage className="col-start-2 col-span-3" />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="isOpen"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Job Status</FormLabel>
+                <FormItem className="grid grid-cols-4 items-center">
+                  <FormLabel className="text-left">Job Status</FormLabel>
                   <Select
                     onValueChange={(value) => field.onChange(value === "true")}
                     defaultValue={String(field.value)}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="col-span-3">
                         <SelectValue placeholder="Select Job Status" />
                       </SelectTrigger>
                     </FormControl>
@@ -202,22 +251,26 @@ export default function Dashboard() {
                       <SelectItem value="false">Closed</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormDescription className="col-start-2 col-span-3">
+                    Select the status of the job posting.
+                  </FormDescription>
+                  <FormMessage className="col-start-2 col-span-3" />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="companyId"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Company</FormLabel>
+                <FormItem className="grid grid-cols-4 items-center">
+                  <FormLabel className="text-left">Company</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="col-span-3">
                         <SelectValue placeholder="Select Company" />
                       </SelectTrigger>
                     </FormControl>
@@ -229,38 +282,133 @@ export default function Dashboard() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormDescription className="col-start-2 col-span-3">
+                    Select the company where the job is posted.
+                  </FormDescription>
+                  <FormMessage className="col-start-2 col-span-3" />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-4 items-center">
+              <div className="col-start-2 col-span-3">
+                <CompanyDrawer />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center">
+              <FormLabel className="text-left">Salary Range</FormLabel>
+              <div className="col-span-3 grid grid-cols-2 gap-3">
+                <FormField
+                  control={form.control}
+                  name="salaryFrom"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Minimum salary"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription className="col-start-2 col-span-3">
+                        Enter the minimum salary for the job.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="salaryTo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Maximum salary"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription className="col-start-2 col-span-3">
+                        Enter the maximum salary for the job.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            <FormField
+              control={form.control}
+              name="skills"
+              render={({ field }) => (
+                <FormItem className="grid grid-cols-4 items-center">
+                  <FormLabel className="text-left">Skills Needed</FormLabel>
+                  <FormControl className="col-span-3">
+                    <Input
+                      placeholder="Enter required skills (comma-separated)"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="col-start-2 col-span-3">
+                    Enter the skills required for the job.
+                  </FormDescription>
+                  <FormMessage className="col-start-2 col-span-3" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="experience"
+              render={({ field }) => (
+                <FormItem className="grid grid-cols-4 items-center">
+                  <FormLabel className="text-left">
+                    Experience (years)
+                  </FormLabel>
+                  <FormControl className="col-span-3">
+                    <Input
+                      type="number"
+                      placeholder="Required years of experience"
+                      value={field.value}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormDescription className="col-start-2 col-span-3">
+                    Enter the minimum years of experience required.
+                  </FormDescription>
+                  <FormMessage className="col-start-2 col-span-3" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="requirement"
+              render={({ field }) => (
+                <FormItem className="grid grid-cols-4 items-start">
+                  <FormLabel className="text-left pt-2">Requirements</FormLabel>
+                  <div className="col-span-3">
+                    <FormControl>
+                      <MarkdownEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                        height="400px"
+                      />
+                    </FormControl>
+                    <FormDescription className="col-start-2 col-span-3">
+                      Use Markdown to format the job requirements.
+                    </FormDescription>
+                    <FormMessage />
+                  </div>
                 </FormItem>
               )}
             />
           </div>
-
-          <div className="flex justify-end">
-            <CompanyDrawer />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="requirement"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Requirements</FormLabel>
-                <FormControl>
-                  <MarkdownEditor
-                    value={field.value}
-                    onChange={field.onChange}
-                    height="200px"
-                  />
-                </FormControl>
-                <FormDescription>
-                  Use Markdown to format the job requirements.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="flex justify-center">
+          <Separator />
+          <div className="flex justify-end mt-8">
             <LoadingButton
               isLoading={loading}
               loadingTitle="Creating..."

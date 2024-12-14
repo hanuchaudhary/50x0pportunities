@@ -1,34 +1,26 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, Sun, User2Icon } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-import { MiniProfile } from "./Profile/MiniProfile";
 import useProfileStore from "@/store/profileState";
+import MiniProfile from "./Profile/MiniProfile";
 
 export default function Navbar() {
-  const { profile } = useProfileStore();
   const { theme, toggleTheme } = useTheme();
-  const role = localStorage.getItem("role");
   const location = useLocation();
   const path = location.pathname;
   const [menu, setMenu] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenu(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [menu]);
+  const handleClose = () => {
+    setMenu(false);
+  };
+  const role =  localStorage.getItem("role");
+  console.log(role);
+  
+  const { profile } = useProfileStore();
 
   return (
     <div className="w-full flex justify-center fixed top-4 left-0 right-0 z-50 px-4">
@@ -38,6 +30,29 @@ export default function Navbar() {
             50<span className="text-green-500">x</span>Opportunities
           </div>
           <div className="flex items-center space-x-1 md:space-x-4">
+            {role === "Recruiter" &&
+            path !== "/" &&
+            path !== "/signin" &&
+            path !== "/signup" ? (
+              <Link to={"/dashboard"}>
+                <Button variant={"green"} className="rounded-xl" size={"sm"}>
+                  Create Job
+                </Button>
+              </Link>
+            ) : (
+              <div className="space-x-2">
+                <Link to={"/edit"}>
+                  <Button variant={"green"} className="rounded-xl" size={"sm"}>
+                    Edit Profile
+                  </Button>
+                </Link>
+                <Link to={"/jobs/user"}>
+                  <Button variant={"green"} className="rounded-xl" size={"sm"}>
+                    Your Jobs
+                  </Button>
+                </Link>
+              </div>
+            )}
             <Button
               variant="ghost"
               size="icon"
@@ -51,18 +66,10 @@ export default function Navbar() {
               )}
               <span className="sr-only">Toggle theme</span>
             </Button>
-            {role === "Recruiter" &&
-              path !== "/" &&
-              path !== "/signin" &&
-              path !== "/signup" && (
-                <Link to={"/dashboard"}>
-                  <Button variant={"green"} className="rounded-xl" size={"sm"}>Create Job</Button>
-                </Link>
-              )}
             {path === "/" || path === "/signup" || path === "/signin" ? (
               <Link to="/signin">
-                <Button variant={"green"} size={"sm"} asChild>
-                  Sign in
+                <Button variant={"green"} className="rounded-xl">
+                  Sign In
                 </Button>
               </Link>
             ) : (
@@ -87,13 +94,12 @@ export default function Navbar() {
         {menu && (
           <motion.div
             className="fixed right-4 lg:right-20 top-24"
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -20}}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            ref={menuRef}
           >
-            <MiniProfile setMenu={setMenu} />
+            <MiniProfile onClose={handleClose} user={profile} />
           </motion.div>
         )}
       </AnimatePresence>

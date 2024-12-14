@@ -1,118 +1,75 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { Link } from "react-router-dom";
-import { User } from "@/types/types";
-import DeactivateAccout from "./DeactivateAccout";
+} from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { MapPin } from 'lucide-react'
+import { User } from "@/types/types"
+
+const navItems = ["WORK", "RESUME", "COLLECTIONS", "ARTICLES", "POSTS"]
 
 export default function ProfilePageCard(user: User) {
-  const role = localStorage.getItem("role");
   return (
-    <Card className="w-full dark:bg-zinc-900 bg-blue-50 bg-opacity-75">
-      <div className="p-2">
-        <CardHeader className="flex rounded-lg dark:bg-zinc-800 bg-blue-100 md:flex-row md:gap-4 items-center space-y-4 md:text-start text-center">
-          <Avatar className="md:w-40 md:h-40 h-20 w-20">
-            <AvatarImage
-              className="object-cover"
-              src={user.avatar}
-              alt={user.fullName}
-            />
-            <AvatarFallback className="text-4xl bg-red-900 font-bold uppercase">
-              {user.email.length > 0
-                ? user.email
-                    .split("@")
-                    .map((n) => n[0])
-                    .join("")
-                : "UN"}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <div>
-              <CardTitle className="text-2xl capitalize">
-                {user.fullName}
-              </CardTitle>
-              <p className="text-muted-foreground">{user.email}</p>
-            </div>
-            <Badge variant="default" className="text-sm">
-              {user.role}
-            </Badge>
+    <Card className="w-full">
+      <div className="flex flex-col items-center py-8">
+        <Avatar className="w-32 h-32 mb-4">
+          <AvatarImage
+            className="object-cover"
+            src={user.avatar}
+            alt={user.fullName}
+          />
+          <AvatarFallback className="text-4xl font-bold uppercase">
+            {user.fullName.split(" ").map((n) => n[0]).join("")}
+          </AvatarFallback>
+        </Avatar>
+        
+        <CardHeader className="text-center space-y-2 pb-0">
+          <CardTitle className="text-3xl font-bold">
+            {user.fullName}
+          </CardTitle>
+          <p className="text-base max-w-xl">{user.bio}</p>
+          <p className="text-lg text-muted-foreground">
+            Education {user.education}
+          </p>
+          <div className="flex items-center justify-center gap-2 text-muted-foreground">
+            <MapPin className="w-4 h-4" />
+            <span>Aligarh, IN</span>
           </div>
         </CardHeader>
-      </div>
-      <CardContent>
-        {role === "Candidate" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-6">
-              <div>
-                <h3 className="font-semibold mb-2">Bio</h3>
-                <p className="text-muted-foreground">{user.bio}</p>
-              </div>
-            </div>
-            <div className="space-y-6 md:border-l md:pl-6">
-              <div>
-                <h3 className="font-semibold mb-2">Education</h3>
-                {user.education.length > 0 ? (
-                  <p>{user.education}</p>
-                ) : (
-                  <p className="text-muted-foreground">
-                    No education information added
-                  </p>
-                )}
-              </div>
-              <Separator className="my-4" />
-              <div>
-                <h3 className="font-semibold mb-2">Experience</h3>
-                {user.experience.length > 0 ? (
-                  <p>{user.experience}</p>
-                ) : (
-                  <p className="text-muted-foreground">
-                    No experience information added
-                  </p>
-                )}
-              </div>
 
-              <Separator className="my-4" />
-              <div>
-                <h3 className="font-semibold mb-2">Skills</h3>
-                <div className="flex flex-wrap gap-2">
-                  {user.skills.length > 0 ? (
-                    user.skills.split(",").map((skill, index) => (
-                      <Badge key={index} variant="destructive">
-                        {skill.trim()}
-                      </Badge>
-                    ))
-                  ) : (
-                    <p className="text-muted-foreground">No skills added</p>
-                  )}
-                </div>
-              </div>
-            </div>
+        <CardContent className="w-full mt-4">
+          <div className="flex flex-wrap gap-3 justify-center mb-8">
+            {user.skills.split(",").map((tech) => (
+              <Badge
+                key={tech}
+                variant="secondary"
+                className="rounded-lg text-sm"
+              >
+                {tech}
+              </Badge>
+            ))}
           </div>
-        )}
-      </CardContent>
 
-      <CardFooter className="flex justify-between">
-        {role === "Candidate" ? (
-          <Button variant="outline" asChild>
-            <Link to="/edit">Edit Profile</Link>
-          </Button>
-        ) : (
-          <Link to={"/dashboard"}>
-            <Button size={"sm"} variant={"outline"}>
-              Create Job
-            </Button>
-          </Link>
-        )}
-        <DeactivateAccout />
-      </CardFooter>
+          <nav className="border-t pt-6">
+            <ul className="flex justify-center gap-8">
+              {navItems.map((item, index) => (
+                <li
+                  key={item}
+                  className={`text-sm font-medium ${
+                    index === 0 ? "text-green-600" : "text-muted-foreground"
+                  }`}
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </CardContent>
+      </div>
     </Card>
-  );
+  )
 }
+

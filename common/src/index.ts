@@ -5,16 +5,26 @@ enum Role {
   Candidate = "Candidate"
 }
 
-enum jobType {
-  OnSite = "OnSite",
-  Remote = "Remote"
-}
-
 enum applicationStatus {
   Rejected = "Rejected",
   Applied = "Applied",
   Interviewing = "Interviewing",
   Hired = "Hired"
+}
+
+
+enum jobType {
+  FullTime = "FullTime",
+  PartTime = "Part Time",
+  Contract = "Contract",
+  Internship = "Internship",
+  Temporary = "Temporary",
+  Volunteer = "Volunteer",
+  Remote = "Remote",
+  Freelance = "Freelance",
+  Apprenticeship = "Apprenticeship",
+  Seasonal = "Seasonal",
+  Other = "Other",
 }
 
 
@@ -40,10 +50,14 @@ export const signinValidation = z.object({
 export const jobValidation = z.object({
   title: z.string().min(5, { message: "Job title must be at least 5 characters long." }),
   description: z.string().min(10, { message: "Job description must be at least 10 characters long." }),
-  jobRole: z.string().min(1, { message: "Job Role must Required" }),
+  position: z.string().min(1, { message: "Job position must Required" }),
   location: z.string().min(1, { message: "Location is required." }),
   isOpen: z.boolean().default(true).optional(),
-  type: z.nativeEnum(jobType, { message: "Job type must be either 'On Site' or 'Work From Home'." }),
+  jobType: z.nativeEnum(jobType, { message: "Job type is required" }),
+  salaryFrom: z.string().min(1, "Minimum salary is required"),
+  salaryTo: z.string().min(1, "Maximum salary is required"),
+  skills: z.string().min(1, "Skills are required"),
+  experience: z.number().min(1, "Experience must be at least 1 year").max(50, "Experience must be less than 50 years"),
   requirement: z.string().min(1, { message: "Job requirement is required." }),
   companyId: z.string().min(1, { message: "CompanyId is required." })
 });

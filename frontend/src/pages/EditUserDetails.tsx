@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import LoadingButton from "@/components/LoadingButton";
 
 const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
@@ -133,18 +134,18 @@ export default function EditUserDetails() {
   };
 
   return (
-    <div className="mt-24 w-full max-w-4xl px-2 mx-auto">
-      <Link to="/profile" replace={true}>
-        <Button size="sm" variant="outline" className="my-2">
-          Back
-        </Button>
-      </Link>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold text-center">
-            Update Profile Details
-          </CardTitle>
-        </CardHeader>
+    <div className="w-full pb-3 max-w-4xl px-2 mx-auto">
+      <div className=" flex items-center justify-between">
+        <Link to="/profile" replace={true}>
+          <Button size="sm" variant="outline" className="my-2">
+            Back
+          </Button>
+        </Link>
+        <h1 className="text-3xl py-5 font-[instrumental-regular] tracking-tighter text-start">
+          Update <span className="text-green-500">profile</span> details.
+        </h1>
+      </div>
+      <Card className="shadow-none">
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -327,9 +328,14 @@ export default function EditUserDetails() {
                 </div>
               </div>
               <Separator />
-              <Button disabled={isLoading} type="submit" className="w-full">
-                {isLoading ? "Updating..." : "Update Profile"}
-              </Button>
+              <div className="flex items-center justify-end">
+                <LoadingButton
+                  isLoading={isLoading}
+                  loadingTitle="Saving..."
+                  title="Save"
+                  type="submit"
+                />
+              </div>
             </form>
           </Form>
         </CardContent>

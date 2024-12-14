@@ -1,65 +1,84 @@
-import { useEffect } from 'react'
-import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect } from "react";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 
-import { ThemeProvider } from './providers/ThemeProvider'
-import { Toaster } from './components/ui/toaster'
-import Navbar from './components/Navbar'
+import { ThemeProvider } from "./providers/ThemeProvider";
+import { Toaster } from "./components/ui/toaster";
+import Navbar from "./components/Navbar";
 
-import Landing from './pages/Landing'
-import Dashboard from './pages/Dashboard'
-import Jobs from './pages/Jobs'
-import FullViewJob from './pages/FullViewJob'
-import Profile from './pages/Profile'
-import SignupPage from './pages/Signup'
-import SigninPage from './pages/Signin'
-import EditUserDetails from './pages/EditUserDetails'
-import ForgotPassword from './pages/ForgotPass/ForgotPassword'
-import SetNewPassword from './pages/ForgotPass/SetPassword'
+import Landing from "./pages/Landing";
+import Dashboard from "./pages/Dashboard";
+import Jobs from "./pages/Jobs";
+import FullViewJob from "./pages/FullViewJob";
+import Profile from "./pages/Profile";
+import SignupPage from "./pages/Signup";
+import SigninPage from "./pages/Signin";
+import EditUserDetails from "./pages/EditUserDetails";
+import ForgotPassword from "./pages/ForgotPass/ForgotPassword";
+import SetNewPassword from "./pages/ForgotPass/SetPassword";
+import UserJobLayout from "./pages/UserJobLayout";
+import SavedJobs from "./components/Job/SavedJobs";
+import RecommendedJobs from "./components/Job/RecommendedJobs";
+import AppliedJobs from "./components/Job/AppliedJobs";
 
-type Role = 'Candidate' | 'Employer' | null
+type Role = "Candidate" | "Employer" | null;
 
 const getUserRole = (): Role => {
-  return localStorage.getItem('role') as Role
-}
+  return localStorage.getItem("role") as Role;
+};
 
 interface PrivateRouteProps {
-  children: React.ReactNode
-  restrictedRole: Role
-  redirectPath: string
+  children: React.ReactNode;
+  restrictedRole: Role;
+  redirectPath: string;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, restrictedRole, redirectPath }) => {
-  const role = getUserRole()
-  return role === restrictedRole ? <Navigate to={redirectPath} replace /> : <>{children}</>
-}
+const PrivateRoute: React.FC<PrivateRouteProps> = ({
+  children,
+  restrictedRole,
+  redirectPath,
+}) => {
+  const role = getUserRole();
+  return role === restrictedRole ? (
+    <Navigate to={redirectPath} replace />
+  ) : (
+    <>{children}</>
+  );
+};
 
 interface PageTransitionProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const PageTransition: React.FC<PageTransitionProps> = ({ children }) => (
   <motion.div
-    initial={{ opacity: 0, filter: 'blur(20px)' }}
-    animate={{ opacity: 1, filter: 'blur(0px)' }}
-    exit={{ opacity: 0, filter: 'blur(20px)' }}
+    initial={{ opacity: 0, filter: "blur(20px)" }}
+    animate={{ opacity: 1, filter: "blur(0px)" }}
+    exit={{ opacity: 0, filter: "blur(20px)" }}
     transition={{ duration: 0.2 }}
   >
     {children}
   </motion.div>
-)
+);
 
 const App: React.FC = () => {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const token = localStorage.getItem('token')
+  const location = useLocation();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const pathsToRedirect = ['/', '/signup', '/signin']
+    const pathsToRedirect = ["/", "/signup", "/signin"];
     if (token && pathsToRedirect.includes(location.pathname)) {
-      navigate('/jobs')
+      navigate("/jobs");
     }
-  }, [token, location.pathname, navigate])
+  }, [token, location.pathname, navigate]);
 
   return (
     <AnimatePresence mode="wait">
@@ -115,22 +134,29 @@ const App: React.FC = () => {
             </PageTransition>
           }
         />
-        <Route path="/jobs" element={<Jobs />} />
         <Route path="/edit" element={<EditUserDetails />} />
+        <Route path="/jobs" element={<Jobs />} />
+        <Route path="/jobs/user" element={<UserJobLayout />}>
+          <Route path="saved" element={<SavedJobs />} />
+          <Route path="recommended" element={<RecommendedJobs />} />
+          <Route path="applied" element={<AppliedJobs />} />
+        </Route>
         <Route path="/jobs/:id" element={<FullViewJob />} />
       </Routes>
     </AnimatePresence>
-  )
-}
+  );
+};
 
 const WrappedApp: React.FC = () => (
   <ThemeProvider>
     <BrowserRouter>
       <Navbar />
-      <App />
+      <div className="md:pt-32 pt-24">
+        <App />
+      </div>
       <Toaster />
     </BrowserRouter>
   </ThemeProvider>
-)
+);
 
-export default WrappedApp
+export default WrappedApp;

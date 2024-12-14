@@ -4,9 +4,18 @@ export enum Role {
     Recruiter = "Recruiter",
 }
 
-export enum JobType {
-    OnSite = "On Site",
-    Remote = "Work From Home",
+enum JobType {
+    FullTime = "FullTime",
+    PartTime = "Part Time",
+    Contract = "Contract",
+    Internship = "Internship",
+    Temporary = "Temporary",
+    Volunteer = "Volunteer",
+    Remote = "Remote",
+    Freelance = "Freelance",
+    Apprenticeship = "Apprenticeship",
+    Seasonal = "Seasonal",
+    Other = "Other",
 }
 
 export interface Company {
@@ -15,7 +24,7 @@ export interface Company {
     name: string;
 }
 
-export interface _count{
+export interface _count {
     createdJobs: number
     jobApplication: number
     savedJobs: number
@@ -42,16 +51,20 @@ export interface JobApplication {
 
 export interface Job {
     id: string;
-    recruiterId: string;
-    companyId: string;
-    jobRole: string;
     title: string;
+    companyId?: string | null;
+    position: string;
     description: string;
+    skills: string;
     location: string;
-    type: JobType;
+    experience: number;
+    package: string;
+    jobType: JobType;
+    salaryFrom: string;
+    salaryTo: string;
     requirement: string;
     isOpen: boolean;
-    createdAt: string;
+    createdAt: Date;
 }
 
 
@@ -66,5 +79,5 @@ export interface User {
     bio: string;
     skills: string;
     role: Role;
-    _count ?: _count;
+    _count?: _count;
 }

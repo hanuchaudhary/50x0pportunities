@@ -74,7 +74,7 @@ export default function SigninPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center flex-col justify-center px-4 sm:px-6 lg:px-8">
+    <div className="bg-background flex items-center flex-col justify-center px-4 sm:px-6 lg:px-8">
       <div className="text-center text-4xl py-4">
         <span className="font-[instrument-regular] text-neutral-500 tracking-tighter leading-none">
           Welcome back!

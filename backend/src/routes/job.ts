@@ -3,6 +3,7 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import { jobValidation } from "@hanuchaudhary/job";
+import { Job } from "../helper/types";
 
 export const jobRouter = new Hono<{
     Bindings: {
@@ -41,9 +42,9 @@ jobRouter.post("/create", async (c) => {
     }).$extends(withAccelerate());
 
     try {
-        const { title, description, jobRole, location, isOpen, type, requirement, companyId } = await c.req.json();
+        const { title, description, experience, location, isOpen, jobType, requirement, companyId, createdAt, position, salaryFrom, salaryTo, skills }: Job = await c.req.json();
 
-        const { success, error } = jobValidation.safeParse({ title, jobRole, description, location, isOpen, type, requirement, companyId });
+        const { success, error } = jobValidation.safeParse({ title, description, experience, location, isOpen, jobType, requirement, companyId, createdAt, position, salaryFrom, salaryTo, skills });
         if (!success) {
             return c.json({
                 success: false,
@@ -75,11 +76,15 @@ jobRouter.post("/create", async (c) => {
                 description,
                 location,
                 isOpen,
-                type,
                 requirement,
                 recruiterId: recruiter.id,
-                companyId: companyId,
-                jobRole
+                companyId,
+                createdAt,
+                position,
+                salaryFrom,
+                salaryTo,
+                skills,
+                jobType: jobType as any,
             }
         });
 
@@ -120,11 +125,14 @@ jobRouter.get("/bulk", async (c) => {
                 title: true,
                 description: true,
                 location: true,
-                type: true,
+                jobType: true,
                 requirement: true,
-                jobRole: true,
+                position: true,
                 isOpen: true,
                 createdAt: true,
+                salaryFrom: true,
+                salaryTo: true,
+                skills: true,
                 company: {
                     select: {
                         id: true,
@@ -229,6 +237,37 @@ jobRouter.get("/saved", async (c) => {
         }, 500);
     }
 });
+
+jobRouter.get("/isApplied/:jobId", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const userId = c.get("userId");
+        const jobId = c.req.param("jobId");
+
+        const jobApplication = await prisma.jobApplication.findFirst({
+            where: {
+                applicantId: userId,
+                jobId: jobId
+            }
+        })
+
+        return c.json({
+            success: true,
+            message: "Job fetched successfully",
+            isApplied: !!jobApplication
+        }, 200)
+
+    } catch (error: any) {
+        return c.json({
+            success: false,
+            message: 'Server error during fetching job',
+            error: error.message,
+        }, 500);
+    }
+})
 
 jobRouter.get("/applied", async (c) => {
     const prisma = new PrismaClient({
@@ -381,7 +420,6 @@ jobRouter.put("/open", async (c) => {
     }
 });
 
-
 //saved jobs route
 jobRouter.post("/save", async (c) => {
     const prisma = new PrismaClient({
@@ -466,4 +504,3 @@ jobRouter.post("/save", async (c) => {
         await prisma.$disconnect();
     }
 });
-

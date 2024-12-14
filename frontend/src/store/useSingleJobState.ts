@@ -9,6 +9,8 @@ interface singleJob extends Job {
 }
 
 interface singleJobState {
+    isApplied: boolean;
+    fetchIsApplied: (id: string) => Promise<void>;
     isLoading: boolean;
     fetchSingleJob: (id: string) => Promise<void>;
     singleJob: singleJob | null;
@@ -19,6 +21,24 @@ export const useSingleJobStore = create<singleJobState>((set) => ({
     singleJob: null,
     isLoading: false,
     error: null,
+    isApplied: false,
+    fetchIsApplied: async (id) => {
+        try {
+            const { Authorization } = getAuthHeaders();
+            set({ isLoading: true, error: null });
+            const response = await axios.get(`${WEB_URL}/api/v1/job/isApplied/${id}`, {
+                headers: {
+                    Authorization
+                },
+            });
+            set({ isApplied: response.data.isApplied });
+        } catch (error) {
+            console.error("Error fetching the application status:", error);
+            set({ error: "Failed to fetch the application status. Please try again later." });
+        } finally {
+            set({ isLoading: false });
+        }
+    },
     fetchSingleJob: async (id) => {
         try {
             const { Authorization } = getAuthHeaders();

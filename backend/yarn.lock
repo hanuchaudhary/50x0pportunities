@@ -57,10 +57,10 @@
   resolved "https://registry.npmjs.org/@fastify/busboy/-/busboy-2.1.1.tgz"
   integrity sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==
 
-"@hanuchaudhary/job@^1.0.9":
-  version "1.0.9"
-  resolved "https://registry.npmjs.org/@hanuchaudhary/job/-/job-1.0.9.tgz"
-  integrity sha512-qMaIqavxUnkaDWk+ycbcrergsHrwoJXNVFBMQ+mZ7sNeLMM4VcEwGhOAD1DE21YJml/mMq2LGgI071agqnvJ0A==
+"@hanuchaudhary/job@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.npmjs.org/@hanuchaudhary/job/-/job-1.1.2.tgz"
+  integrity sha512-BUbZV77qZHpPKwYBPBmKLaAFrFXv7TAmYM44D7K7GFK+7xXt0OCs/t0WoV7CpbzIbU27WIbWjARNdnNRm1t+ow==
   dependencies:
     zod "^3.23.8"
 
