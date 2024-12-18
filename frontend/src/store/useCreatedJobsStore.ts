@@ -1,22 +1,41 @@
 import { create } from "zustand";
 import axios from "axios";
 import { WEB_URL } from "@/Config";
-import { ApplicationStatus, Company, Job, JobApplication } from "@/types/types";
+import { ApplicationStatus, Company, Job } from "@/types/types";
 import { getAuthHeaders } from "./profileState";
 
 
-export interface CreatedJobs extends Job {
-    jobApplication: JobApplication[];
-
+export interface CreatedJobs {
+    id: string;
+    title: string;
+    companyId?: string | null;
+    position: string;
+    description: string;
+    skills: string;
+    location: string;
+    experience: number;
+    package: string;
+    jobType: string;
+    salaryFrom: string;
+    salaryTo: string;
+    requirement: string;
+    isOpen: boolean;
+    createdAt: string;
+    company: Company;
+    _count: {
+        jobApplication: number;
+    };
 }
 
 interface CreatedJobsStore {
     createdJobs: CreatedJobs[];
     loading: boolean;
     fetchCreatedJobs: () => Promise<void>;
+    updateJobStatus: (jobId: string, isOpen: boolean) => Promise<void>;
+    deleteJob: (jobId: string) => Promise<void>;
 }
 
-export const useCreatedJobsStore = create<CreatedJobsStore>((set) => ({
+export const useCreatedJobsStore = create<CreatedJobsStore>((set, get) => ({
     createdJobs: [],
     loading: false,
     fetchCreatedJobs: async () => {
@@ -33,6 +52,47 @@ export const useCreatedJobsStore = create<CreatedJobsStore>((set) => ({
             console.error("Failed to fetch created jobs:", error);
         } finally {
             set({ loading: false });
+        }
+    },
+    updateJobStatus: async (jobId, isOpen) => {
+        const { Authorization } = getAuthHeaders();
+        try {
+            await axios.put(
+                `${WEB_URL}/api/v1/job/open`,
+                {
+                    jobId,
+                    isOpen,
+                },
+                {
+                    headers: {
+                        Authorization,
+                    },
+                }
+            );
+
+            const updatedJobs = get().createdJobs.map((job) =>
+                job.id === jobId ? { ...job, isOpen } : job
+            );
+            set({ createdJobs: updatedJobs });
+
+        } catch (error) {
+            console.error("Failed to update job status:", error);
+        }
+    },
+    deleteJob: async (jobId) => {
+        const { Authorization } = getAuthHeaders();
+        try {
+            await axios.delete(`${WEB_URL}/api/v1/job/delete/${jobId}`, {
+                headers: {
+                    Authorization,
+                },
+            });
+            const updatedJobs = get().createdJobs.filter((job) => job.id !== jobId);
+            // const updatedCount = get().createdJobs.find((job) => job.id === jobId)?._count.jobApplication;
+            set({ createdJobs: updatedJobs });
+
+        } catch (error) {
+            console.error("Failed to delete job:", error);
         }
     },
 }));
@@ -78,9 +138,9 @@ export const useSavedJobsStore = create<savedJobsStore>((set) => ({
 
 export interface appliedJob {
     id: string;
-    jobId : string;
-    createdAt : string;
-    status : ApplicationStatus
+    jobId: string;
+    createdAt: string;
+    status: ApplicationStatus
     job: extendedJob;
 }
 

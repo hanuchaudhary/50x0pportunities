@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Briefcase, MapPin, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ApplicationStatus } from "@/types/types";
-import { appliedJob } from "@/store/userJobsStore";
+import { appliedJob } from "@/store/useCreatedJobsStore";
 
 export default function ApplicationCard(data: appliedJob) {
 

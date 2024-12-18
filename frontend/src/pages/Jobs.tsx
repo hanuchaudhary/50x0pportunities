@@ -22,13 +22,14 @@ export default function Jobs() {
   const { fetchProfile } = useProfileStore();
   const { jobs, fetchJobs, loading } = useJobsStore();
   const [filter, setFilter] = useState("");
+  const { companies, fetchCompanies } = useCompaniesStore();
 
   useEffect(() => {
+    fetchCompanies();
     fetchJobs(filter);
     fetchProfile();
-  }, [filter, fetchJobs, fetchProfile]);
+  }, [filter, fetchJobs, fetchProfile, fetchCompanies]);
 
-  const { companies } = useCompaniesStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [selectedCompany, setSelectedCompany] = useState("");
@@ -64,7 +65,8 @@ export default function Jobs() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Discover Your Next <span className="text-green-500">Opportunity.</span>
+          Discover Your Next{" "}
+          <span className="text-green-500">Opportunity.</span>
         </motion.h1>
         <motion.section
           className="space-y-2 max-w-4xl mx-auto"

@@ -1,4 +1,4 @@
-import { useAppliedJobsStore } from "@/store/userJobsStore";
+import { useAppliedJobsStore } from "@/store/useCreatedJobsStore";
 import AppliedJobCard from "./MiniAppliedJobCard";
 import { useEffect } from "react";
 

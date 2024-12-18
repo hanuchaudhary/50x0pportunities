@@ -447,26 +447,6 @@ userRouter.post("/application/:id", async (c) => {
     }).$extends(withAccelerate());
 
     try {
-        const { education, experience, skills, resume } = await c.req.json();
-        const { success, error } = applicationValidation.safeParse({
-            education,
-            experience,
-            skills,
-            resume,
-        });
-
-        if (!success) {
-            return c.json(
-                {
-                    success: false,
-                    message: "Validation error",
-                    error: error,
-
-                },
-                400
-            );
-        }
-
         const jobId = c.req.param("id");
         const job = await prisma.job.findUnique({
             where: {
@@ -502,7 +482,7 @@ userRouter.post("/application/:id", async (c) => {
             );
         }
 
-        const existingApplication = await prisma.jobApplication.findFirst({
+        const existingApplication = await prisma.jobApplications.findFirst({
             where: {
                 applicantId: candidate.id,
                 jobId: job.id,
@@ -519,12 +499,8 @@ userRouter.post("/application/:id", async (c) => {
             );
         }
 
-        const application = await prisma.jobApplication.create({
+        const application = await prisma.jobApplications.create({
             data: {
-                education,
-                experience,
-                resume,
-                skills,
                 applicantId: candidate.id,
                 jobId: job?.id,
                 status: 'Applied'
@@ -588,7 +564,7 @@ userRouter.get("/allapplications/:id", async (c) => {
             );
         }
 
-        const allApplications = await prisma.jobApplication.findMany({
+        const allApplications = await prisma.jobApplications.findMany({
             where: { jobId: jobId },
             include: { applicant: true, job: true },
         });
@@ -690,7 +666,7 @@ userRouter.put("/status", async (c) => {
             }, 403);
         }
 
-        const application = await prisma.jobApplication.findUnique({
+        const application = await prisma.jobApplications.findUnique({
             where: {
                 id: applicationId
             }
@@ -703,7 +679,7 @@ userRouter.put("/status", async (c) => {
             }, 404);
         }
 
-        const updatedStatus = await prisma.jobApplication.update({
+        const updatedStatus = await prisma.jobApplications.update({
             where: {
                 id: application.id
             },

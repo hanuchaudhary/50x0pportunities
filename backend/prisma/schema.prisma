@@ -46,7 +46,7 @@ model User {
   avatar         String           @default("")
   role           Role
   createdJobs    Job[]
-  jobApplication jobApplication[]
+  jobApplication jobApplications[]
   savedJobs      SavedJobs[]
 }
 
@@ -67,7 +67,7 @@ model Job {
   location       String
   experience     String           @default("")
   package        String           @default("")
-  jobType           jobType
+  jobType        jobType
   salaryFrom     String           @default("")
   salaryTo       String           @default("")
   requirement    String
@@ -76,7 +76,7 @@ model Job {
   recruiterId    String
   recruiter      User             @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   company        Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  jobApplication jobApplication[]
+  jobApplication jobApplications[]
   savedJobs      SavedJobs[]
 }
 
@@ -89,7 +89,7 @@ model SavedJobs {
   createdAt DateTime @default(now())
 }
 
-model jobApplication {
+model jobApplications {
   id          String             @unique @default(uuid())
   applicantId String
   applicant   User               @relation(fields: [applicantId], references: [id], onDelete: Cascade)
@@ -97,9 +97,5 @@ model jobApplication {
   job         Job?               @relation(fields: [jobId], references: [id], onDelete: Cascade)
   status      applicationStatus? @default(Applied)
   isApplied   Boolean            @default(true)
-  resume      String
-  skills      String
-  experience  String
-  education   String
   createdAt   DateTime           @default(now())
 }

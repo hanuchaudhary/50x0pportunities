@@ -171,15 +171,16 @@ jobRouter.get("/created", async (c) => {
                 createdAt: "desc"
             },
             include: {
-                jobApplication: {
-                    include: {
-                        applicant: {
-                            select: {
-                                fullName: true,
-                                email: true,
-                                id: true
-                            }
-                        }
+                company: {
+                    select: {
+                        id: true,
+                        logo: true,
+                        name: true
+                    }
+                },
+                _count: {
+                    select: {
+                        jobApplication: true
                     }
                 }
             }
@@ -189,6 +190,40 @@ jobRouter.get("/created", async (c) => {
             success: true,
             message: "Jobs fetched successfully",
             jobs
+        }, 200)
+
+    } catch (error: any) {
+        return c.json({
+            success: false,
+            message: 'Server error during fetching jobs',
+            error: error.message,
+        }, 500);
+    }
+});
+
+jobRouter.get("/applications/:jobId", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const jobId = await c.req.param("jobId");
+        const userId = c.get("userId");
+        const applications = await prisma.jobApplications.findMany({
+            where: {
+                jobId
+            },
+            orderBy: {
+                createdAt: "desc"
+            },include:{
+                applicant: true
+            }
+        })
+
+        return c.json({
+            success: true,
+            message: "Jobs fetched successfully",
+            applications
         }, 200)
 
     } catch (error: any) {
@@ -247,7 +282,7 @@ jobRouter.get("/isApplied/:jobId", async (c) => {
         const userId = c.get("userId");
         const jobId = c.req.param("jobId");
 
-        const jobApplication = await prisma.jobApplication.findFirst({
+        const jobApplications = await prisma.jobApplications.findFirst({
             where: {
                 applicantId: userId,
                 jobId: jobId
@@ -257,7 +292,7 @@ jobRouter.get("/isApplied/:jobId", async (c) => {
         return c.json({
             success: true,
             message: "Job fetched successfully",
-            isApplied: !!jobApplication
+            isApplied: !!jobApplications
         }, 200)
 
     } catch (error: any) {
@@ -276,7 +311,7 @@ jobRouter.get("/applied", async (c) => {
 
     try {
         const userId = c.get("userId");
-        const appliedJobs = await prisma.jobApplication.findMany({
+        const appliedJobs = await prisma.jobApplications.findMany({
             where: {
                 applicantId: userId
             },
@@ -348,17 +383,17 @@ jobRouter.get("/:id", async (c) => {
 })
 //fetch jobs-------
 
-jobRouter.post("/delete", async (c) => {
+jobRouter.delete("/delete/:jobId", async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate());
 
     try {
-        const { id } = await c.req.json();
+        const jobId = c.req.param("jobId");
 
         const job = await prisma.job.delete({
             where: {
-                id: id
+                id: jobId
             }
         })
 
@@ -382,7 +417,7 @@ jobRouter.put("/open", async (c) => {
     }).$extends(withAccelerate());
 
     try {
-        const { jobId, isOpenValue }: { jobId: string; isOpenValue: boolean } = await c.req.json();
+        const { jobId, isOpen}: { jobId: string; isOpen: boolean } = await c.req.json();
 
         if (!jobId) {
             return c.json({
@@ -391,7 +426,7 @@ jobRouter.put("/open", async (c) => {
             }, 400);
         }
 
-        if (typeof isOpenValue !== "boolean") {
+        if (typeof isOpen !== "boolean") {
             return c.json({
                 success: false,
                 message: "isOpenValue must be a boolean",
@@ -403,7 +438,7 @@ jobRouter.put("/open", async (c) => {
                 id: jobId,
             },
             data: {
-                isOpen: isOpenValue,
+                isOpen
             },
         });
 

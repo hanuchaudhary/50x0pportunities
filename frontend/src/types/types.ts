@@ -36,18 +36,26 @@ export enum ApplicationStatus {
     Interviewing = "Interviewing",
     Hired = "Hired",
 }
-
 export interface JobApplication {
     id: string;
-    title: string;
-    education: string;
-    experience: string;
-    skills: string;
-    status: ApplicationStatus;
+    applicantId: string;
+    jobId: string;
+    status: string;
+    isApplied: boolean;
     createdAt: string;
-    job: Job;
-    company: Company;
-}
+    applicant: {
+      id: string;
+      fullName: string;
+      email: string;
+      experience: string;
+      education: string;
+      skills: string;
+      resume: string;
+      bio: string;
+      avatar: string;
+      role: string;
+    };
+  }  
 
 export interface Job {
     id: string;

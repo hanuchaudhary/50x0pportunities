@@ -24,7 +24,7 @@ import {
 import { WEB_URL } from "@/Config";
 import { toast } from "@/hooks/use-toast";
 import { getAuthHeaders } from "@/store/profileState";
-import { useCreatedJobsStore } from "@/store/userJobsStore";
+import { useCreatedJobsStore } from "@/store/useCreatedJobsStore";
 
 interface editTypes {
   isOpen: boolean;

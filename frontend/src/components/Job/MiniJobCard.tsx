@@ -3,6 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import JobApplicationCard from "./JobApplicationCard";
+import { useJobApplicationsStore } from "@/store/useJobApplicationsStore";
+import { formatDate } from "@/lib/FormatDate";
+import { ManageJob } from "./ManageJob";
 
 interface JobCardProps {
   companyName: string;
@@ -11,10 +15,14 @@ interface JobCardProps {
   location: string;
   type: string;
   experience: string;
-  createdAt: Date;
+  createdAt: string;
   skills: string[];
   className?: string;
   jobId: string;
+  _count: {
+    jobApplication: number;
+  };
+  isOpen: boolean;
 }
 
 export default function MiniJobCard({
@@ -28,9 +36,18 @@ export default function MiniJobCard({
   createdAt,
   skills,
   className,
+  _count,
+  isOpen
 }: JobCardProps) {
+  const userRole = localStorage.getItem("role");
+  const { fetchJobApplications, applications, loading } =
+    useJobApplicationsStore();
+
   return (
-    <Link to={`/jobs/${jobId}`} className={cn("w-full", className)}>
+    <Link
+      to={`${userRole === "Candidate" ? `/jobs/${jobId}` : ""}`}
+      className={cn("w-full", className)}
+    >
       <div className="p-3 dark:hover:bg-neutral-900 hover:bg-neutral-100 rounded-xl transition-colors duration-300">
         <div className="flex items-start justify-between">
           <div className="flex gap-4">
@@ -53,19 +70,27 @@ export default function MiniJobCard({
                 <span>•</span>
                 <span>{experience}</span>
                 <span>•</span>
-                <span>
-                  {new Date(createdAt).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </span>
+                <span>{formatDate(createdAt)}</span>
               </div>
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Bookmark className="h-5 w-5" />
-          </Button>
+          {userRole === "Candidate" ? (
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Bookmark className="h-5 w-5" />
+            </Button>
+          ) : (
+            <div>
+              <JobApplicationCard
+                isLoading={loading}
+                companyName={companyName}
+                jobPosition={position}
+                applications={applications}
+                applicationsCount={_count.jobApplication}
+                handleApplicationFetch={() => fetchJobApplications(jobId)}
+              />
+              <ManageJob isOpen={isOpen} jobId={jobId}/>
+            </div>
+          )}
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">

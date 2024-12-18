@@ -61,12 +61,7 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({
       setLoading(true);
       const response = await axios.post(
         `${WEB_URL}/api/v1/user/application/${id}`,
-        {
-          education: profile?.education,
-          experience: profile?.experience,
-          skills: profile?.skills,
-          resume: profile?.resume,
-        },
+        {},
         {
           headers: { Authorization },
         }
@@ -200,12 +195,13 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({
         </div>
       </div>
 
-      {success || isApplied && (
-        <p className="text-center w-full h-12 fixed bottom-0 left-0 text-base flex items-center justify-center font-semibold bg-green-500/30 backdrop-blur-xl text-green-50 border border-green-700">
-          Your application has been successfully submitted. We'll be in touch
-          soon!
-        </p>
-      )}
+      {success ||
+        (isApplied && (
+          <p className="text-center w-full h-12 fixed bottom-0 left-0 text-base flex items-center justify-center font-semibold bg-green-500/30 backdrop-blur-xl text-green-50 border border-green-700">
+            Your application has been successfully submitted. We'll be in touch
+            soon!
+          </p>
+        ))}
     </div>
   );
 };

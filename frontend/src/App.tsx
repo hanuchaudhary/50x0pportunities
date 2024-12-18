@@ -27,7 +27,7 @@ import UserJobLayout from "./pages/UserJobLayout";
 import SavedJobs from "./components/Job/SavedJobs";
 import RecommendedJobs from "./components/Job/RecommendedJobs";
 import AppliedJobs from "./components/Job/AppliedJobs";
-
+import CreatedJobs from "./components/Job/CreatedJobs";
 type Role = "Candidate" | "Employer" | null;
 
 const getUserRole = (): Role => {
@@ -139,6 +139,7 @@ const App: React.FC = () => {
         <Route path="/jobs/user" element={<UserJobLayout />}>
           <Route path="saved" element={<SavedJobs />} />
           <Route path="recommended" element={<RecommendedJobs />} />
+          <Route path="created" element={<CreatedJobs />} />
           <Route path="applied" element={<AppliedJobs />} />
         </Route>
         <Route path="/jobs/:id" element={<FullViewJob />} />

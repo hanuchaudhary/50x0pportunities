@@ -30,7 +30,7 @@ import { WEB_URL } from "@/Config";
 import { toast } from "@/hooks/use-toast";
 import { Label } from "./ui/label";
 import EditJob from "./EditJob";
-import { CreatedJobs } from "@/store/userJobsStore";
+import { CreatedJobs } from "@/store/useCreatedJobsStore";
 import { getAuthHeaders } from "@/store/profileState";
 
 export enum ApplicationStatus {
