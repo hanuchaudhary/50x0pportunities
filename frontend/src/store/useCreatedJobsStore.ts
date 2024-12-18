@@ -88,7 +88,6 @@ export const useCreatedJobsStore = create<CreatedJobsStore>((set, get) => ({
                 },
             });
             const updatedJobs = get().createdJobs.filter((job) => job.id !== jobId);
-            // const updatedCount = get().createdJobs.find((job) => job.id === jobId)?._count.jobApplication;
             set({ createdJobs: updatedJobs });
 
         } catch (error) {
@@ -100,41 +99,6 @@ export const useCreatedJobsStore = create<CreatedJobsStore>((set, get) => ({
 interface extendedJob extends Job {
     company: Company;
 }
-
-export interface savedJob {
-    id: string;
-    createdAt: string;
-    jobId: string;
-    userId: string;
-    job: extendedJob;
-}
-
-interface savedJobsStore {
-    savedJobs: savedJob[];
-    loading: boolean;
-    fetchSavedJobs: () => Promise<void>;
-}
-
-export const useSavedJobsStore = create<savedJobsStore>((set) => ({
-    savedJobs: [],
-    loading: false,
-    fetchSavedJobs: async () => {
-        const { Authorization } = getAuthHeaders();
-        set({ loading: true });
-        try {
-            const response = await axios.get(`${WEB_URL}/api/v1/job/saved`, {
-                headers: {
-                    Authorization,
-                },
-            });
-            set({ savedJobs: response.data.jobs });
-        } catch (error) {
-            console.error("Failed to fetch saved jobs:", error);
-        } finally {
-            set({ loading: false });
-        }
-    },
-}));
 
 export interface appliedJob {
     id: string;

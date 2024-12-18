@@ -60,7 +60,7 @@ export default function Jobs() {
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
       <main className="container mx-auto px-4 pb-12">
         <motion.h1
-          className="text-4xl leading-none tracking-tighter text-center mb-12 sm:text-5xl font-[instrumental-regular]"
+          className="text-4xl mt-4 leading-none tracking-tighter text-center mb-12 sm:text-5xl font-[instrumental-regular]"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -124,7 +124,7 @@ export default function Jobs() {
             </Button>
           </div>
         </motion.section>
-        <div className="py-10">
+        <div className="md:py-6 py-4">
           {loading && (
             <div className="flex justify-center items-center w-full">
               <BarLoader color="hsl(var(--primary))" width={150} />

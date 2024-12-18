@@ -15,7 +15,9 @@ export default function UserJobLayout() {
 
   return (
     <div className="container mx-auto px-4 pb-12 max-w-4xl">
-      <BackButton href="/jobs" title="Jobs" />
+      <div className="my-4">
+        <BackButton href="/jobs" title="Jobs" />
+      </div>
       {role === "Candidate" && (
         <h1 className="text-3xl font-[instrumental-regular] tracking-tighter text-center">
           Your Jobs
@@ -85,7 +87,7 @@ export default function UserJobLayout() {
         )}
       </div>
       <Separator />
-      <div className="py-4 flex items-center justify-center">
+      <div className="w-full py-2">
         <Outlet />
       </div>
     </div>

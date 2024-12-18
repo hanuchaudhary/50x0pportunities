@@ -160,7 +160,7 @@ const JobCard = (job: CardType) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div
-                    className={`transition-colors duration-300 ${
+                    className={`transition-colors cursor-pointer duration-300 ${
                       isSaved ? "fill-white" : ""
                     }`}
                     onClick={handleSaveJob}

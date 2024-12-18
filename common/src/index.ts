@@ -57,7 +57,7 @@ export const jobValidation = z.object({
   salaryFrom: z.string().min(1, "Minimum salary is required"),
   salaryTo: z.string().min(1, "Maximum salary is required"),
   skills: z.string().min(1, "Skills are required"),
-  experience: z.number().min(1, "Experience must be at least 1 year").max(50, "Experience must be less than 50 years"),
+  experience: z.string().min(1, "Experience must be at least 1 year").max(50, "Experience must be less than 50 years"),
   requirement: z.string().min(1, { message: "Job requirement is required." }),
   companyId: z.string().min(1, { message: "CompanyId is required." })
 });
@@ -112,7 +112,7 @@ export const editProfileValidation = z.object({
     })
     .refine((file) => file.size <= 5 * 1024 * 1024, {
       message: "Avatar must be less than 5MB.",
-    }),
+    }).optional(),
 
   resume: z
     .instanceof(File, {
@@ -123,7 +123,7 @@ export const editProfileValidation = z.object({
     })
     .refine((file) => file.size <= 10 * 1024 * 1024, {
       message: "Resume must be less than 10MB.",
-    }),
+    }).optional(),
 
   bio: z
     .string()

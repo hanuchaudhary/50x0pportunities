@@ -1,16 +1,11 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import SavedJobs from "@/components/Drawers/SavedJobs";
-import CreatedJobs from "@/components/Drawers/CreatedJobs";
 import useProfileState from "@/store/profileState";
-import AppliedJobs from "@/components/Drawers/AppliedJobs";
 import ProfilePageCard from "@/components/Profile/ProfilePageCard";
-import { Briefcase } from "lucide-react";
 import BackButton from "@/components/BackButton";
 
 export default function Profile() {
   const { fetchProfile, profile } = useProfileState();
-
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);

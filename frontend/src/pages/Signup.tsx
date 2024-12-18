@@ -62,9 +62,9 @@ export default function SignupPage() {
         variant: "success",
       });
       if (response.data.user.role === "Candidate") {
-        navigate("/profile");
+        navigate("/jobs");
       } else {
-        navigate("/profile");
+        navigate("/jobs");
       }
     } catch (error: any) {
       toast({

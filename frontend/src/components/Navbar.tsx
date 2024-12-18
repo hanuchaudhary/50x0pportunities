@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { Moon, Sun, User2Icon } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,7 @@ export default function Navbar() {
   const handleClose = () => {
     setMenu(false);
   };
-  const role =  localStorage.getItem("role");
-  console.log(role);
-  
+  const role = localStorage.getItem("role");
   const { profile } = useProfileStore();
 
   return (
@@ -31,28 +29,15 @@ export default function Navbar() {
           </div>
           <div className="flex items-center space-x-1 md:space-x-4">
             {role === "Recruiter" &&
-            path !== "/" &&
-            path !== "/signin" &&
-            path !== "/signup" ? (
-              <Link to={"/dashboard"}>
-                <Button variant={"green"} className="rounded-xl" size={"sm"}>
-                  Create Job
-                </Button>
-              </Link>
-            ) : (
-              <div className="space-x-2">
-                <Link to={"/edit"}>
+              path !== "/" &&
+              path !== "/signin" &&
+              path !== "/signup" && (
+                <Link to={"/dashboard"}>
                   <Button variant={"green"} className="rounded-xl" size={"sm"}>
-                    Edit Profile
+                    Create Job
                   </Button>
                 </Link>
-                <Link to={"/jobs/user"}>
-                  <Button variant={"green"} className="rounded-xl" size={"sm"}>
-                    Your Jobs
-                  </Button>
-                </Link>
-              </div>
-            )}
+              )}
             <Button
               variant="ghost"
               size="icon"
@@ -79,7 +64,10 @@ export default function Navbar() {
               >
                 <AvatarImage
                   className="object-cover"
-                  src={profile?.avatar}
+                  src={
+                    profile?.avatar ||
+                    "https://i.pinimg.com/736x/71/e5/d2/71e5d2e61c2ce50df62c7eb751a3ce8e.jpg"
+                  }
                   alt="@shadcn"
                 />
                 <AvatarFallback className="uppercase font-semibold">
@@ -92,15 +80,9 @@ export default function Navbar() {
       </header>
       <AnimatePresence>
         {menu && (
-          <motion.div
-            className="fixed right-4 lg:right-20 top-24"
-            initial={{ opacity: 0, y: -20}}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-          >
+          <div>
             <MiniProfile onClose={handleClose} user={profile} />
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

@@ -50,15 +50,16 @@ export default function SigninPage() {
       );
       localStorage.setItem("token", `${response.data.token}`);
       localStorage.setItem("role", response.data.user.role);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       toast({
         title: "Success!",
         description: "You have signed in successfully! Redirecting...",
         variant: "success",
       });
       if (response.data.user.role === "Candidate") {
-        navigate("/profile");
+        navigate("/jobs");
       } else {
-        navigate("/profile");
+        navigate("/jobs");
       }
     } catch (err: any) {
       toast({

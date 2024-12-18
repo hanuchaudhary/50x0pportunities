@@ -197,7 +197,7 @@ const ApplyForJob: React.FC<ApplyForJobProps> = ({
 
       {success ||
         (isApplied && (
-          <p className="text-center w-full h-12 fixed bottom-0 left-0 text-base flex items-center justify-center font-semibold bg-green-500/30 backdrop-blur-xl text-green-50 border border-green-700">
+          <p className="text-center w-full h-12 fixed bottom-0 left-0 text-base flex items-center justify-center font-semibold bg-green-500/30 backdrop-blur-xl text-green-50 border-t border-b border-green-700">
             Your application has been successfully submitted. We'll be in touch
             soon!
           </p>

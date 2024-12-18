@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { State } from "country-state-city";
-import MarkdownEditor from "@uiw/react-markdown-editor";
+import "react-quill/dist/quill.snow.css";
 import axios from "axios";
 import { toast } from "@/hooks/use-toast";
 import {
@@ -35,6 +35,10 @@ import { Separator } from "@/components/ui/separator";
 import BackButton from "@/components/BackButton";
 import { jobValidation } from "@hanuchaudhary/job";
 
+import ReactQuill from "react-quill";
+
+import "@/lib/quill-custom.css";
+
 enum JobType {
   FullTime = "FullTime",
   PartTime = "Part Time",
@@ -50,6 +54,49 @@ enum JobType {
 }
 
 export default function Dashboard() {
+  const modules = {
+    toolbar: {
+      container: [
+        [{ header: [2, 3, 4, false] }],
+        ["bold", "italic", "underline", "blockquote"],
+        [{ color: [] }],
+        [
+          { list: "ordered" },
+          { list: "bullet" },
+          { indent: "-1" },
+          { indent: "+1" },
+        ],
+        ["link", "image"],
+        ["clean"],
+      ],
+    },
+    clipboard: {
+      matchVisual: true,
+    },
+  };
+  const formats = [
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "color",
+    "background",
+    "script",
+    "header",
+    "blockquote",
+    "code-block",
+    "indent",
+    "list",
+    "direction",
+    "align",
+    "link",
+    "image",
+    "video",
+    "formula",
+  ];
+
   const { companies, fetchCompanies } = useCompaniesStore();
 
   useEffect(() => {
@@ -61,25 +108,22 @@ export default function Dashboard() {
 
   const form = useForm<z.infer<typeof jobValidation>>({
     resolver: zodResolver(jobValidation),
-    // defaultValues: {
-    //   title: "",
-    //   description: "",
-    //   location: "",
-    //   position: "",
-    //   companyId: "",
-    //   isOpen: true,
-    //   requirement: "# Requirements",
-    //   salaryFrom: "",
-    //   salaryTo: "",
-    //   skills: "",
-    //   experience: 1,
-    // },
+    defaultValues: {
+      title: "",
+      description: "",
+      location: "",
+      position: "",
+      companyId: "",
+      isOpen: true,
+      requirement: "# Requirements",
+      salaryFrom: "",
+      salaryTo: "",
+      skills: "",
+      experience: "5",
+    },
   });
-  
-  async function onSubmit(values: z.infer<typeof jobValidation>) {
-    console.log("clicked");
-    console.log(values);
 
+  async function onSubmit(values: z.infer<typeof jobValidation>) {
     setLoading(true);
     try {
       await axios.post(`${WEB_URL}/api/v1/job/create`, values, {
@@ -103,9 +147,14 @@ export default function Dashboard() {
     }
   }
 
+  const theme = localStorage.getItem("theme");
+
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-8">
-      <BackButton href="/jobs" title="Jobs" replace={true} />
+    <div className="container max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      <div className="mb-4">
+        <BackButton href="/jobs" title="Jobs" replace={true} />
+      </div>
+
       <h1 className="text-3xl font-[instrumental-regular] tracking-tighter text-center mb-8">
         Create a New <span className="text-green-500">Job Posting.</span>
       </h1>
@@ -116,15 +165,17 @@ export default function Dashboard() {
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center">
-                  <FormLabel className="text-left">Job Title</FormLabel>
-                  <FormControl className="col-span-3">
+                <FormItem className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+                  <FormLabel className="text-left sm:col-span-1">
+                    Job Title
+                  </FormLabel>
+                  <FormControl className="sm:col-span-3">
                     <Input placeholder="Enter the job title" {...field} />
                   </FormControl>
-                  <FormDescription className="col-start-2 col-span-3">
+                  <FormDescription className="sm:col-start-2 sm:col-span-3">
                     Be specific and include the job role in the title.
                   </FormDescription>
-                  <FormMessage className="col-start-2 col-span-3" />
+                  <FormMessage className="sm:col-start-2 sm:col-span-3" />
                 </FormItem>
               )}
             />
@@ -133,14 +184,16 @@ export default function Dashboard() {
               control={form.control}
               name="location"
               render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center">
-                  <FormLabel className="text-left">Location</FormLabel>
+                <FormItem className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+                  <FormLabel className="text-left sm:col-span-1">
+                    Location
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="col-span-3">
+                      <SelectTrigger className="sm:col-span-3">
                         <SelectValue placeholder="Select State" />
                       </SelectTrigger>
                     </FormControl>
@@ -152,10 +205,10 @@ export default function Dashboard() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription className="col-start-2 col-span-3">
+                  <FormDescription className="sm:col-start-2 sm:col-span-3">
                     Select the state where the job is located.
                   </FormDescription>
-                  <FormMessage className="col-start-2 col-span-3" />
+                  <FormMessage className="sm:col-start-2 sm:col-span-3" />
                 </FormItem>
               )}
             />
@@ -164,21 +217,21 @@ export default function Dashboard() {
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-start">
-                  <FormLabel className="text-left pt-2">
+                <FormItem className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+                  <FormLabel className="text-left sm:col-span-1 pt-2">
                     Job Description
                   </FormLabel>
-                  <FormControl className="col-span-3">
+                  <FormControl className="sm:col-span-3">
                     <Textarea
                       placeholder="Enter job description"
                       className="min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription className="col-start-2 col-span-3">
+                  <FormDescription className="sm:col-start-2 sm:col-span-3">
                     Describe the job role and responsibilities in brief.
                   </FormDescription>
-                  <FormMessage className="col-start-2 col-span-3" />
+                  <FormMessage className="sm:col-start-2 sm:col-span-3" />
                 </FormItem>
               )}
             />
@@ -187,14 +240,16 @@ export default function Dashboard() {
               control={form.control}
               name="jobType"
               render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center">
-                  <FormLabel className="text-left">Job Type</FormLabel>
+                <FormItem className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+                  <FormLabel className="text-left sm:col-span-1">
+                    Job Type
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="col-span-3">
+                      <SelectTrigger className="sm:col-span-3">
                         <SelectValue placeholder="Select Job Type" />
                       </SelectTrigger>
                     </FormControl>
@@ -206,10 +261,10 @@ export default function Dashboard() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription className="col-start-2 col-span-3">
+                  <FormDescription className="sm:col-start-2 sm:col-span-3">
                     Select the type of job you are posting.
                   </FormDescription>
-                  <FormMessage className="col-start-2 col-span-3" />
+                  <FormMessage className="sm:col-start-2 sm:col-span-3" />
                 </FormItem>
               )}
             />
@@ -218,15 +273,17 @@ export default function Dashboard() {
               control={form.control}
               name="position"
               render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center">
-                  <FormLabel className="text-left">Job Position</FormLabel>
-                  <FormControl className="col-span-3">
+                <FormItem className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+                  <FormLabel className="text-left sm:col-span-1">
+                    Job Position
+                  </FormLabel>
+                  <FormControl className="sm:col-span-3">
                     <Input placeholder="Data Scientist" {...field} />
                   </FormControl>
-                  <FormDescription className="col-start-2 col-span-3">
+                  <FormDescription className="sm:col-start-2 sm:col-span-3">
                     Specify the position or job role.
                   </FormDescription>
-                  <FormMessage className="col-start-2 col-span-3" />
+                  <FormMessage className="sm:col-start-2 sm:col-span-3" />
                 </FormItem>
               )}
             />
@@ -235,14 +292,16 @@ export default function Dashboard() {
               control={form.control}
               name="isOpen"
               render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center">
-                  <FormLabel className="text-left">Job Status</FormLabel>
+                <FormItem className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+                  <FormLabel className="text-left sm:col-span-1">
+                    Job Status
+                  </FormLabel>
                   <Select
                     onValueChange={(value) => field.onChange(value === "true")}
                     defaultValue={String(field.value)}
                   >
                     <FormControl>
-                      <SelectTrigger className="col-span-3">
+                      <SelectTrigger className="sm:col-span-3">
                         <SelectValue placeholder="Select Job Status" />
                       </SelectTrigger>
                     </FormControl>
@@ -251,10 +310,10 @@ export default function Dashboard() {
                       <SelectItem value="false">Closed</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormDescription className="col-start-2 col-span-3">
+                  <FormDescription className="sm:col-start-2 sm:col-span-3">
                     Select the status of the job posting.
                   </FormDescription>
-                  <FormMessage className="col-start-2 col-span-3" />
+                  <FormMessage className="sm:col-start-2 sm:col-span-3" />
                 </FormItem>
               )}
             />
@@ -263,14 +322,16 @@ export default function Dashboard() {
               control={form.control}
               name="companyId"
               render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center">
-                  <FormLabel className="text-left">Company</FormLabel>
+                <FormItem className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+                  <FormLabel className="text-left sm:col-span-1">
+                    Company
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="col-span-3">
+                      <SelectTrigger className="sm:col-span-3">
                         <SelectValue placeholder="Select Company" />
                       </SelectTrigger>
                     </FormControl>
@@ -282,23 +343,25 @@ export default function Dashboard() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription className="col-start-2 col-span-3">
+                  <FormDescription className="sm:col-start-2 sm:col-span-3">
                     Select the company where the job is posted.
                   </FormDescription>
-                  <FormMessage className="col-start-2 col-span-3" />
+                  <FormMessage className="sm:col-start-2 sm:col-span-3" />
                 </FormItem>
               )}
             />
 
-            <div className="grid grid-cols-4 items-center">
-              <div className="col-start-2 col-span-3">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+              <div className="sm:col-span-3">
                 <CompanyDrawer />
               </div>
             </div>
 
-            <div className="grid grid-cols-4 items-center">
-              <FormLabel className="text-left">Salary Range</FormLabel>
-              <div className="col-span-3 grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+              <FormLabel className="text-left sm:col-span-1">
+                Salary Range
+              </FormLabel>
+              <div className="sm:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <FormField
                   control={form.control}
                   name="salaryFrom"
@@ -311,7 +374,7 @@ export default function Dashboard() {
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription className="col-start-2 col-span-3">
+                      <FormDescription>
                         Enter the minimum salary for the job.
                       </FormDescription>
                       <FormMessage />
@@ -330,7 +393,7 @@ export default function Dashboard() {
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription className="col-start-2 col-span-3">
+                      <FormDescription>
                         Enter the maximum salary for the job.
                       </FormDescription>
                       <FormMessage />
@@ -344,18 +407,20 @@ export default function Dashboard() {
               control={form.control}
               name="skills"
               render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center">
-                  <FormLabel className="text-left">Skills Needed</FormLabel>
-                  <FormControl className="col-span-3">
+                <FormItem className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+                  <FormLabel className="text-left sm:col-span-1">
+                    Skills Needed
+                  </FormLabel>
+                  <FormControl className="sm:col-span-3">
                     <Input
                       placeholder="Enter required skills (comma-separated)"
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription className="col-start-2 col-span-3">
+                  <FormDescription className="sm:col-start-2 sm:col-span-3">
                     Enter the skills required for the job.
                   </FormDescription>
-                  <FormMessage className="col-start-2 col-span-3" />
+                  <FormMessage className="sm:col-start-2 sm:col-span-3" />
                 </FormItem>
               )}
             />
@@ -364,22 +429,21 @@ export default function Dashboard() {
               control={form.control}
               name="experience"
               render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-center">
-                  <FormLabel className="text-left">
+                <FormItem className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+                  <FormLabel className="text-left sm:col-span-1">
                     Experience (years)
                   </FormLabel>
-                  <FormControl className="col-span-3">
+                  <FormControl className="sm:col-span-3">
                     <Input
-                      type="number"
                       placeholder="Required years of experience"
-                      value={field.value}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      type="number"
+                      {...field}
                     />
                   </FormControl>
-                  <FormDescription className="col-start-2 col-span-3">
+                  <FormDescription className="sm:col-start-2 sm:col-span-3">
                     Enter the minimum years of experience required.
                   </FormDescription>
-                  <FormMessage className="col-start-2 col-span-3" />
+                  <FormMessage className="sm:col-start-2 sm:col-span-3" />
                 </FormItem>
               )}
             />
@@ -388,18 +452,30 @@ export default function Dashboard() {
               control={form.control}
               name="requirement"
               render={({ field }) => (
-                <FormItem className="grid grid-cols-4 items-start">
-                  <FormLabel className="text-left pt-2">Requirements</FormLabel>
-                  <div className="col-span-3">
+                <FormItem className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2">
+                  <FormLabel className="text-left sm:col-span-1 pt-2">
+                    Requirements
+                  </FormLabel>
+                  <div className="col-span-1 sm:col-span-3">
                     <FormControl>
-                      <MarkdownEditor
-                        value={field.value}
-                        onChange={field.onChange}
-                        height="400px"
+                      <ReactQuill
+                        style={{
+                          backgroundColor:
+                            theme === "dark" ? "#262626" : "white",
+                          color: "white",
+                          borderRadius: "20px",
+                          paddingBottom: "40px",
+                        }}
+                        placeholder="Enter job requirements"
+                        className="h-96"
+                        {...field}
+                        theme="snow"
+                        modules={modules}
+                        formats={formats}
                       />
                     </FormControl>
-                    <FormDescription className="col-start-2 col-span-3">
-                      Use Markdown to format the job requirements.
+                    <FormDescription className="sm:col-start-2 sm:col-span-3">
+                      Describe the requirements for the job.
                     </FormDescription>
                     <FormMessage />
                   </div>

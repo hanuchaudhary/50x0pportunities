@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
@@ -22,12 +21,8 @@ import {
 } from "@/components/ui/select";
 import { formatDate } from "@/lib/FormatDate";
 import { JobApplication, ApplicationStatus } from "@/types/types";
-import axios from "axios";
-import { getAuthHeaders } from "@/store/profileState";
-import { WEB_URL } from "@/Config";
-import { toast } from "@/hooks/use-toast";
-import { Badge } from "../ui/badge";
-import { Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useJobApplicationsStore } from "@/store/useJobApplicationsStore";
 
 export default function JobApplicationCard({
   applications,
@@ -35,40 +30,14 @@ export default function JobApplicationCard({
   handleApplicationFetch,
   companyName,
   jobPosition,
-  isLoading,
 }: {
-  isLoading: boolean;
-  companyName: string;
-  jobPosition: string;
   handleApplicationFetch: () => void;
   applications: JobApplication[];
   applicationsCount: number;
+  companyName: string;
+  jobPosition: string;
 }) {
   const [open, setOpen] = useState(false);
-  const handleStatusChange = async (
-    applicationId: string,
-    newStatus: ApplicationStatus
-  ) => {
-    try {
-      await axios.put(
-        `${WEB_URL}/api/v1/user/status`,
-        {
-          applicationId,
-          status: newStatus,
-        },
-        {
-          headers: {
-            Authorization: getAuthHeaders().Authorization,
-          },
-        }
-      );
-    } catch (error) {
-      toast({
-        title: "Failed to update status",
-        description: "Please try again later.",
-      });
-    }
-  };
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
@@ -77,38 +46,35 @@ export default function JobApplicationCard({
           View Applications ({applicationsCount})
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="w-full ">
         <DrawerHeader>
           <DrawerTitle className="text-2xl font-[instrumental-regular] tracking-tighter font-thin">
-            <span className="text-green-500">Application Details</span> for{" "}
-            {jobPosition}
+            <span className="text-green-500">Application Details </span>
+            for {jobPosition}
             <span className="text-neutral-500"> at {companyName}.</span>
           </DrawerTitle>
           <DrawerDescription>
             Review the details of job applications.
           </DrawerDescription>
         </DrawerHeader>
-        <ScrollArea className="h-[calc(100vh-200px)] px-4">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-96">
-              <Loader2 className="animate-spin text-green-500 h-14 w-14" />
-            </div>
-          ) : applications.length === 0 ? (
-            <div className="flex items-center justify-center h-96">
-              <p className="text-lg text-muted-foreground">
-                No applications found.
+        <ScrollArea className="h-[calc(100vh-200px)] px-4 sm:h-[500px]">
+          {applications.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-96 text-neutral-500">
+              <h1 className="text-3xl font-[instrumnetal-regular] tracking-tighter leading-none text-center">
+                No applications yet
+              </h1>
+              <p className="text-sm text-center leading-none">
+                Check back later for applications
               </p>
             </div>
           ) : (
             applications.map((app, index) => (
-              <div
-                key={app.id}
-                className="mb-6 dark:bg-neutral-900 rounded-xl p-3"
-              >
-                <h2 className="text-lg font-semibold mb-2">
-                  Application #{index + 1}
-                </h2>
-                <div className="flex items-center justify-between mb-4">
+              <div key={app.id} className="mb-3 bg-neutral-900 p-3 rounded-lg">
+                <h1 className="font-semibold py-2">
+                  Application{" "}
+                  <span className="text-green-500">{index + 1}.</span>
+                </h1>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                   <div className="flex items-center space-x-4">
                     <Avatar>
                       <AvatarImage
@@ -131,11 +97,13 @@ export default function JobApplicationCard({
                   </div>
                   <Select
                     defaultValue={app.status}
-                    onValueChange={async (value: ApplicationStatus) => {
-                      handleStatusChange(app.id, value);
+                    onValueChange={(value) => {
+                      useJobApplicationsStore
+                        .getState()
+                        .updateApplicationStatus(app.id, value);
                     }}
                   >
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="w-full sm:w-[180px]">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -148,59 +116,63 @@ export default function JobApplicationCard({
                   </Select>
                 </div>
                 <div className="grid gap-2">
-                  <div className="grid grid-cols-3 items-center gap-2">
+                  <div className="flex justify-between gap-2">
                     <span className="font-medium">Experience:</span>
                     <span className="col-span-2">
                       {app.applicant.experience}
                     </span>
                   </div>
-                  <div className="grid grid-cols-3 items-center gap-2">
+                  <div className="flex justify-between gap-2">
                     <span className="font-medium">Education:</span>
                     <span className="col-span-2">
                       {app.applicant.education}
                     </span>
                   </div>
-                  <div className="grid grid-cols-3 items-center gap-2">
-                    <span className="font-medium">Skills:</span>
-                    <span className="col-span-2 space-x-1">
-                      {app.applicant.skills.split(",").map((skill) => (
-                        <Badge variant={"secondary"} key={skill}>
-                          {skill}
-                        </Badge>
-                      ))}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 items-center gap-2">
+                  <div className="flex justify-between gap-2">
                     <span className="font-medium">Applied on:</span>
                     <span className="col-span-2">
                       {formatDate(app.createdAt)}
                     </span>
                   </div>
-                  <div className="grid grid-cols-3 items-center gap-2">
+                  <div className="flex justify-between gap-2">
                     <span className="font-medium">Resume:</span>
                     <a
                       href={app.applicant.resume}
                       target="_blank"
-                      className="col-span-2 text-green-500 font-[instrumental-regular] tracking-tighter hover:underline"
+                      rel="noopener noreferrer"
+                      className="col-span-2 text-blue-600 hover:underline"
                     >
-                      View Resume.
+                      View Resume
                     </a>
                   </div>
-                  <div className="grid grid-cols-3 items-start gap-2 mt-2">
+                  <div className="flex justify-between gap-10 md:gap-10">
+                    <span className="font-medium">Skills:</span>
+                    <span className="col-span-2 flex flex-wrap gap-1">
+                      {app.applicant.skills.split(",").map((skill) => (
+                        <Badge
+                          className="text-xs"
+                          variant={"secondary"}
+                          key={skill}
+                        >
+                          {skill}
+                        </Badge>
+                      ))}
+                    </span>
+                  </div>
+                  <div className="flex justify-between gap-10 md:gap-24 mt-2">
                     <span className="font-medium">Bio:</span>
-                    <p className="col-span-2 text-sm">{app.applicant.bio}</p>
+                    <p className="text-sm line-clamp-3 sm:line-clamp-2">
+                      {app.applicant.bio}
+                    </p>
                   </div>
                 </div>
-                {index < applications.length - 1 && (
-                  <Separator className="my-4" />
-                )}
               </div>
             ))
           )}
         </ScrollArea>
         <DrawerFooter>
-          <DrawerClose asChild>
-            <Button variant="outline">Close</Button>
+          <DrawerClose>
+            <Button variant="secondary">Close</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

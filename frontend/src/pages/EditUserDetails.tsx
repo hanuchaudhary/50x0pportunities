@@ -2,7 +2,6 @@ import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -16,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import axios from "axios";
 import { WEB_URL } from "@/Config";
 import useProfileStore, { getAuthHeaders } from "@/store/profileState";
@@ -31,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import LoadingButton from "@/components/LoadingButton";
+import BackButton from "@/components/BackButton";
 
 const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
@@ -136,11 +136,7 @@ export default function EditUserDetails() {
   return (
     <div className="w-full pb-3 max-w-4xl px-2 mx-auto">
       <div className=" flex items-center justify-between">
-        <Link to="/profile" replace={true}>
-          <Button size="sm" variant="outline" className="my-2">
-            Back
-          </Button>
-        </Link>
+        <BackButton href="/jobs" title="" replace={true} />
         <h1 className="text-3xl py-5 font-[instrumental-regular] tracking-tighter text-start">
           Update <span className="text-green-500">profile</span> details.
         </h1>

@@ -79,6 +79,7 @@ export interface Job {
 export interface User {
     id: string;
     email: string;
+    location: string;
     fullName: string;
     experience: string;
     education: string;

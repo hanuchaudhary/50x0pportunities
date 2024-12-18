@@ -433,7 +433,7 @@ jobRouter.put("/open", async (c) => {
             }, 400);
         }
 
-        await prisma.job.update({
+        const updatedJob =  await prisma.job.update({
             where: {
                 id: jobId,
             },
@@ -445,6 +445,8 @@ jobRouter.put("/open", async (c) => {
         return c.json({
             success: true,
             message: "Job updated successfully",
+            updatedJob : updatedJob.isOpen
+
         }, 200);
     } catch (error: any) {
         return c.json({
@@ -533,6 +535,85 @@ jobRouter.post("/save", async (c) => {
         return c.json({
             success: false,
             message: "Server error during saving job",
+            error: error.message,
+        }, 500);
+    } finally {
+        await prisma.$disconnect();
+    }
+});
+
+jobRouter.delete("/unsave/:jobId", async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        const userId = c.get("userId");
+        const jobId = c.req.param("jobId");
+
+        if (!jobId) {
+            return c.json({
+                success: false,
+                message: "Job ID is required",
+            }, 400);
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+        });
+
+        if (!user) {
+            return c.json({
+                success: false,
+                message: "User not found",
+            }, 404);
+        }
+
+        if (user.role !== "Candidate") {
+            return c.json({
+                success: false,
+                message: "Only Candidates can save jobs",
+            }, 403);
+        }
+
+        const jobExists = await prisma.job.findUnique({
+            where: { id: jobId },
+        });
+
+        if (!jobExists) {
+            return c.json({
+                success: false,
+                message: "Job does not exist",
+            }, 404);
+        }
+
+        const existingJob = await prisma.savedJobs.findFirst({
+            where: { userId, jobId },
+        });
+
+        if (!existingJob) {
+            return c.json({
+                success: false,
+                message: "Job not saved",
+            }, 404);
+        }
+
+        await prisma.savedJobs.delete({
+            where: { id: existingJob.id },
+        });
+
+        return c.json({
+            success: true,
+            message: "Job unsaved successfully",
+            jobId,
+        }, 200);
+
+    } catch (error: any) {
+        console.error("Error unsaving job:", error);
+
+        return c.json({
+            success: false,
+            message: "Server error during unsaving job",
             error: error.message,
         }, 500);
     } finally {

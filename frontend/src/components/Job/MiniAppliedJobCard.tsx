@@ -39,9 +39,9 @@ export default function AppliedJobCard({
         className
       )}
     >
-      <div className="p-3  dark:hover:bg-neutral-900 hover:bg-neutral-100 transition-colors duration-300 rounded-xl">
-        <div className="flex gap-4">
-          <div className="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden border-secondary border p-2">
+      <div className="p-3 sm:p-4 dark:hover:bg-neutral-900 hover:bg-neutral-100 transition-colors duration-300 rounded-xl">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 rounded-lg overflow-hidden border-secondary border p-2 mx-auto sm:mx-0">
             <img
               src={logo}
               alt={companyName}
@@ -50,13 +50,13 @@ export default function AppliedJobCard({
           </div>
 
           <div className="space-y-2 flex-1">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <h3 className="font-semibold text-lg sm:text-xl text-center sm:text-left">
                 {position}{" "}
-                <span className="text-muted-foreground">at {companyName}</span>
+                <span className="text-muted-foreground block sm:inline text-sm sm:text-base">at {companyName}</span>
               </h3>
               <Badge
-                className={`font-semibold ${
+                className={`font-semibold text-xs sm:text-sm px-2 py-1 self-center ${
                   status === "Applied"
                     ? "bg-blue-500 text-white"
                     : status === "Interviewing"
@@ -70,15 +70,15 @@ export default function AppliedJobCard({
               </Badge>
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+            <div className="flex flex-wrap justify-center sm:justify-start items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-muted-foreground">
               <span>{location}</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span>{type}</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span>{salary}</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span>{experience}</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span>
                 {new Date(createdAt).toLocaleDateString("en-US", {
                   month: "long",
@@ -88,19 +88,19 @@ export default function AppliedJobCard({
               </span>
             </div>
 
-            <div className="flex flex-wrap gap-2 pt-2">
-              {skills.slice(0, 4).map((skill) => (
+            <div className="flex flex-wrap justify-center sm:justify-start gap-2 pt-2">
+              {skills.slice(0, 3).map((skill) => (
                 <Badge
                   key={skill}
                   variant="secondary"
-                  className="rounded-full px-3 py-0.5 flex items-center gap-1"
+                  className="rounded-full px-2 sm:px-3 py-0.5 text-xs sm:text-sm flex items-center gap-1"
                 >
                   {skill}
                 </Badge>
               ))}
-              {skills.length > 4 && (
-                <Badge variant="secondary" className="rounded-full px-3 py-0.5">
-                  +{skills.length - 4}
+              {skills.length > 3 && (
+                <Badge variant="secondary" className="rounded-full px-2 sm:px-3 py-0.5 text-xs sm:text-sm">
+                  +{skills.length - 3}
                 </Badge>
               )}
             </div>
@@ -110,3 +110,4 @@ export default function AppliedJobCard({
     </Link>
   );
 }
+

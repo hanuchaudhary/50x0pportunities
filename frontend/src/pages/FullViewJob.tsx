@@ -3,7 +3,6 @@ import BackButton from "@/components/BackButton";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useSingleJobStore } from "@/store/useSingleJobState";
-import MarkdownEditor from "@uiw/react-markdown-editor";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -22,12 +21,12 @@ const FullViewJob = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[70vh]">
-        <Loader2 className="animate-spin text-green-600" />
+        <Loader2 className="animate-spin h-14 w-14 text-green-600" />
       </div>
     );
   }
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl px-3 mx-auto">
       <div className="py-3">
         <BackButton href="/jobs" title="" />
       </div>
@@ -56,7 +55,7 @@ const FullViewJob = () => {
               <p>at {singleJob?.company.name} |</p>
               <p>{singleJob?.jobType}</p>
             </div>
-            <div className="flex gap-8 pb-4">
+            <div className="flex md:gap-8 gap-4 flex-wrap pb-4">
               <div>
                 <p className="text-sm dark:text-neutral-400 text-neutral-600">
                   Experience
@@ -105,9 +104,14 @@ const FullViewJob = () => {
                 {skill}
               </Badge>
             ))}
-            <div className="py-4">
+            <div className="py-10">
               <h1 className="pb-3 font-semibold">Job Description</h1>
-              <MarkdownEditor.Markdown source={singleJob?.requirement} />
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: singleJob?.requirement || "",
+                }}
+                className="p-2 rounded-xl"
+              ></div>
             </div>
           </div>
         </div>

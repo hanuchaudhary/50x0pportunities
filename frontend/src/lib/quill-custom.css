@@ -1,0 +1,12 @@
+.ql-toolbar.ql-snow {
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  background-color: var(--primary) !important;
+  border-bottom: 1px solid gray !important;
+}
+
+.ql-container.ql-snow {
+  border: none !important;
+  color: white !important;
+}

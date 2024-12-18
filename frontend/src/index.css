@@ -68,30 +68,27 @@
   }
 }
 
-@layer base {
-  @font-face {
-    font-family: 'instrument-regular';
-    font-style: normal;
-    font-display: swap;
-    src: url(/fonts/InstrumentSerif-Regular.ttf) format('ttf');
-  }
+@font-face {
+  font-family: "instrument-regular";
+  font-style: normal;
+  font-display: swap;
+  src: url(/fonts/InstrumentSerif-Regular.ttf) format("ttf");
 }
 
-
 .custom-scrollbar::-webkit-scrollbar {
-  width: 10px; 
+  width: 10px;
   display: none;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: white !important; 
+  background: white !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: white !important;
-  border-radius: 10px; 
+  border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: white !important; 
+  background: white !important;
 }

@@ -164,7 +164,8 @@ userRouter.post('/signin', async (c) => {
             message: 'User signed in successfully',
             token,
             user : {
-                email,
+                id: user.id,
+                email : user.email,
                 role: user.role,
             }
         }, 200);

@@ -29,15 +29,16 @@ export function ManageJob({ jobId, isOpen }: JobActionsProps) {
   const [showOpenConfirm, setShowOpenConfirm] = useState(false);
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  console.log(isOpen);
 
   const handleOpenJob = async () => {
     setShowOpenConfirm(true);
-    useCreatedJobsStore.getState().updateJobStatus(jobId, isOpen);
+    useCreatedJobsStore.getState().updateJobStatus(jobId, true);
   };
 
   const handleCloseJob = async () => {
     setShowCloseConfirm(true);
-    useCreatedJobsStore.getState().updateJobStatus(jobId, isOpen);
+    useCreatedJobsStore.getState().updateJobStatus(jobId, false);
   };
 
   const handleDeleteJob = async () => {

@@ -28,7 +28,7 @@ import SavedJobs from "./components/Job/SavedJobs";
 import RecommendedJobs from "./components/Job/RecommendedJobs";
 import AppliedJobs from "./components/Job/AppliedJobs";
 import CreatedJobs from "./components/Job/CreatedJobs";
-type Role = "Candidate" | "Employer" | null;
+type Role = "Candidate" | "Recruiter" | null;
 
 const getUserRole = (): Role => {
   return localStorage.getItem("role") as Role;
@@ -152,7 +152,7 @@ const WrappedApp: React.FC = () => (
   <ThemeProvider>
     <BrowserRouter>
       <Navbar />
-      <div className="md:pt-32 pt-24">
+      <div className="md:pt-32 pt-20">
         <App />
       </div>
       <Toaster />
