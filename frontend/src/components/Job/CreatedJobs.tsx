@@ -19,22 +19,24 @@ export default function CreatedJobs() {
           </p>
         </div>
       ) : (
-        createdJobs.map((job) => (
-          <MiniJobCard
-            isOpen={job.isOpen}
-            _count={{ jobApplication: job._count.jobApplication }}
-            key={job.id}
-            companyName={job.company.name}
-            createdAt={job.createdAt}
-            experience={job.experience + " years"}
-            jobId={job.id}
-            location={job.location}
-            position={job.position}
-            logo={job.company.logo}
-            skills={job.skills.split(",")}
-            type={job.jobType}
-          />
-        ))
+        <div className="flex flex-col gap-2 w-full">
+          {createdJobs.map((job) => (
+            <MiniJobCard
+              isOpen={job.isOpen}
+              _count={{ jobApplication: job._count.jobApplication }}
+              key={job.id}
+              companyName={job.company.name}
+              createdAt={job.createdAt}
+              experience={job.experience + " years"}
+              jobId={job.id}
+              location={job.location}
+              position={job.position}
+              logo={job.company.logo}
+              skills={job.skills.split(",")}
+              type={job.jobType}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

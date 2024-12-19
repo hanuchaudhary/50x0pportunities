@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 
 interface ProfileMenuProps {
   user: {
@@ -46,6 +47,12 @@ export default function MiniProfile({ user, onClose }: ProfileMenuProps) {
       description: "Manage identity and other verifications.",
       href: "/verification",
     },
+    {
+      icon: <GitHubLogoIcon className="w-5 h-5" />,
+      title: "Github",
+      description: "Made with ❤️ by Kush Chaudhary",
+      href: "https://github.com/hanuchaudhary",
+    }
   ];
 
   const navigate = useNavigate();
@@ -139,7 +146,7 @@ export default function MiniProfile({ user, onClose }: ProfileMenuProps) {
         <Button
           onClick={LogoutUser}
           variant="secondary"
-          className="py-6 rounded-none"
+          className="py-6 rounded-t-xl rounded-b-none"
         >
           <LogOut className="mr-2 h-5 w-5" />
           Log Out

@@ -37,7 +37,7 @@ export default function LandingPage() {
         />
       </div>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 text-center">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pb-16 text-center">
         <h1 className="text-3xl md:text-5xl font-bold mb-4">
           Welcome to
           <br />

@@ -43,7 +43,7 @@ export default function MiniJobCard({
   const { fetchJobApplications, applications } = useJobApplicationsStore();
   return (
     <div className={cn("w-full block", className)}>
-      <div className="p-3 dark:hover:bg-neutral-900 w-full hover:bg-neutral-100 rounded-xl transition-colors duration-300">
+      <div className="p-3 dark:bg-neutral-900 w-full bg-neutral-100 rounded-xl transition-colors duration-300">
         <div className="w-full space-y-1">
           <div className="flex items-start justify-between w-full">
             <div className="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden border-secondary border p-2">

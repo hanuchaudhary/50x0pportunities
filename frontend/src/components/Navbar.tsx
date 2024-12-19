@@ -23,17 +23,17 @@ export default function Navbar() {
   return (
     <div className="w-full flex justify-center fixed top-4 left-0 right-0 z-50 px-4">
       <header className="flex w-full justify-between bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 md:px-3 py-3 rounded-2xl">
-        <div className="container flex justify-between items-center">
+        <div className="flex justify-between items-center w-full px-2">
           <div className="md:text-xl select-none leading-none tracking-tighter font-[instrumental-regular] text-primary">
-            50<span className="text-green-500">x</span>Opportunities
+            50<span className="text-green-500">x</span>Opportunities.
           </div>
-          <div className="flex items-center space-x-1 md:space-x-4">
+          <div className="flex items-center ">
             {role === "Recruiter" &&
               path !== "/" &&
               path !== "/signin" &&
               path !== "/signup" && (
                 <Link to={"/dashboard"}>
-                  <Button variant={"green"} className="rounded-xl" size={"sm"}>
+                  <Button variant={"green"} className="px-2 py-0" size={"sm"}>
                     Create Job
                   </Button>
                 </Link>

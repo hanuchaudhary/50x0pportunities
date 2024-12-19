@@ -34,7 +34,7 @@ const FullViewJob = () => {
       <div>
         <div className="py-3 dark:bg-neutral-900/30 px-3 bg-neutral-100 my-2 rounded-xl">
           <div className="flex items-center justify-between pb-8 ">
-            <div className="flex items-center justify-between border dark:border-neutral-800 bg-secondary border-neutral-200 p-2 rounded-3xl w-20 h-20">
+            <div className="flex items-center justify-between border dark:border-neutral-800 bg-white border-neutral-200 p-2 rounded-3xl w-20 h-20">
               <img
                 src={singleJob?.company.logo}
                 className="w-full h-full object-contain"

@@ -69,7 +69,7 @@ export default function JobApplicationCard({
             </div>
           ) : (
             applications.map((app, index) => (
-              <div key={app.id} className="mb-3 bg-neutral-900 p-3 rounded-lg">
+              <div key={app.id} className="mb-3 dark:bg-neutral-900 bg-neutral-50 shadow-sm p-3 rounded-lg">
                 <h1 className="font-semibold py-2">
                   Application{" "}
                   <span className="text-green-500">{index + 1}.</span>
@@ -103,7 +103,7 @@ export default function JobApplicationCard({
                         .updateApplicationStatus(app.id, value);
                     }}
                   >
-                    <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectTrigger className="w-full sm:w-[180px] bg-white">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
