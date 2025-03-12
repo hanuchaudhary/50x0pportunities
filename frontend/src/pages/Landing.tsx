@@ -29,7 +29,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="dark:bg-background w-full bg-primary-foreground overflow-x-hidden">
+    <div className="dark:bg-background w-full overflow-x-hidden">
       <div className="w-full overflow-hidden">
         <Spotlight
           fill={theme === "dark" ? "white" : "blue"}

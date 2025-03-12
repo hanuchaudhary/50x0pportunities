@@ -81,12 +81,12 @@ export default function SignupPage() {
 
   return (
     <div className="flex items-center justify-center flex-col bg-background px-4 py-12 sm:px-6 lg:px-8">
-      <div className="text-center text-4xl py-4">
+      <div className="text-center md:text-4xl text-2xl py-4">
         <span className="font-[instrument-regular] tracking-tighter leading-none">
           Sign up & create your <span className="text-green-500">profile.</span>
         </span>
       </div>
-      <Card className="w-full max-w-sm shadow-lg">
+      <Card className="w-full max-w-sm shadow-lg py-2">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">

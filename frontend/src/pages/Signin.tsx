@@ -76,11 +76,10 @@ export default function SigninPage() {
 
   return (
     <div className="bg-background flex items-center flex-col justify-center px-4 sm:px-6 lg:px-8">
-      <div className="text-center text-4xl py-4">
+      <div className="text-center md:text-4xl text-2xl py-4 flex flex-col gap-1">
         <span className="font-[instrument-regular] text-neutral-500 tracking-tighter leading-none">
           Welcome back!
         </span>
-        <br />
         <span className="font-[instrument-regular] tracking-tighter leading-none">
           Login to your <span className="text-green-500">account.</span>
         </span>

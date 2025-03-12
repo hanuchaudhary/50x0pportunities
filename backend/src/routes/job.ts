@@ -21,6 +21,12 @@ jobRouter.use("/*", async (c, next) => {
     try {
         const token = authHeader.split(" ")[1];
         const userVerify = await verify(token, c.env.JWT_SECRET);
+        console.log("token", token);
+        console.log("userVerify", userVerify);
+        console.log("Authorization", authHeader);
+        
+        
+        
 
         if (userVerify) {
             c.set("userId", userVerify.id as string);
