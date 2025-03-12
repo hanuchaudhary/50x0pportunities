@@ -48,7 +48,7 @@ export default function SigninPage() {
         `${WEB_URL}/api/v1/user/signin`,
         values
       );
-      localStorage.setItem("token", `${response.data.token}`);
+      localStorage.setItem("token", `Bearer ${response.data.token}`);
       localStorage.setItem("role", response.data.user.role);
       localStorage.setItem("user", JSON.stringify(response.data.user));
       toast({

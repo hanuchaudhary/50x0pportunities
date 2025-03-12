@@ -103,10 +103,10 @@ export default function JobApplicationCard({
                         .updateApplicationStatus(app.id, value);
                     }}
                   >
-                    <SelectTrigger className="w-full sm:w-[180px] bg-white">
+                    <SelectTrigger className="w-full sm:w-[180px] bg-white dark:bg-black/80 rounded-xl">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-xl">
                       {Object.values(ApplicationStatus).map((status) => (
                         <SelectItem key={status} value={status}>
                           {status}
